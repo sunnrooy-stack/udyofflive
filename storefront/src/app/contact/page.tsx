@@ -3,6 +3,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
+const API_BASE = (process.env.NEXT_PUBLIC_API_URL || "https://udyofflive1111111111.onrender.com").replace(/\/$/, "");
+
 interface TicketMessage {
   id: string;
   sender: "USER" | "ADMIN" | "SUPPORT";
@@ -124,9 +126,9 @@ export default function ContactPage() {
 
     try {
       const cleanEmail = email.trim().toLowerCase();
-      let res = await fetch(`http://localhost:5000/api/tickets?email=${encodeURIComponent(cleanEmail)}`).catch(() => null);
+      let res = await fetch(`${API_BASE}/api/tickets?email=${encodeURIComponent(cleanEmail)}`).catch(() => null);
       if (!res || !res.ok) {
-        res = await fetch(`https://digital-product-1-l3qr.onrender.com/api/tickets?email=${encodeURIComponent(cleanEmail)}`).catch(() => null);
+        res = await fetch(`http://localhost:5000/api/tickets?email=${encodeURIComponent(cleanEmail)}`).catch(() => null);
       }
 
       if (res && res.ok) {
@@ -161,9 +163,9 @@ export default function ContactPage() {
 
   const fetchTicketById = async (ticketId: string, isPolling = false) => {
     try {
-      let res = await fetch(`http://localhost:5000/api/tickets/${ticketId}`).catch(() => null);
+      let res = await fetch(`${API_BASE}/api/tickets/${ticketId}`).catch(() => null);
       if (!res || !res.ok) {
-        res = await fetch(`https://digital-product-1-l3qr.onrender.com/api/tickets/${ticketId}`).catch(() => null);
+        res = await fetch(`http://localhost:5000/api/tickets/${ticketId}`).catch(() => null);
       }
 
       if (res && res.status === 404) {
@@ -204,14 +206,14 @@ export default function ContactPage() {
       localStorage.setItem("user_contact_name", formData.name.trim());
       setUserEmail(emailToSave);
 
-      let res = await fetch("http://localhost:5000/api/tickets", {
+      let res = await fetch(`${API_BASE}/api/tickets`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...formData, email: emailToSave }),
       }).catch(() => null);
 
       if (!res || !res.ok) {
-        res = await fetch("https://digital-product-1-l3qr.onrender.com/api/tickets", {
+        res = await fetch("http://localhost:5000/api/tickets", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ ...formData, email: emailToSave }),
@@ -266,7 +268,7 @@ export default function ContactPage() {
     });
 
     try {
-      let res = await fetch(`http://localhost:5000/api/tickets/${activeTicket.id}/reply`, {
+      let res = await fetch(`${API_BASE}/api/tickets/${activeTicket.id}/reply`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -277,7 +279,7 @@ export default function ContactPage() {
       }).catch(() => null);
 
       if (!res || !res.ok) {
-        res = await fetch(`https://digital-product-1-l3qr.onrender.com/api/tickets/${activeTicket.id}/reply`, {
+        res = await fetch(`http://localhost:5000/api/tickets/${activeTicket.id}/reply`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

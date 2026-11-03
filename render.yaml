@@ -11,3 +11,11 @@ services:
         value: "5000"
       - key: NODE_ENV
         value: "production"
+      - key: RENDER_EXTERNAL_URL
+        value: "https://udyofflive1111111111.onrender.com"
+      - key: BACKEND_URL
+        value: "https://udyofflive1111111111.onrender.com"
+      - key: FRONTEND_URL
+        value: "https://udyofflive.onrender.com"
+      - key: ADMIN_URL
+        value: "https://udyofflive8888.onrender.com"

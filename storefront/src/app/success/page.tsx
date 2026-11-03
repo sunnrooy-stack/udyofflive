@@ -40,10 +40,11 @@ function SuccessContent() {
       try {
         const queryParams = new URLSearchParams({ payment_id: paymentId || "" });
         if (token) queryParams.append("token", token);
+        const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "https://udyofflive1111111111.onrender.com").replace(/\/$/, "");
 
-        let res = await fetch(`http://localhost:5000/api/orders/verify-download?${queryParams.toString()}`).catch(() => null);
+        let res = await fetch(`${apiUrl}/api/orders/verify-download?${queryParams.toString()}`).catch(() => null);
         if (!res || !res.ok) {
-          res = await fetch(`https://digital-product-1-l3qr.onrender.com/api/orders/verify-download?${queryParams.toString()}`).catch(() => null);
+          res = await fetch(`http://localhost:5000/api/orders/verify-download?${queryParams.toString()}`).catch(() => null);
         }
         if (res && res.ok) {
           const data = await res.json();

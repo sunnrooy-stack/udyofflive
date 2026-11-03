@@ -27,14 +27,14 @@ export default function CategoriesPage() {
         if (Array.isArray(data) && data.length > 0) {
           setCategories(data);
         } else {
-          fetch(`https://digital-product-1-l3qr.onrender.com/api/categories?t=${new Date().getTime()}`, { cache: "no-store" })
+          fetch(`https://udyofflive1111111111.onrender.com/api/categories?t=${new Date().getTime()}`, { cache: "no-store" })
             .then((r) => r.json())
             .then((remoteData) => { if (Array.isArray(remoteData)) setCategories(remoteData); })
             .catch(() => {});
         }
       })
       .catch(() => {
-        fetch(`https://digital-product-1-l3qr.onrender.com/api/categories?t=${new Date().getTime()}`, { cache: "no-store" })
+        fetch(`https://udyofflive1111111111.onrender.com/api/categories?t=${new Date().getTime()}`, { cache: "no-store" })
           .then((r) => r.json())
           .then((remoteData) => { if (Array.isArray(remoteData)) setCategories(remoteData); })
           .catch(() => {});
@@ -70,7 +70,7 @@ export default function CategoriesPage() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(updatedCat),
           }).catch(() => null),
-          fetch("https://digital-product-1-l3qr.onrender.com/api/categories", {
+          fetch("https://udyofflive1111111111.onrender.com/api/categories", {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(updatedCat),
@@ -91,7 +91,7 @@ export default function CategoriesPage() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ name, slug, parentId: parentId || null, metaTitle, metaDescription }),
           }).catch(() => null),
-          fetch("https://digital-product-1-l3qr.onrender.com/api/categories", {
+          fetch("https://udyofflive1111111111.onrender.com/api/categories", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ name, slug, parentId: parentId || null, metaTitle, metaDescription }),
@@ -126,7 +126,7 @@ export default function CategoriesPage() {
 
     Promise.allSettled([
       fetch(`http://localhost:5000/api/categories?id=${id}`, { method: "DELETE" }).catch(() => null),
-      fetch(`https://digital-product-1-l3qr.onrender.com/api/categories?id=${id}`, { method: "DELETE" }).catch(() => null),
+      fetch(`https://udyofflive1111111111.onrender.com/api/categories?id=${id}`, { method: "DELETE" }).catch(() => null),
     ]).finally(() => loadCategories());
   };
 

@@ -72,7 +72,7 @@ export default function AuthVerificationModal({
     setErrorMsg("");
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://digital-product-1-l3qr.onrender.com";
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://udyofflive1111111111.onrender.com";
       let res = await fetch(`${apiUrl}/api/auth/verify-profile`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

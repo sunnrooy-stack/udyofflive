@@ -19,14 +19,15 @@ export default function AIChatWidget() {
     setIsLoading(true);
     
     try {
-      let response = await fetch('http://localhost:5000/api/chat', {
+      const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "https://udyofflive1111111111.onrender.com").replace(/\/$/, "");
+      let response = await fetch(`${apiUrl}/api/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: [...messages, { role: 'user', text: userMessage }] })
       }).catch(() => null);
 
       if (!response || !response.ok) {
-        response = await fetch('https://digital-product-1-l3qr.onrender.com/api/chat', {
+        response = await fetch('http://localhost:5000/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ messages: [...messages, { role: 'user', text: userMessage }] })

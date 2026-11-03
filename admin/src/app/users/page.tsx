@@ -10,7 +10,7 @@ export default function UsersAdmin() {
 
   const fetchUsers = async () => {
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://digital-product-1-l3qr.onrender.com";
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://udyofflive1111111111.onrender.com";
       const res = await fetch(`${apiUrl}/api/users`);
       const data = await res.json();
       if (Array.isArray(data)) {

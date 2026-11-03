@@ -19,7 +19,7 @@ export default function AdminDashboard() {
   const [revenuePoints, setRevenuePoints] = useState<number[]>([0, 0, 0, 0, 0, 0, 0]);
 
   const fetchOverviewData = () => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://digital-product-1-l3qr.onrender.com";
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://udyofflive1111111111.onrender.com";
     Promise.all([
       fetch(`${apiUrl}/api/products`).then((r) => r.json()).catch(() => []),
       fetch(`${apiUrl}/api/orders`).then((r) => r.json()).catch(() => []),

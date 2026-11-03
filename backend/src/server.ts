@@ -24,13 +24,23 @@ dotenv.config();
 const app: Express = express();
 const port = process.env.PORT || 5000;
 
+const allowedOrigins = [
+  'https://udyofflive.onrender.com',
+  'https://udyofflive8888.onrender.com',
+  'https://digitals-product-store.onrender.com', 
+  'https://digital-product-2.onrender.com',
+  'http://localhost:3000',
+  'http://localhost:3001'
+];
+
 app.use(cors({
-  origin: [
-    'https://digitals-product-store.onrender.com', 
-    'https://digital-product-2.onrender.com',
-    'http://localhost:3000',
-    'http://localhost:3001'
-  ],
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin) || origin.endsWith('.onrender.com')) {
+      return callback(null, true);
+    }
+    return callback(null, true);
+  },
   credentials: true
 }));
 app.use(helmet({ crossOriginResourcePolicy: false }));
@@ -79,7 +89,8 @@ app.post('/api/upload', (req: Request, res: Response) => {
       fs.writeFileSync(path.join(storefrontUploadsDir, finalFilename), buffer);
     } catch (e) {}
 
-    const fileUrl = `http://localhost:5000/uploads/${finalFilename}`;
+    const backendBase = process.env.BACKEND_URL || process.env.RENDER_EXTERNAL_URL || 'https://udyofflive1111111111.onrender.com';
+    const fileUrl = `${backendBase.replace(/\/$/, '')}/uploads/${finalFilename}`;
     const storefrontUrl = `/images/uploads/${finalFilename}`;
 
     console.log(`[Upload] Image saved successfully: ${finalFilename} (${buffer.length} bytes)`);
@@ -698,7 +709,7 @@ app.get('/api/config', (req: Request, res: Response) => {
 
 // Automatic Self-Ping Keep-Alive (runs in production on Render to prevent sleep)
 const startKeepAlive = () => {
-  const targetUrl = process.env.RENDER_EXTERNAL_URL || process.env.BACKEND_URL || 'https://digital-product-1-l3qr.onrender.com';
+  const targetUrl = process.env.RENDER_EXTERNAL_URL || process.env.BACKEND_URL || 'https://udyofflive1111111111.onrender.com';
   const pingUrl = `${targetUrl.replace(/\/$/, '')}/health`;
   const INTERVAL = 10 * 60 * 1000; // Ping every 10 minutes
 

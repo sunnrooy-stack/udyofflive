@@ -46,7 +46,7 @@ export default function Navbar() {
   const syncUserToBackend = async (uData: any) => {
     if (!uData || !uData.email) return;
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://udyofflive1111111111.onrender.com";
       fetch(`${apiUrl}/api/auth/verify-profile`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

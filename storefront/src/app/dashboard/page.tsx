@@ -56,9 +56,10 @@ function DashboardContent() {
       
       if (userEmail) {
         try {
-          let res = await fetch("http://localhost:5000/api/orders").catch(() => null);
+          const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "https://udyofflive1111111111.onrender.com").replace(/\/$/, "");
+          let res = await fetch(`${apiUrl}/api/orders`).catch(() => null);
           if (!res || !res.ok) {
-            res = await fetch("https://digital-product-1-l3qr.onrender.com/api/orders").catch(() => null);
+            res = await fetch("http://localhost:5000/api/orders").catch(() => null);
           }
           if (res && res.ok) {
             const allOrders = await res.json();
@@ -92,9 +93,10 @@ function DashboardContent() {
 
         // Fetch products to generate personalized recommendations for user
         try {
-          let pRes = await fetch("http://localhost:5000/api/products").catch(() => null);
+          const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "https://udyofflive1111111111.onrender.com").replace(/\/$/, "");
+          let pRes = await fetch(`${apiUrl}/api/products`).catch(() => null);
           if (!pRes || !pRes.ok) {
-            pRes = await fetch("https://digital-product-1-l3qr.onrender.com/api/products").catch(() => null);
+            pRes = await fetch("http://localhost:5000/api/products").catch(() => null);
           }
           if (pRes && pRes.ok) {
             const allProds = await pRes.json();

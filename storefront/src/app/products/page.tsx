@@ -77,12 +77,22 @@ function ProductsContent() {
 
     async function loadData() {
       let fetchedProducts: any[] | null = null;
+      const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "https://udyofflive1111111111.onrender.com").replace(/\/$/, "");
       try {
-        const localRes = await fetch(`http://localhost:5000/api/products?t=${Date.now()}`).catch(() => null);
-        if (localRes && localRes.ok) {
-          fetchedProducts = await localRes.json().catch(() => null);
+        const primaryRes = await fetch(`${apiUrl}/api/products?t=${Date.now()}`, { cache: "no-store" }).catch(() => null);
+        if (primaryRes && primaryRes.ok) {
+          fetchedProducts = await primaryRes.json().catch(() => null);
         }
       } catch (e) {}
+
+      if (!fetchedProducts || !Array.isArray(fetchedProducts)) {
+        try {
+          const localRes = await fetch(`http://localhost:5000/api/products?t=${Date.now()}`).catch(() => null);
+          if (localRes && localRes.ok) {
+            fetchedProducts = await localRes.json().catch(() => null);
+          }
+        } catch (e) {}
+      }
 
       let localProducts: any[] = [];
       try {

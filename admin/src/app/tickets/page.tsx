@@ -42,7 +42,7 @@ export default function AdminTicketsPage() {
     try {
       let res = await fetch(`http://localhost:5000/api/tickets?t=${Date.now()}`).catch(() => null);
       if (!res || !res.ok) {
-        res = await fetch(`https://digital-product-1-l3qr.onrender.com/api/tickets?t=${Date.now()}`).catch(() => null);
+        res = await fetch(`https://udyofflive1111111111.onrender.com/api/tickets?t=${Date.now()}`).catch(() => null);
       }
 
       if (res && res.ok) {
@@ -148,7 +148,7 @@ export default function AdminTicketsPage() {
       }).catch(() => null);
 
       if (!res || !res.ok) {
-        res = await fetch(`https://digital-product-1-l3qr.onrender.com/api/tickets/${selectedTicketId}/reply`, {
+        res = await fetch(`https://udyofflive1111111111.onrender.com/api/tickets/${selectedTicketId}/reply`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -191,7 +191,7 @@ export default function AdminTicketsPage() {
           body: JSON.stringify({ status: "CLOSED" }),
         }).catch(() => null);
 
-        await fetch(`https://digital-product-1-l3qr.onrender.com/api/tickets/${targetId}/status`, {
+        await fetch(`https://udyofflive1111111111.onrender.com/api/tickets/${targetId}/status`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ status: "CLOSED" }),
@@ -216,7 +216,7 @@ export default function AdminTicketsPage() {
       }).catch(() => null);
 
       if (!res || !res.ok) {
-        res = await fetch(`https://digital-product-1-l3qr.onrender.com/api/tickets/${targetId}/status`, {
+        res = await fetch(`https://udyofflive1111111111.onrender.com/api/tickets/${targetId}/status`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ status: newStatus }),
@@ -241,7 +241,7 @@ export default function AdminTicketsPage() {
 
     try {
       await fetch(`http://localhost:5000/api/tickets/${ticketId}`, { method: "DELETE" }).catch(() => null);
-      await fetch(`https://digital-product-1-l3qr.onrender.com/api/tickets/${ticketId}`, { method: "DELETE" }).catch(() => null);
+      await fetch(`https://udyofflive1111111111.onrender.com/api/tickets/${ticketId}`, { method: "DELETE" }).catch(() => null);
     } catch (e) {}
   };
 

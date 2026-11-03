@@ -110,18 +110,19 @@ function ProductDetailContent() {
     async function loadProduct() {
       setLoading(true);
       let data: any[] | null = null;
+      const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "https://udyofflive1111111111.onrender.com").replace(/\/$/, "");
       try {
-        const localRes = await fetch(`http://localhost:5000/api/products?t=${Date.now()}`).catch(() => null);
-        if (localRes && localRes.ok) {
-          data = await localRes.json().catch(() => null);
+        const primaryRes = await fetch(`${apiUrl}/api/products?t=${Date.now()}`, { cache: "no-store" }).catch(() => null);
+        if (primaryRes && primaryRes.ok) {
+          data = await primaryRes.json().catch(() => null);
         }
       } catch (e) {}
 
       if (!data || !Array.isArray(data)) {
         try {
-          const remoteRes = await fetch(`https://digital-product-1-l3qr.onrender.com/api/products?t=${Date.now()}`, { cache: "no-store" }).catch(() => null);
-          if (remoteRes && remoteRes.ok) {
-            data = await remoteRes.json().catch(() => null);
+          const localRes = await fetch(`http://localhost:5000/api/products?t=${Date.now()}`).catch(() => null);
+          if (localRes && localRes.ok) {
+            data = await localRes.json().catch(() => null);
           }
         } catch (e) {}
       }

@@ -6,6 +6,8 @@ import { useCartStore } from "@/store/cart";
 import AuthVerificationModal from "@/components/AuthVerificationModal";
 import { Trash2, ShieldCheck, Lock, CreditCard, ShoppingBag, ArrowLeft, CheckCircle2 } from "lucide-react";
 
+const API_BASE = (process.env.NEXT_PUBLIC_API_URL || "https://udyofflive1111111111.onrender.com").replace(/\/$/, "");
+
 export default function CheckoutPage() {
   const { items, removeItem, totalAmount, clearCart } = useCartStore();
   const [email, setEmail] = useState("");
@@ -24,7 +26,8 @@ export default function CheckoutPage() {
     } catch (e) {}
 
     // Check active Razorpay gateway from backend
-    fetch("http://localhost:5000/api/payment-settings")
+    fetch(`${API_BASE}/api/payment-settings`)
+      .catch(() => fetch("http://localhost:5000/api/payment-settings"))
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (data && data.success) {
@@ -83,7 +86,7 @@ export default function CheckoutPage() {
       const freePaymentId = `FREE_ORDER_${Date.now()}`;
       let downloadToken = "";
       try {
-        let res = await fetch("http://localhost:5000/api/orders", {
+        let res = await fetch(`${API_BASE}/api/orders`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -98,7 +101,7 @@ export default function CheckoutPage() {
         }).catch(() => null);
 
         if (!res || !res.ok) {
-          res = await fetch("https://digital-product-1-l3qr.onrender.com/api/orders", {
+          res = await fetch("http://localhost:5000/api/orders", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -154,14 +157,14 @@ export default function CheckoutPage() {
 
       // 1. Try local API endpoint first, then remote Render backend
       try {
-        let res = await fetch("http://localhost:5000/api/create-order", {
+        let res = await fetch(`${API_BASE}/api/create-order`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(checkoutPayload),
         }).catch(() => null);
 
         if (!res || !res.ok) {
-          res = await fetch("https://digital-product-1-l3qr.onrender.com/api/create-order", {
+          res = await fetch("http://localhost:5000/api/create-order", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(checkoutPayload),
@@ -198,14 +201,14 @@ export default function CheckoutPage() {
           customer: email.split("@")[0] || "Guest",
         };
 
-        let verifyRes = await fetch("http://localhost:5000/api/verify-payment", {
+        let verifyRes = await fetch(`${API_BASE}/api/verify-payment`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(verifyPayload),
         }).catch(() => null);
 
         if (!verifyRes || !verifyRes.ok) {
-          verifyRes = await fetch("https://digital-product-1-l3qr.onrender.com/api/verify-payment", {
+          verifyRes = await fetch("http://localhost:5000/api/verify-payment", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(verifyPayload),
@@ -255,14 +258,14 @@ export default function CheckoutPage() {
               customer: email.split("@")[0] || "Guest",
             };
 
-            let verifyRes = await fetch("http://localhost:5000/api/verify-payment", {
+            let verifyRes = await fetch(`${API_BASE}/api/verify-payment`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(liveVerifyPayload),
             }).catch(() => null);
 
             if (!verifyRes || !verifyRes.ok) {
-              verifyRes = await fetch("https://digital-product-1-l3qr.onrender.com/api/verify-payment", {
+              verifyRes = await fetch("http://localhost:5000/api/verify-payment", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(liveVerifyPayload),

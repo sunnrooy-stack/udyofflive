@@ -6,7 +6,8 @@ export const inMemoryOrdersStore: any[] = [];
 // Seed existing production orders into memory store
 const seedRealOrders = async () => {
   try {
-    const res = await fetch("https://digital-product-1-l3qr.onrender.com/api/orders").catch(() => null);
+    const backendUrl = process.env.RENDER_EXTERNAL_URL || process.env.BACKEND_URL || "https://udyofflive1111111111.onrender.com";
+    const res = await fetch(`${backendUrl.replace(/\/$/, '')}/api/orders`).catch(() => null);
     if (res && res.ok) {
       const data = await res.json();
       if (Array.isArray(data) && data.length > 0) {

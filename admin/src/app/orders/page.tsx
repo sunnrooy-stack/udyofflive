@@ -12,14 +12,14 @@ export default function AdminOrders() {
         if (Array.isArray(data) && data.length > 0) {
           setOrders(data);
         } else {
-          fetch("https://digital-product-1-l3qr.onrender.com/api/orders")
+          fetch("https://udyofflive1111111111.onrender.com/api/orders")
             .then((r) => r.json())
             .then((remoteData) => { if (Array.isArray(remoteData)) setOrders(remoteData); })
             .catch(() => {});
         }
       })
       .catch(() => {
-        fetch("https://digital-product-1-l3qr.onrender.com/api/orders")
+        fetch("https://udyofflive1111111111.onrender.com/api/orders")
           .then((r) => r.json())
           .then((remoteData) => { if (Array.isArray(remoteData)) setOrders(remoteData); })
           .catch(() => {});

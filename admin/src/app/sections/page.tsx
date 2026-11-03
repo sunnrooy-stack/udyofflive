@@ -25,7 +25,7 @@ export default function SectionsOverviewPage() {
     } catch {}
 
     const primaryApi = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-    const fallbackApi = "https://digital-product-1-l3qr.onrender.com";
+    const fallbackApi = "https://udyofflive1111111111.onrender.com";
 
     let apiItems: any[] = [];
     let activeApi = primaryApi;

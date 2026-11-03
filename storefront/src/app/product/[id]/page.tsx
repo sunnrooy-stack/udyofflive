@@ -3,12 +3,15 @@ import ClientPage from "./ClientPage";
 
 export async function generateStaticParams() {
   try {
-    const res = await fetch("https://digital-product-1-l3qr.onrender.com/api/products");
-    const products = await res.json();
-    if (Array.isArray(products)) {
-      return products.map((p: any) => ({
-        id: String(p.id),
-      }));
+    const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "https://udyofflive1111111111.onrender.com").replace(/\/$/, "");
+    const res = await fetch(`${apiUrl}/api/products`).catch(() => null);
+    if (res && res.ok) {
+      const products = await res.json();
+      if (Array.isArray(products)) {
+        return products.map((p: any) => ({
+          id: String(p.id),
+        }));
+      }
     }
   } catch (e) {
     // ignore

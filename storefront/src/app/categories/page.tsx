@@ -11,14 +11,15 @@ export default function CategoriesPage() {
   useEffect(() => {
     async function loadData() {
       try {
-        let catsData = await fetch("http://localhost:5000/api/categories").then(r => r.json()).catch(() => null);
+        const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "https://udyofflive1111111111.onrender.com").replace(/\/$/, "");
+        let catsData = await fetch(`${apiUrl}/api/categories`).then(r => r.json()).catch(() => null);
         if (!Array.isArray(catsData)) {
-          catsData = await fetch("https://digital-product-1-l3qr.onrender.com/api/categories").then(r => r.json()).catch(() => []);
+          catsData = await fetch("http://localhost:5000/api/categories").then(r => r.json()).catch(() => []);
         }
 
-        let prodsData = await fetch("http://localhost:5000/api/products").then(r => r.json()).catch(() => null);
+        let prodsData = await fetch(`${apiUrl}/api/products`).then(r => r.json()).catch(() => null);
         if (!Array.isArray(prodsData)) {
-          prodsData = await fetch("https://digital-product-1-l3qr.onrender.com/api/products").then(r => r.json()).catch(() => []);
+          prodsData = await fetch("http://localhost:5000/api/products").then(r => r.json()).catch(() => []);
         }
 
         if (Array.isArray(catsData)) setCategories(catsData);

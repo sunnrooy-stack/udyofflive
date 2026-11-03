@@ -106,14 +106,14 @@ function ProductsContent() {
         if (Array.isArray(data) && data.length > 0) {
           setProducts(mergeLocalWithFetched(data));
         } else {
-          fetch(`https://digital-product-1-l3qr.onrender.com/api/products?t=${new Date().getTime()}`, { cache: "no-store" })
+          fetch(`https://udyofflive1111111111.onrender.com/api/products?t=${new Date().getTime()}`, { cache: "no-store" })
             .then((r) => r.json())
             .then((remoteData) => { if (Array.isArray(remoteData)) setProducts(mergeLocalWithFetched(remoteData)); })
             .catch(() => setProducts(getLocalProducts()));
         }
       })
       .catch(() => {
-        fetch(`https://digital-product-1-l3qr.onrender.com/api/products?t=${new Date().getTime()}`, { cache: "no-store" })
+        fetch(`https://udyofflive1111111111.onrender.com/api/products?t=${new Date().getTime()}`, { cache: "no-store" })
           .then((r) => r.json())
           .then((remoteData) => { if (Array.isArray(remoteData)) setProducts(mergeLocalWithFetched(remoteData)); })
           .catch(() => setProducts(getLocalProducts()));
@@ -274,7 +274,7 @@ function ProductsContent() {
   const [uploadingFiles, setUploadingFiles] = useState(false);
 
   useEffect(() => {
-    fetch(`https://digital-product-1-l3qr.onrender.com/api/categories?t=${new Date().getTime()}`, { cache: "no-store" })
+    fetch(`https://udyofflive1111111111.onrender.com/api/categories?t=${new Date().getTime()}`, { cache: "no-store" })
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) {
@@ -435,7 +435,7 @@ function ProductsContent() {
       revenue: 0,
     };
     setProducts([...products, duplicated]);
-    fetch("https://digital-product-1-l3qr.onrender.com/api/products", {
+    fetch("https://udyofflive1111111111.onrender.com/api/products", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(duplicated),
@@ -459,7 +459,7 @@ function ProductsContent() {
 
     Promise.allSettled([
       fetch(`http://localhost:5000/api/products/${id}`, { method: "DELETE" }).catch(() => null),
-      fetch(`https://digital-product-1-l3qr.onrender.com/api/products/${id}`, { method: "DELETE" }).catch(() => null),
+      fetch(`https://udyofflive1111111111.onrender.com/api/products/${id}`, { method: "DELETE" }).catch(() => null),
     ]).finally(() => refreshProducts());
   };
 
@@ -489,7 +489,7 @@ function ProductsContent() {
       body: payload,
     }).catch(() => null);
 
-    fetch(`https://digital-product-1-l3qr.onrender.com/api/products/${id}`, {
+    fetch(`https://udyofflive1111111111.onrender.com/api/products/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: payload,
@@ -565,7 +565,7 @@ function ProductsContent() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(updatedProduct),
         }).catch(() => null),
-        fetch(`https://digital-product-1-l3qr.onrender.com/api/products/${formId}`, {
+        fetch(`https://udyofflive1111111111.onrender.com/api/products/${formId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(updatedProduct),
@@ -619,7 +619,7 @@ function ProductsContent() {
             const data = await res.json().catch(() => null);
             if (data && data.product) createdProduct = data.product;
           } else {
-            res = await fetch("https://digital-product-1-l3qr.onrender.com/api/products", {
+            res = await fetch("https://udyofflive1111111111.onrender.com/api/products", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(newProduct),
