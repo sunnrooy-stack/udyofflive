@@ -1,0 +1,17 @@
+{
+  "activeAccount": "1",
+  "account1": {
+    "id": "1",
+    "name": "Razorpay Option 1 (Test / Sandbox)",
+    "keyId": "rzp_test_TvF0iIwMv1MxWV",
+    "keySecret": "4Ucfs5fbQLMkTBoEajVfDoQp",
+    "isLive": false
+  },
+  "account2": {
+    "id": "2",
+    "name": "Razorpay Option 2 (Live / Production)",
+    "keyId": "rzp_live_TvZhey1ZgYXPiz",
+    "keySecret": "FQyNDjA4noqH6u50xlUbdW6I",
+    "isLive": true
+  }
+}
