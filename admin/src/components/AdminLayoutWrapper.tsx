@@ -93,12 +93,12 @@ export default function AdminLayoutWrapper({ children }: { children: React.React
             onError={(e) => {
               (e.currentTarget as HTMLImageElement).src = "/logo.png";
             }}
-            alt="UDYO FF Logo"
+            alt="GEONIXEDITZ Logo"
             className="h-10 w-10 object-contain rounded-xl drop-shadow-md"
           />
           <div className="flex flex-col">
             <span className="font-extrabold text-base tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-indigo-400">
-              UDYO FF
+              GEONIXEDITZ
             </span>
             <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest -mt-1">
               Admin Control

@@ -10,7 +10,7 @@ const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "UDYO FF | Premium Digital Products Marketplace",
+  title: "GEONIXEDITZ | Premium Digital Products Marketplace",
   description: "Download YouTube thumbnail PSDs, After Effects CC packs, manga assets, character packs, and 3D text effects.",
   icons: {
     icon: "/logo-tight.png",

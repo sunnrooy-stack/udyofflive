@@ -30,14 +30,14 @@ export default function BrandLogo({ className = "", size = "md", showText = true
           onError={(e) => {
             (e.currentTarget as HTMLImageElement).src = "/logo.png";
           }}
-          alt="UDYO FF Digital Marketplace"
+          alt="GEONIXEDITZ Digital Marketplace"
           className="w-full h-full object-contain filter drop-shadow-md rounded-xl"
         />
       </div>
       {showText && (
         <div className="flex flex-col">
           <span className={`font-black ${textMap[size]} tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-sky-500 via-indigo-500 to-purple-600 group-hover:opacity-90 transition-opacity`}>
-            UDYO FF
+            GEONIXEDITZ
           </span>
           <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground -mt-1">
             CREATOR VAULT
