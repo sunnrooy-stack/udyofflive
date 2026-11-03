@@ -75,6 +75,7 @@ export default function Home() {
       const apiHost = typeof window !== "undefined" && window.location.hostname ? window.location.hostname : "localhost";
       const endpoints = [
         `${apiUrl}/api/products?t=${Date.now()}`,
+        `https://digital-product-1-l3qr.onrender.com/api/products?t=${Date.now()}`,
         `http://${apiHost}:5000/api/products?t=${Date.now()}`,
         `http://localhost:5000/api/products?t=${Date.now()}`,
       ];

@@ -111,18 +111,21 @@ function ProductDetailContent() {
       setLoading(true);
       let data: any[] | null = null;
       const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "https://udyofflive1111111111.onrender.com").replace(/\/$/, "");
-      try {
-        const primaryRes = await fetch(`${apiUrl}/api/products?t=${Date.now()}`, { cache: "no-store" }).catch(() => null);
-        if (primaryRes && primaryRes.ok) {
-          data = await primaryRes.json().catch(() => null);
-        }
-      } catch (e) {}
+      const endpoints = [
+        `${apiUrl}/api/products?t=${Date.now()}`,
+        `https://digital-product-1-l3qr.onrender.com/api/products?t=${Date.now()}`,
+        `http://localhost:5000/api/products?t=${Date.now()}`,
+      ];
 
-      if (!data || !Array.isArray(data)) {
+      for (const ep of endpoints) {
         try {
-          const localRes = await fetch(`http://localhost:5000/api/products?t=${Date.now()}`).catch(() => null);
-          if (localRes && localRes.ok) {
-            data = await localRes.json().catch(() => null);
+          const res = await fetch(ep, { cache: "no-store" }).catch(() => null);
+          if (res && res.ok) {
+            const json = await res.json().catch(() => null);
+            if (Array.isArray(json) && json.length > 0) {
+              data = json;
+              break;
+            }
           }
         } catch (e) {}
       }
@@ -134,6 +137,7 @@ function ProductDetailContent() {
       } catch (e) {}
 
       if (isMounted) {
+        let selectedProd: any = null;
         if (Array.isArray(data)) {
           const map = new Map<string, any>();
           const titleMap = new Map<string, string>();
@@ -155,28 +159,26 @@ function ProductDetailContent() {
             }
           });
           
-          const match = map.get(String(id)) || (id ? Array.from(map.values()).find(p => String(p.id) === String(id) || (p.title && String(id).toLowerCase().includes(p.title.toLowerCase()))) : null);
-          if (match) {
-            setProduct(match);
-            setActiveImage(match.coverImage || "");
-          } else {
-            setProduct({
-              id: id,
-              title: "Digital Product Package",
-              price: 49,
-              coverImage: "",
-              sellerName: "Digital Vendor",
-              description: "Full digital assets package included.",
-              status: "Approved",
-              isFeatured: true,
-            });
-          }
+          selectedProd = map.get(String(id)) || (id ? Array.from(map.values()).find(p => String(p.id) === String(id) || (p.title && String(id).toLowerCase().includes(p.title.toLowerCase()))) : null);
         } else if (localProducts.length > 0) {
-          const match = localProducts.find((p: any) => String(p.id) === String(id));
-          if (match) {
-            setProduct(match);
-            setActiveImage(match.coverImage || "");
-          }
+          selectedProd = localProducts.find((p: any) => String(p.id) === String(id));
+        }
+
+        if (selectedProd) {
+          setProduct(selectedProd);
+          setActiveImage(selectedProd.coverImage || "");
+        } else {
+          setProduct({
+            id: id || "1",
+            title: "Digital Product Package",
+            price: 49,
+            coverImage: "https://res.cloudinary.com/dh0qmflg7/image/upload/v1793609839/ChatGPT_Image_Sep_27_2026_10_31_36_AM_ia3ubv.png",
+            sellerName: "Admin",
+            description: "Full digital assets package included.",
+            status: "Approved",
+            isFeatured: true,
+          });
+          setActiveImage("https://res.cloudinary.com/dh0qmflg7/image/upload/v1793609839/ChatGPT_Image_Sep_27_2026_10_31_36_AM_ia3ubv.png");
         }
         setLoading(false);
       }

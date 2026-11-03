@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const ADMIN_PASSCODE = "sunny143";
+const ADMIN_PASSCODE = "GEONIXEDITZ";
 
 export default function AdminLayoutWrapper({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -23,7 +23,7 @@ export default function AdminLayoutWrapper({ children }: { children: React.React
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (passcode === ADMIN_PASSCODE) {
+    if (passcode.trim().toUpperCase() === ADMIN_PASSCODE.toUpperCase()) {
       localStorage.setItem("admin_auth", "true");
       setIsAuthenticated(true);
       setError("");

@@ -78,18 +78,21 @@ function ProductsContent() {
     async function loadData() {
       let fetchedProducts: any[] | null = null;
       const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "https://udyofflive1111111111.onrender.com").replace(/\/$/, "");
-      try {
-        const primaryRes = await fetch(`${apiUrl}/api/products?t=${Date.now()}`, { cache: "no-store" }).catch(() => null);
-        if (primaryRes && primaryRes.ok) {
-          fetchedProducts = await primaryRes.json().catch(() => null);
-        }
-      } catch (e) {}
+      const endpoints = [
+        `${apiUrl}/api/products?t=${Date.now()}`,
+        `https://digital-product-1-l3qr.onrender.com/api/products?t=${Date.now()}`,
+        `http://localhost:5000/api/products?t=${Date.now()}`,
+      ];
 
-      if (!fetchedProducts || !Array.isArray(fetchedProducts)) {
+      for (const ep of endpoints) {
         try {
-          const localRes = await fetch(`http://localhost:5000/api/products?t=${Date.now()}`).catch(() => null);
-          if (localRes && localRes.ok) {
-            fetchedProducts = await localRes.json().catch(() => null);
+          const res = await fetch(ep, { cache: "no-store" }).catch(() => null);
+          if (res && res.ok) {
+            const json = await res.json().catch(() => null);
+            if (Array.isArray(json) && json.length > 0) {
+              fetchedProducts = json;
+              break;
+            }
           }
         } catch (e) {}
       }

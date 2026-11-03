@@ -34,39 +34,44 @@ export default function ProductDetailPage() {
     async function loadProduct() {
       let data: any[] | null = null;
       const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "https://udyofflive1111111111.onrender.com").replace(/\/$/, "");
-      try {
-        const primaryRes = await fetch(`${apiUrl}/api/products?t=${Date.now()}`, { cache: "no-store" }).catch(() => null);
-        if (primaryRes && primaryRes.ok) {
-          data = await primaryRes.json().catch(() => null);
-        }
-      } catch (e) {}
+      const endpoints = [
+        `${apiUrl}/api/products?t=${Date.now()}`,
+        `https://digital-product-1-l3qr.onrender.com/api/products?t=${Date.now()}`,
+        `http://localhost:5000/api/products?t=${Date.now()}`,
+      ];
 
-      if (!data || !Array.isArray(data)) {
+      for (const ep of endpoints) {
         try {
-          const localRes = await fetch(`http://localhost:5000/api/products?t=${Date.now()}`).catch(() => null);
-          if (localRes && localRes.ok) {
-            data = await localRes.json().catch(() => null);
+          const res = await fetch(ep, { cache: "no-store" }).catch(() => null);
+          if (res && res.ok) {
+            const json = await res.json().catch(() => null);
+            if (Array.isArray(json) && json.length > 0) {
+              data = json;
+              break;
+            }
           }
         } catch (e) {}
       }
 
       if (isMounted) {
+        let match: any = null;
         if (Array.isArray(data)) {
-          const match = data.find((p: any) => String(p.id) === String(id));
-          if (match) {
-            setProduct(match);
-          } else {
-            setProduct({
-              id: id,
-              title: "Digital Product Package",
-              price: 49,
-              coverImage: "",
-              sellerName: "Digital Vendor",
-              description: "Full digital assets package included.",
-              status: "Approved",
-              isFeatured: true,
-            });
-          }
+          match = data.find((p: any) => String(p.id) === String(id));
+        }
+
+        if (match) {
+          setProduct(match);
+        } else {
+          setProduct({
+            id: id,
+            title: "Digital Product Package",
+            price: 49,
+            coverImage: "https://res.cloudinary.com/dh0qmflg7/image/upload/v1793609839/ChatGPT_Image_Sep_27_2026_10_31_36_AM_ia3ubv.png",
+            sellerName: "Admin",
+            description: "Full digital assets package included.",
+            status: "Approved",
+            isFeatured: true,
+          });
         }
         setLoading(false);
       }
