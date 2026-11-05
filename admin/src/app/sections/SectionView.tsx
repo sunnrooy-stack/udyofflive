@@ -32,8 +32,8 @@ export const SECTIONS_CONFIG: Record<string, SectionConfig> = {
     badge: "4K ULTRA",
     description: "Ultra high-definition gaming environments, battlegrounds, and atmospheric skies.",
     defaultCover: "/images/demo-sections/demo-4k-backgrounds.png",
-    defaultAspectRatio: "16:10",
-    defaultOrientation: "landscape",
+    defaultAspectRatio: "1.09:1",
+    defaultOrientation: "portrait",
   },
   "3d-character": {
     slug: "3d-character",
@@ -146,7 +146,7 @@ export function matchProductForSection(p: any, slug: string, title?: string) {
 
 export default function SectionView({ slug }: { slug: string }) {
   const section = SECTIONS_CONFIG[slug] || SECTIONS_CONFIG["thumbnail-psd"];
-  const isThumbnailPsd = slug === "thumbnail-psd";
+  const isThumbnailPsd = slug === "thumbnail-psd" || slug === "4k-backgrounds";
 
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);

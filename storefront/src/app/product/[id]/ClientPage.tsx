@@ -96,8 +96,11 @@ export default function ProductDetailPage() {
   const isThumbnailProduct =
     (product?.category && product.category.toLowerCase().includes("psd")) ||
     (product?.category && product.category.toLowerCase().includes("thumbnail")) ||
+    (product?.category && product.category.toLowerCase().includes("background")) ||
     (product?.title && product.title.toLowerCase().includes("psd")) ||
+    (product?.title && product.title.toLowerCase().includes("background")) ||
     (product?.sectionSlug === "thumbnail-psd") ||
+    (product?.sectionSlug === "4k-backgrounds") ||
     (product?.aspectRatio === "1.09:1" || product?.aspectRatio === "1:1.09");
 
   const defaultRatio = isThumbnailProduct ? "1.09:1" : (product?.aspectRatio || "16:9");

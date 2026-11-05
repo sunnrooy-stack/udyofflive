@@ -325,6 +325,13 @@ function ProductsContent() {
                 sellerName: product.sellerName || "Admin",
               };
 
+              const isPortrait =
+                product.aspectRatio === "1.09:1" ||
+                product.aspectRatio === "1:1.09" ||
+                product.category?.toLowerCase().includes("thumbnail") ||
+                product.category?.toLowerCase().includes("background");
+              const aspectClass = isPortrait ? "aspect-[1/1.09]" : "aspect-video";
+
               return (
                 <motion.div
                   key={product.id}
@@ -336,7 +343,7 @@ function ProductsContent() {
                 >
                   <div>
                     <a href={`/product?id=${product.id}`}>
-                      <div className={`aspect-video w-full rounded-xl bg-gradient-to-br ${gradients[gradientIndex]} mb-3 flex items-center justify-center relative overflow-hidden`}>
+                      <div className={`${aspectClass} w-full rounded-xl bg-gradient-to-br ${gradients[gradientIndex]} mb-3 flex items-center justify-center relative overflow-hidden`}>
                         {product.coverImage ? (
                           <img
                             src={product.coverImage}

@@ -22,6 +22,7 @@ export interface Product {
   tags?: string[];
   isFeatured?: boolean;
   sectionSlug?: string;
+  aspectRatio?: string;
 }
 
 interface ProductCardProps {
@@ -98,9 +99,13 @@ export default function ProductCard({
   };
 
   const isThumbnail =
+    product.aspectRatio === "1.09:1" ||
+    product.aspectRatio === "1:1.09" ||
     product.sectionSlug === "thumbnail-psd" ||
-    (product.category && product.category.toLowerCase().includes("thumbnail")) ||
-    (product.title && product.title.toLowerCase().includes("thumbnail"));
+    product.sectionSlug === "4k-backgrounds" ||
+    aspectRatio === "portrait" ||
+    (product.category && (product.category.toLowerCase().includes("thumbnail") || product.category.toLowerCase().includes("background"))) ||
+    (product.title && (product.title.toLowerCase().includes("thumbnail") || product.title.toLowerCase().includes("background")));
 
   const aspectClass = isThumbnail
     ? "aspect-[1/1.09]"

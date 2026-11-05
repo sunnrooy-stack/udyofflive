@@ -276,6 +276,7 @@ export default function Home() {
         title="4K Backgrounds"
         viewAllHref="/products?category=presets"
         products={backgroundProducts}
+        aspectRatio="portrait"
         onRequireAuth={() => setIsAuthModalOpen(true)}
       />
 
