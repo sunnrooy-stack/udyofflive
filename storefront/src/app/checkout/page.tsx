@@ -26,21 +26,33 @@ export default function CheckoutPage() {
     } catch (e) {}
 
     // Check active Razorpay gateway from backend
-    fetch(`${API_BASE}/api/payment-settings`)
-      .catch(() => fetch("http://localhost:5000/api/payment-settings"))
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (data && data.success) {
-          if (data.activeAccount === "1") {
-            setGatewayName("Razorpay Option 1 (Test / Sandbox)");
-            setGatewayMode("Test Sandbox Mode");
-          } else {
-            setGatewayName("Razorpay Option 2 (Live Gateway)");
-            setGatewayMode("Live Real Payments");
+    const checkGateway = async () => {
+      const endpoints = [
+        `${API_BASE}/api/payment-settings`,
+        "https://udyofflive1111111111.onrender.com/api/payment-settings",
+        "https://digital-product-1-l3qr.onrender.com/api/payment-settings",
+        "http://localhost:5000/api/payment-settings",
+      ];
+      for (const ep of endpoints) {
+        try {
+          const res = await fetch(ep).catch(() => null);
+          if (res && res.ok) {
+            const data = await res.json().catch(() => null);
+            if (data && data.success) {
+              if (data.activeAccount === "1") {
+                setGatewayName("Razorpay Option 1 (Test / Sandbox)");
+                setGatewayMode("Test Sandbox Mode");
+              } else {
+                setGatewayName("Razorpay Option 2 (Live Gateway)");
+                setGatewayMode("Live Real Payments");
+              }
+              break;
+            }
           }
-        }
-      })
-      .catch(() => {});
+        } catch (e) {}
+      }
+    };
+    checkGateway();
   }, []);
 
   const checkUserVerified = () => {
@@ -153,44 +165,49 @@ export default function CheckoutPage() {
 
     try {
       let orderData: any = null;
+      let workingBaseUrl = "";
       const checkoutPayload = { items: items, email: email, amount: totalAmount() };
 
-      // 1. Try local API endpoint first, then remote Render backend
-      try {
-        let res = await fetch(`${API_BASE}/api/create-order`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(checkoutPayload),
-        }).catch(() => null);
+      // 1. Try available backend endpoints sequentially
+      const endpoints = [
+        `${API_BASE}/api/create-order`,
+        "https://udyofflive1111111111.onrender.com/api/create-order",
+        "https://digital-product-1-l3qr.onrender.com/api/create-order",
+        "http://localhost:5000/api/create-order",
+      ];
 
-        if (!res || !res.ok) {
-          res = await fetch("http://localhost:5000/api/create-order", {
+      for (const ep of endpoints) {
+        try {
+          const res = await fetch(ep, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(checkoutPayload),
-          });
-        }
-        orderData = await res.json();
-      } catch (e: any) {
-        alert("Could not reach backend API for order creation. Is the server running?");
-        setLoading(false);
-        return;
+          }).catch(() => null);
+
+          if (res && res.ok) {
+            orderData = await res.json().catch(() => null);
+            if (orderData && (orderData.orderId || orderData.isFree)) {
+              workingBaseUrl = ep.replace("/api/create-order", "");
+              break;
+            }
+          }
+        } catch (e) {}
       }
 
       if (!orderData || (!orderData.orderId && !orderData.isFree)) {
-        alert(`Order Creation Error: ${orderData?.error || "Unknown Error"}`);
+        alert(`Order Creation Error: ${orderData?.error || "Could not reach payment server. Please try again."}`);
         setLoading(false);
         return;
       }
 
       const orderId = orderData.orderId;
+      const razorpayKey =
+        orderData?.key ||
+        process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID ||
+        "rzp_test_TvF0iIwMv1MxWV";
 
-      // Handle Test Mode / Demo Orders when Razorpay keys are unconfigured
-      if (
-        orderData.isDemo ||
-        !process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID ||
-        process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID.includes("dummy")
-      ) {
+      // Handle Test Mode ONLY if explicit demo requested with no key
+      if (orderData.isDemo && (!razorpayKey || razorpayKey.includes("dummy"))) {
         const testPaymentId = `TEST_PAY_${Date.now()}`;
         const verifyPayload = {
           razorpay_order_id: orderId,
@@ -201,23 +218,29 @@ export default function CheckoutPage() {
           customer: email.split("@")[0] || "Guest",
         };
 
-        let verifyRes = await fetch(`${API_BASE}/api/verify-payment`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(verifyPayload),
-        }).catch(() => null);
+        const verifyEndpoints = [
+          `${workingBaseUrl || API_BASE}/api/verify-payment`,
+          "https://udyofflive1111111111.onrender.com/api/verify-payment",
+          "https://digital-product-1-l3qr.onrender.com/api/verify-payment",
+          "http://localhost:5000/api/verify-payment",
+        ];
 
-        if (!verifyRes || !verifyRes.ok) {
-          verifyRes = await fetch("http://localhost:5000/api/verify-payment", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(verifyPayload),
-          });
+        let verifyData: any = null;
+        for (const vep of verifyEndpoints) {
+          try {
+            const vRes = await fetch(vep, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(verifyPayload),
+            }).catch(() => null);
+            if (vRes && vRes.ok) {
+              verifyData = await vRes.json().catch(() => null);
+              if (verifyData && verifyData.success) break;
+            }
+          } catch (e) {}
         }
 
-        const verifyData = await verifyRes.json();
-
-        if (verifyData.success) {
+        if (verifyData && verifyData.success) {
           const downloadToken = verifyData.downloadToken || "";
           if (downloadToken) {
             localStorage.setItem("download_token", downloadToken);
@@ -238,14 +261,12 @@ export default function CheckoutPage() {
         }
       }
 
-      const key = orderData?.key || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_live_TvZhey1ZgYXPiz";
-
       const options: any = {
-        key: key,
+        key: razorpayKey,
         amount: Math.round(totalAmount() * 100), // Amount in paise
         currency: "INR",
-        name: "Digital Products Store",
-        description: "Digital Products Purchase",
+        name: "GEONIXEDITZ",
+        description: items.length === 1 ? items[0].title : `${items.length} Digital Products`,
         order_id: orderId,
         handler: async function (response: any) {
           try {
@@ -258,23 +279,29 @@ export default function CheckoutPage() {
               customer: email.split("@")[0] || "Guest",
             };
 
-            let verifyRes = await fetch(`${API_BASE}/api/verify-payment`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(liveVerifyPayload),
-            }).catch(() => null);
+            const verifyEndpoints = [
+              `${workingBaseUrl || API_BASE}/api/verify-payment`,
+              "https://udyofflive1111111111.onrender.com/api/verify-payment",
+              "https://digital-product-1-l3qr.onrender.com/api/verify-payment",
+              "http://localhost:5000/api/verify-payment",
+            ];
 
-            if (!verifyRes || !verifyRes.ok) {
-              verifyRes = await fetch("http://localhost:5000/api/verify-payment", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(liveVerifyPayload),
-              });
+            let verifyData: any = null;
+            for (const vep of verifyEndpoints) {
+              try {
+                const vRes = await fetch(vep, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(liveVerifyPayload),
+                }).catch(() => null);
+                if (vRes && vRes.ok) {
+                  verifyData = await vRes.json().catch(() => null);
+                  if (verifyData && verifyData.success) break;
+                }
+              } catch (e) {}
             }
 
-            const verifyData = await verifyRes.json();
-
-            if (verifyData.success) {
+            if (verifyData && verifyData.success) {
               const downloadToken = verifyData.downloadToken || "";
               if (downloadToken) {
                 localStorage.setItem("download_token", downloadToken);
