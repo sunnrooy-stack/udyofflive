@@ -204,7 +204,7 @@ export default function CheckoutPage() {
       const razorpayKey =
         orderData?.key ||
         process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID ||
-        "rzp_test_TvF0iIwMv1MxWV";
+        "rzp_live_T3nxTH4mjFTNK8";
 
       // Handle Test Mode ONLY if explicit demo requested with no key
       if (orderData.isDemo && (!razorpayKey || razorpayKey.includes("dummy"))) {

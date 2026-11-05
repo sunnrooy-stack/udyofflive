@@ -1,5 +1,5 @@
 {
-  "activeAccount": "1",
+  "activeAccount": "2",
   "account1": {
     "id": "1",
     "name": "Razorpay Option 1 (Test / Sandbox)",
@@ -10,8 +10,8 @@
   "account2": {
     "id": "2",
     "name": "Razorpay Option 2 (Live / Production)",
-    "keyId": "rzp_live_TvZhey1ZgYXPiz",
-    "keySecret": "FQyNDjA4noqH6u50xlUbdW6I",
+    "keyId": "rzp_live_T3nxTH4mjFTNK8",
+    "keySecret": "spFAtkmHQhl5hpcgin3MkJX5",
     "isLive": true
   }
 }
