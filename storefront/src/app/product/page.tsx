@@ -234,15 +234,25 @@ function ProductDetailContent() {
 
   const displayedMainImage = activeImage || product.coverImage;
 
+  const isGlowAnimeProduct =
+    product?.aspectRatio === "600:706" ||
+    product?.aspectRatio === "600/706" ||
+    product?.sectionSlug === "glow-anime-logo" ||
+    (product?.category && product.category.toLowerCase().includes("glow anime")) ||
+    (product?.title && (product.title.toLowerCase().includes("glow anime") || product.title.toLowerCase().includes("annu palyz") || product.title.toLowerCase().includes("sweety")));
+
   const is4kBackgroundProduct =
-    product?.aspectRatio === "600:550" ||
-    product?.aspectRatio === "600/550" ||
-    product?.aspectRatio === "12:11" ||
-    product?.sectionSlug === "4k-backgrounds" ||
-    (product?.category && product.category.toLowerCase().includes("background")) ||
-    (product?.title && product.title.toLowerCase().includes("background"));
+    !isGlowAnimeProduct && (
+      product?.aspectRatio === "600:550" ||
+      product?.aspectRatio === "600/550" ||
+      product?.aspectRatio === "12:11" ||
+      product?.sectionSlug === "4k-backgrounds" ||
+      (product?.category && product.category.toLowerCase().includes("background")) ||
+      (product?.title && product.title.toLowerCase().includes("background"))
+    );
 
   const isTextEffectProduct =
+    !isGlowAnimeProduct &&
     !is4kBackgroundProduct && (
       product?.aspectRatio === "2:1" ||
       product?.aspectRatio === "2/1" ||
@@ -252,6 +262,7 @@ function ProductDetailContent() {
     );
 
   const isThumbnailProduct =
+    !isGlowAnimeProduct &&
     !is4kBackgroundProduct &&
     !isTextEffectProduct && (
       (product?.category && product.category.toLowerCase().includes("psd")) ||
@@ -262,7 +273,9 @@ function ProductDetailContent() {
       (product?.aspectRatio === "1.09:1" || product?.aspectRatio === "1:1.09")
     );
 
-  const defaultRatio = is4kBackgroundProduct
+  const defaultRatio = isGlowAnimeProduct
+    ? "600:706"
+    : is4kBackgroundProduct
     ? "600:550"
     : isTextEffectProduct
     ? "2:1"
@@ -285,6 +298,9 @@ function ProductDetailContent() {
 
   const getAspectRatioClass = (ratio?: string) => {
     const r = String(ratio || "").trim();
+    if (r === "600:706" || r === "600/706") {
+      return "aspect-[600/706] max-w-[460px] w-full mx-auto";
+    }
     if (r === "600:550" || r === "600/550" || r === "12:11" || r === "12/11") {
       return "aspect-[600/550] max-w-[550px] w-full mx-auto";
     }
@@ -302,6 +318,9 @@ function ProductDetailContent() {
 
   const getThumbnailSizeClass = (ratio?: string) => {
     const r = String(ratio || "").trim();
+    if (r === "600:706" || r === "600/706") {
+      return "h-24 w-[68px] aspect-[600/706]";
+    }
     if (r === "600:550" || r === "600/550" || r === "12:11" || r === "12/11") {
       return "h-20 w-[87px] aspect-[600/550]";
     }
@@ -327,7 +346,9 @@ function ProductDetailContent() {
             className={`rounded-2xl overflow-hidden relative group border border-border bg-slate-900 flex items-center justify-center shadow-xl transition-all duration-300 ${getAspectRatioClass(currentActiveRatio)}`}
             style={{
               aspectRatio:
-                currentActiveRatio === "600:550" || currentActiveRatio === "600/550" || currentActiveRatio === "12:11"
+                currentActiveRatio === "600:706" || currentActiveRatio === "600/706"
+                  ? "600 / 706"
+                  : currentActiveRatio === "600:550" || currentActiveRatio === "600/550" || currentActiveRatio === "12:11"
                   ? "600 / 550"
                   : currentActiveRatio === "2:1" || currentActiveRatio === "2/1"
                   ? "2 / 1"

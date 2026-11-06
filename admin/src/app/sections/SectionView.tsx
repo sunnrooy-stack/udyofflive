@@ -51,9 +51,9 @@ export const SECTIONS_CONFIG: Record<string, SectionConfig> = {
     icon: "✨",
     badge: "TRENDING",
     description: "Solo Leveling style glowing eyes, aura vector logos, and streaming avatars.",
-    defaultCover: "/images/demo-sections/demo-glow-anime-logo.png",
-    defaultAspectRatio: "16:10",
-    defaultOrientation: "landscape",
+    defaultCover: "/images/demo-sections/demo-glow-anime-logo.jpg",
+    defaultAspectRatio: "600:706",
+    defaultOrientation: "portrait",
   },
   "text-effects": {
     slug: "text-effects",
@@ -149,7 +149,10 @@ export default function SectionView({ slug }: { slug: string }) {
   const isThumbnailPsd = slug === "thumbnail-psd";
   const is4kBackgrounds = slug === "4k-backgrounds";
   const isTextEffects = slug === "text-effects";
-  const defaultSectionRatio = is4kBackgrounds
+  const isGlowAnimeLogo = slug === "glow-anime-logo";
+  const defaultSectionRatio = isGlowAnimeLogo
+    ? "600:706"
+    : is4kBackgrounds
     ? "600:550"
     : isTextEffects
     ? "2:1"
@@ -559,21 +562,31 @@ export default function SectionView({ slug }: { slug: string }) {
             className={`grid gap-5 ${
               isTextEffects
                 ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
-                : isThumbnailPsd
+                : isGlowAnimeLogo || isThumbnailPsd
                 ? "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4"
                 : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
             }`}
           >
             {products.map((item) => {
+              const itemIsGlowAnime =
+                isGlowAnimeLogo ||
+                item.sectionSlug === "glow-anime-logo" ||
+                item.aspectRatio === "600:706" ||
+                item.aspectRatio === "600/706" ||
+                (item.category && item.category.toLowerCase().includes("glow anime"));
+
               const itemIs4k =
-                is4kBackgrounds ||
-                item.sectionSlug === "4k-backgrounds" ||
-                item.aspectRatio === "600:550" ||
-                item.aspectRatio === "600/550" ||
-                item.aspectRatio === "12:11" ||
-                (item.category && item.category.toLowerCase().includes("4k background"));
+                !itemIsGlowAnime && (
+                  is4kBackgrounds ||
+                  item.sectionSlug === "4k-backgrounds" ||
+                  item.aspectRatio === "600:550" ||
+                  item.aspectRatio === "600/550" ||
+                  item.aspectRatio === "12:11" ||
+                  (item.category && item.category.toLowerCase().includes("4k background"))
+                );
 
               const itemIsTextEffects =
+                !itemIsGlowAnime &&
                 !itemIs4k && (
                   isTextEffects ||
                   item.aspectRatio === "2:1" ||
@@ -582,6 +595,7 @@ export default function SectionView({ slug }: { slug: string }) {
                 );
 
               const itemIsPortrait =
+                !itemIsGlowAnime &&
                 !itemIs4k &&
                 !itemIsTextEffects && (
                   isThumbnailPsd ||
@@ -589,7 +603,9 @@ export default function SectionView({ slug }: { slug: string }) {
                   item.orientation === "portrait"
                 );
 
-              const cardRatioStyle = itemIs4k
+              const cardRatioStyle = itemIsGlowAnime
+                ? "600 / 706"
+                : itemIs4k
                 ? "600 / 550"
                 : itemIsTextEffects
                 ? "2 / 1"
@@ -625,6 +641,11 @@ export default function SectionView({ slug }: { slug: string }) {
                         {item.category && (
                           <span className="px-2 py-0.5 rounded-md bg-primary/85 backdrop-blur-md text-[9px] font-black text-white uppercase tracking-wider">
                             {item.category}
+                          </span>
+                        )}
+                        {itemIsGlowAnime && (
+                          <span className="px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-md text-[8px] font-bold text-fuchsia-300 border border-fuchsia-300/30">
+                            ✨ 600x706
                           </span>
                         )}
                         {itemIs4k && (
@@ -762,7 +783,9 @@ export default function SectionView({ slug }: { slug: string }) {
                     <span>🖼️ Cover PNG Upload</span>
                   </label>
                   <span className="text-[10px] font-mono font-bold bg-sky-500/15 text-sky-400 border border-sky-500/30 px-2 py-0.5 rounded-full">
-                    {selectedAspectRatio === "600:550"
+                    {selectedAspectRatio === "600:706"
+                      ? "Glow Anime Logo (600x706)"
+                      : selectedAspectRatio === "600:550"
                       ? "4K Backgrounds (600x550)"
                       : selectedAspectRatio === "1.09:1"
                       ? "Orientation: Portrait (Vertical 1.09:1)"
@@ -773,11 +796,17 @@ export default function SectionView({ slug }: { slug: string }) {
                 {/* Aspect Ratio Selector Pills */}
                 <div className="flex items-center gap-2 pt-1 flex-wrap">
                   {[
+                    ...(isGlowAnimeLogo
+                      ? [{ id: "600:706", label: "✨ 600x706 Glow Anime Logo" }]
+                      : []),
                     ...(is4kBackgrounds
                       ? [{ id: "600:550", label: "🖼️ 600x550 4K Backgrounds" }]
                       : []),
                     ...(isTextEffects
                       ? [{ id: "2:1", label: "🔤 2:1 Text Effects (600x300)" }]
+                      : []),
+                    ...(!isGlowAnimeLogo
+                      ? [{ id: "600:706", label: "✨ 600x706 Anime Logo" }]
                       : []),
                     ...(!is4kBackgrounds
                       ? [{ id: "600:550", label: "🖼️ 600x550 4K (12:11)" }]

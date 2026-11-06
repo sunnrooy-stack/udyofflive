@@ -24,13 +24,15 @@ interface Product {
 const REAL_CATALOG_PRODUCTS: Product[] = [
   {
     id: "6ae8508c7a36210fc0dc8e0a",
-    title: "ANNU PALYZ PDF",
+    title: "Sweety Queen Plays Glow Anime Logo",
     price: 299,
     originalPrice: 499,
-    description: "PDF",
+    description: "Get 4K PFP, Add Your Text, Add Your Pic - Glow Anime Logo (600x706).",
     category: "Glow anime logo",
-    tags: ["NEW", "GLOW ANIME LOGO"],
-    coverImage: "https://res.cloudinary.com/dh0qmflg7/image/upload/v1793609839/ChatGPT_Image_Sep_27_2026_10_31_36_AM_ia3ubv.png",
+    sectionSlug: "glow-anime-logo",
+    aspectRatio: "600:706",
+    tags: ["NEW", "GLOW ANIME LOGO", "4K PFP"],
+    coverImage: "/images/demo-sections/demo-glow-anime-logo.jpg",
     sellerName: "Admin",
     isFeatured: true,
   },
@@ -354,15 +356,25 @@ function ProductsContent() {
                 sellerName: product.sellerName || "Admin",
               };
 
+              const isGlowAnime =
+                product.aspectRatio === "600:706" ||
+                product.aspectRatio === "600/706" ||
+                product.sectionSlug === "glow-anime-logo" ||
+                (product.category && product.category.toLowerCase().includes("glow anime")) ||
+                (product.title && (product.title.toLowerCase().includes("glow anime") || product.title.toLowerCase().includes("annu palyz") || product.title.toLowerCase().includes("sweety")));
+
               const is4kBackground =
-                product.aspectRatio === "600:550" ||
-                product.aspectRatio === "600/550" ||
-                product.aspectRatio === "12:11" ||
-                product.sectionSlug === "4k-backgrounds" ||
-                (product.category && product.category.toLowerCase().includes("background")) ||
-                (product.title && product.title.toLowerCase().includes("background"));
+                !isGlowAnime && (
+                  product.aspectRatio === "600:550" ||
+                  product.aspectRatio === "600/550" ||
+                  product.aspectRatio === "12:11" ||
+                  product.sectionSlug === "4k-backgrounds" ||
+                  (product.category && product.category.toLowerCase().includes("background")) ||
+                  (product.title && product.title.toLowerCase().includes("background"))
+                );
 
               const isTextEffect =
+                !isGlowAnime &&
                 !is4kBackground && (
                   product.aspectRatio === "2:1" ||
                   product.aspectRatio === "2/1" ||
@@ -371,6 +383,7 @@ function ProductsContent() {
                 );
 
               const isPortrait =
+                !isGlowAnime &&
                 !is4kBackground &&
                 !isTextEffect && (
                   product.aspectRatio === "1.09:1" ||
@@ -378,7 +391,9 @@ function ProductsContent() {
                   product.category?.toLowerCase().includes("thumbnail")
                 );
 
-              const aspectClass = is4kBackground
+              const aspectClass = isGlowAnime
+                ? "aspect-[600/706]"
+                : is4kBackground
                 ? "aspect-[600/550]"
                 : isTextEffect
                 ? "aspect-[2/1]"

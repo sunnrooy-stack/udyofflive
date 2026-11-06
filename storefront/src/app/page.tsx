@@ -31,14 +31,15 @@ const PSD_PRODUCT: Product = {
 
 const ANNU_GLOW_ANIME_PRODUCT: Product = {
   id: "6ae8508c7a36210fc0dc8e0a",
-  title: "ANNU PALYZ PDF",
-  description: "PDF",
+  title: "Sweety Queen Plays Glow Anime Logo",
+  description: "Get 4K PFP, Add Your Text, Add Your Pic - Glow Anime Logo (600x706).",
   price: 299,
   originalPrice: 499,
   category: "Glow anime logo",
   sectionSlug: "glow-anime-logo",
-  tags: ["NEW", "GLOW ANIME LOGO"],
-  coverImage: "https://res.cloudinary.com/dh0qmflg7/image/upload/v1793609839/ChatGPT_Image_Sep_27_2026_10_31_36_AM_ia3ubv.png",
+  aspectRatio: "600:706",
+  tags: ["NEW", "GLOW ANIME LOGO", "4K PFP"],
+  coverImage: "/images/demo-sections/demo-glow-anime-logo.jpg",
   sellerName: "Admin",
   rating: 5.0,
   reviewsCount: 1,
@@ -225,7 +226,7 @@ export default function Home() {
     (p) =>
       p.sectionSlug === "glow-anime-logo" ||
       p.category?.toLowerCase() === "glow anime logo" ||
-      (p.title && p.title.toLowerCase().includes("annu palyz")) ||
+      (p.title && (p.title.toLowerCase().includes("annu palyz") || p.title.toLowerCase().includes("sweety") || p.title.toLowerCase().includes("glow"))) ||
       (Array.isArray(p.tags) &&
         p.tags.some(
           (t: string) =>
@@ -333,6 +334,7 @@ export default function Home() {
         title="Glow anime logo"
         viewAllHref="/products?category=anime-pfp"
         products={glowAnimeProducts}
+        aspectRatio="600:706"
         onRequireAuth={() => setIsAuthModalOpen(true)}
       />
 

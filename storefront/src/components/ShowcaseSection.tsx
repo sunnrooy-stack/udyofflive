@@ -11,7 +11,7 @@ interface ShowcaseSectionProps {
   subtitle?: string;
   viewAllHref?: string;
   products: Product[];
-  aspectRatio?: "video" | "square" | "portrait" | "2:1" | "600:550";
+  aspectRatio?: "video" | "square" | "portrait" | "2:1" | "600:550" | "600:706";
   onRequireAuth?: () => void;
   badge?: string;
 }
@@ -112,14 +112,24 @@ export default function ShowcaseSection({
             style={{ scrollSnapType: "x mandatory" }}
           >
             {products.map((product) => {
+              const isGlowAnime =
+                aspectRatio === "600:706" ||
+                product.aspectRatio === "600:706" ||
+                product.aspectRatio === "600/706" ||
+                product.sectionSlug === "glow-anime-logo" ||
+                (product.category && product.category.toLowerCase().includes("glow anime"));
+
               const is4k =
-                aspectRatio === "600:550" ||
-                product.aspectRatio === "600:550" ||
-                product.aspectRatio === "600/550" ||
-                product.sectionSlug === "4k-backgrounds" ||
-                (product.category && product.category.toLowerCase().includes("background"));
+                !isGlowAnime && (
+                  aspectRatio === "600:550" ||
+                  product.aspectRatio === "600:550" ||
+                  product.aspectRatio === "600/550" ||
+                  product.sectionSlug === "4k-backgrounds" ||
+                  (product.category && product.category.toLowerCase().includes("background"))
+                );
 
               const is2to1 =
+                !isGlowAnime &&
                 !is4k && (
                   aspectRatio === "2:1" ||
                   product.aspectRatio === "2:1" ||
@@ -131,7 +141,9 @@ export default function ShowcaseSection({
                 <div
                   key={product.id}
                   className={
-                    is4k
+                    isGlowAnime
+                      ? "w-[240px] sm:w-[265px] md:w-[285px] shrink-0"
+                      : is4k
                       ? "w-[270px] sm:w-[295px] md:w-[325px] shrink-0"
                       : is2to1
                       ? "w-[300px] sm:w-[350px] md:w-[390px] shrink-0"

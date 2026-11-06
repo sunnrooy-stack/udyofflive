@@ -27,7 +27,7 @@ export interface Product {
 
 interface ProductCardProps {
   product: Product;
-  aspectRatio?: "video" | "square" | "portrait" | "2:1" | "600:550";
+  aspectRatio?: "video" | "square" | "portrait" | "2:1" | "600:550" | "600:706";
   onRequireAuth?: () => void;
 }
 
@@ -98,16 +98,27 @@ export default function ProductCard({
     });
   };
 
+  const isGlowAnime =
+    product.aspectRatio === "600:706" ||
+    product.aspectRatio === "600/706" ||
+    product.sectionSlug === "glow-anime-logo" ||
+    aspectRatio === "600:706" ||
+    (product.category && (product.category.toLowerCase().includes("glow anime") || product.category.toLowerCase().includes("anime logo") || product.category.toLowerCase() === "glow anime logo")) ||
+    (product.title && (product.title.toLowerCase().includes("glow anime") || product.title.toLowerCase().includes("annu palyz") || product.title.toLowerCase().includes("sweety")));
+
   const is4kBackground =
-    product.aspectRatio === "600:550" ||
-    product.aspectRatio === "600/550" ||
-    product.aspectRatio === "12:11" ||
-    product.sectionSlug === "4k-backgrounds" ||
-    aspectRatio === "600:550" ||
-    (product.category && product.category.toLowerCase().includes("background")) ||
-    (product.title && product.title.toLowerCase().includes("background"));
+    !isGlowAnime && (
+      product.aspectRatio === "600:550" ||
+      product.aspectRatio === "600/550" ||
+      product.aspectRatio === "12:11" ||
+      product.sectionSlug === "4k-backgrounds" ||
+      aspectRatio === "600:550" ||
+      (product.category && product.category.toLowerCase().includes("background")) ||
+      (product.title && product.title.toLowerCase().includes("background"))
+    );
 
   const isTextEffect =
+    !isGlowAnime &&
     !is4kBackground && (
       product.aspectRatio === "2:1" ||
       product.aspectRatio === "2/1" ||
@@ -118,6 +129,7 @@ export default function ProductCard({
     );
 
   const isThumbnail =
+    !isGlowAnime &&
     !is4kBackground &&
     !isTextEffect && (
       product.aspectRatio === "1.09:1" ||
@@ -128,7 +140,9 @@ export default function ProductCard({
       (product.title && product.title.toLowerCase().includes("thumbnail"))
     );
 
-  const aspectClass = is4kBackground
+  const aspectClass = isGlowAnime
+    ? "aspect-[600/706]"
+    : is4kBackground
     ? "aspect-[600/550]"
     : isTextEffect
     ? "aspect-[2/1]"
@@ -140,6 +154,7 @@ export default function ProductCard({
         portrait: "aspect-[1/1.09]",
         "2:1": "aspect-[2/1]",
         "600:550": "aspect-[600/550]",
+        "600:706": "aspect-[600/706]",
       }[aspectRatio] || "aspect-[16/10]";
 
   return (
