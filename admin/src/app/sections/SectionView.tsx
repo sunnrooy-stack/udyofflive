@@ -61,8 +61,8 @@ export const SECTIONS_CONFIG: Record<string, SectionConfig> = {
     icon: "🔤",
     badge: "NEW ARRIVALS",
     description: "Photoshop smart-object styles for titles, logos, and YouTube banners.",
-    defaultCover: "/images/demo-sections/demo-thumbnail-psd.png",
-    defaultAspectRatio: "16:10",
+    defaultCover: "/images/demo-sections/demo-text-effects.jpg",
+    defaultAspectRatio: "2:1",
     defaultOrientation: "landscape",
   },
 };
@@ -147,6 +147,8 @@ export function matchProductForSection(p: any, slug: string, title?: string) {
 export default function SectionView({ slug }: { slug: string }) {
   const section = SECTIONS_CONFIG[slug] || SECTIONS_CONFIG["thumbnail-psd"];
   const isThumbnailPsd = slug === "thumbnail-psd" || slug === "4k-backgrounds";
+  const isTextEffects = slug === "text-effects";
+  const defaultSectionRatio = isTextEffects ? "2:1" : (isThumbnailPsd ? "1.09:1" : "16:10");
 
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -161,9 +163,7 @@ export default function SectionView({ slug }: { slug: string }) {
   const [description, setDescription] = useState("");
   const [fileUrl, setFileUrl] = useState("");
   const [badgeTag, setBadgeTag] = useState("NEW");
-  const [selectedAspectRatio, setSelectedAspectRatio] = useState<string>(
-    isThumbnailPsd ? "1.09:1" : "16:10"
-  );
+  const [selectedAspectRatio, setSelectedAspectRatio] = useState<string>(defaultSectionRatio);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadMessage, setUploadMessage] = useState("");
   const [apiSource, setApiSource] = useState<string>("Local API");
@@ -246,7 +246,7 @@ export default function SectionView({ slug }: { slug: string }) {
     setDescription("");
     setFileUrl("");
     setBadgeTag("NEW");
-    setSelectedAspectRatio(isThumbnailPsd ? "1.09:1" : "16:10");
+    setSelectedAspectRatio(defaultSectionRatio);
     setUploadMessage("");
     setIsModalOpen(true);
   };
@@ -260,7 +260,7 @@ export default function SectionView({ slug }: { slug: string }) {
     setDescription(item.description || "");
     setFileUrl(item.fileUrls && item.fileUrls.length > 0 ? item.fileUrls[0] : "");
     setBadgeTag(item.tags?.[0] || "NEW");
-    setSelectedAspectRatio(item.aspectRatio || (isThumbnailPsd ? "1.09:1" : "16:10"));
+    setSelectedAspectRatio(item.aspectRatio || defaultSectionRatio);
     setUploadMessage("");
     setIsModalOpen(true);
   };
@@ -550,16 +550,32 @@ export default function SectionView({ slug }: { slug: string }) {
         ) : (
           <div
             className={`grid gap-5 ${
-              isThumbnailPsd
+              isTextEffects
+                ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+                : isThumbnailPsd
                 ? "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4"
                 : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
             }`}
           >
             {products.map((item) => {
+              const itemIsTextEffects =
+                isTextEffects ||
+                item.aspectRatio === "2:1" ||
+                item.sectionSlug === "text-effects" ||
+                (item.category && item.category.toLowerCase().includes("text"));
+
               const itemIsPortrait =
-                isThumbnailPsd ||
-                item.aspectRatio === "1.09:1" ||
-                item.orientation === "portrait";
+                !itemIsTextEffects && (
+                  isThumbnailPsd ||
+                  item.aspectRatio === "1.09:1" ||
+                  item.orientation === "portrait"
+                );
+
+              const cardRatioStyle = itemIsTextEffects
+                ? "2 / 1"
+                : itemIsPortrait
+                ? "1 / 1.09"
+                : "16 / 10";
 
               return (
                 <div
@@ -571,7 +587,7 @@ export default function SectionView({ slug }: { slug: string }) {
                     <div
                       className="bg-muted relative overflow-hidden w-full flex items-center justify-center"
                       style={{
-                        aspectRatio: itemIsPortrait ? "1 / 1.09" : "16 / 10",
+                        aspectRatio: cardRatioStyle,
                       }}
                     >
                       <img
@@ -589,6 +605,11 @@ export default function SectionView({ slug }: { slug: string }) {
                         {item.category && (
                           <span className="px-2 py-0.5 rounded-md bg-primary/85 backdrop-blur-md text-[9px] font-black text-white uppercase tracking-wider">
                             {item.category}
+                          </span>
+                        )}
+                        {itemIsTextEffects && (
+                          <span className="px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-md text-[8px] font-bold text-sky-300 border border-sky-300/30">
+                            🔤 2:1 (600x300)
                           </span>
                         )}
                         {itemIsPortrait && (
@@ -723,9 +744,15 @@ export default function SectionView({ slug }: { slug: string }) {
                 </div>
 
                 {/* Aspect Ratio Selector Pills */}
-                <div className="flex items-center gap-2 pt-1">
+                <div className="flex items-center gap-2 pt-1 flex-wrap">
                   {[
+                    ...(isTextEffects
+                      ? [{ id: "2:1", label: "🔤 2:1 Text Effects (600x300)" }]
+                      : []),
                     { id: "1.09:1", label: "📱 1.09:1 Portrait (Vertical)" },
+                    ...(!isTextEffects
+                      ? [{ id: "2:1", label: "🔤 2:1 Text Effects (600x300)" }]
+                      : []),
                     { id: "1:1", label: "🔲 1:1 Square" },
                     { id: "16:10", label: "🖥️ 16:10 Landscape" },
                   ].map((mode) => (

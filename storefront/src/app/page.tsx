@@ -45,9 +45,27 @@ const ANNU_GLOW_ANIME_PRODUCT: Product = {
   isFeatured: true,
 };
 
+const TEXT_EFFECT_PRODUCT: Product = {
+  id: "text-effect-sinera-psd-2026",
+  title: "Sinera 3D Text Effect PSD",
+  description: "Fully editable and scalable Photoshop text effect PSD (600x300, 2:1 ratio).",
+  price: 99,
+  originalPrice: 199,
+  category: "3D Text Effects PSD",
+  sectionSlug: "text-effects",
+  aspectRatio: "2:1",
+  tags: ["NEW", "3D TEXT EFFECTS PSD"],
+  coverImage: "/images/demo-sections/demo-text-effects.jpg",
+  sellerName: "Admin",
+  rating: 5.0,
+  reviewsCount: 1,
+  isFeatured: true,
+};
+
 const REAL_STORE_PRODUCTS: Product[] = [
   PSD_PRODUCT,
   ANNU_GLOW_ANIME_PRODUCT,
+  TEXT_EFFECT_PRODUCT,
 ];
 
 export default function Home() {
@@ -209,7 +227,7 @@ export default function Home() {
             t.toLowerCase().includes("text")
         ))
   );
-  const textProductsToShow = textProducts;
+  const textProductsToShow = textProducts.length > 0 ? textProducts : [TEXT_EFFECT_PRODUCT];
 
   const popularProducts = products.slice(0, 10);
 
@@ -304,6 +322,7 @@ export default function Home() {
         title="3D Text Effects PSD"
         viewAllHref="/products?category=text-effects"
         products={textProductsToShow}
+        aspectRatio="2:1"
         onRequireAuth={() => setIsAuthModalOpen(true)}
       />
 

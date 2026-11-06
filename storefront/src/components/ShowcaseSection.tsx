@@ -11,7 +11,7 @@ interface ShowcaseSectionProps {
   subtitle?: string;
   viewAllHref?: string;
   products: Product[];
-  aspectRatio?: "video" | "square" | "portrait";
+  aspectRatio?: "video" | "square" | "portrait" | "2:1";
   onRequireAuth?: () => void;
   badge?: string;
 }
@@ -111,19 +111,31 @@ export default function ShowcaseSection({
             className="flex items-stretch gap-4 sm:gap-6 overflow-x-auto no-scrollbar scroll-smooth px-1 py-2"
             style={{ scrollSnapType: "x mandatory" }}
           >
-            {products.map((product) => (
-              <div
-                key={product.id}
-                className="w-[260px] sm:w-[285px] md:w-[310px] shrink-0"
-                style={{ scrollSnapAlign: "start" }}
-              >
-                <ProductCard
-                  product={product}
-                  aspectRatio={aspectRatio}
-                  onRequireAuth={onRequireAuth}
-                />
-              </div>
-            ))}
+            {products.map((product) => {
+              const is2to1 =
+                aspectRatio === "2:1" ||
+                product.aspectRatio === "2:1" ||
+                product.sectionSlug === "text-effects" ||
+                (product.category && product.category.toLowerCase().includes("text"));
+
+              return (
+                <div
+                  key={product.id}
+                  className={
+                    is2to1
+                      ? "w-[300px] sm:w-[350px] md:w-[390px] shrink-0"
+                      : "w-[260px] sm:w-[285px] md:w-[310px] shrink-0"
+                  }
+                  style={{ scrollSnapAlign: "start" }}
+                >
+                  <ProductCard
+                    product={product}
+                    aspectRatio={aspectRatio}
+                    onRequireAuth={onRequireAuth}
+                  />
+                </div>
+              );
+            })}
           </div>
         </div>
 

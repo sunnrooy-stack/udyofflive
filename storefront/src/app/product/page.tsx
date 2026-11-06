@@ -234,17 +234,30 @@ function ProductDetailContent() {
 
   const displayedMainImage = activeImage || product.coverImage;
 
-  const isThumbnailProduct =
-    (product?.category && product.category.toLowerCase().includes("psd")) ||
-    (product?.category && product.category.toLowerCase().includes("thumbnail")) ||
-    (product?.category && product.category.toLowerCase().includes("background")) ||
-    (product?.title && product.title.toLowerCase().includes("psd")) ||
-    (product?.title && product.title.toLowerCase().includes("background")) ||
-    (product?.sectionSlug === "thumbnail-psd") ||
-    (product?.sectionSlug === "4k-backgrounds") ||
-    (product?.aspectRatio === "1.09:1" || product?.aspectRatio === "1:1.09");
+  const isTextEffectProduct =
+    product?.aspectRatio === "2:1" ||
+    product?.aspectRatio === "2/1" ||
+    product?.sectionSlug === "text-effects" ||
+    (product?.category && (product.category.toLowerCase().includes("text effect") || product.category.toLowerCase() === "3d text effects psd")) ||
+    (product?.title && product.title.toLowerCase().includes("text"));
 
-  const defaultRatio = isThumbnailProduct ? "1.09:1" : (product?.aspectRatio || "16:9");
+  const isThumbnailProduct =
+    !isTextEffectProduct && (
+      (product?.category && product.category.toLowerCase().includes("psd")) ||
+      (product?.category && product.category.toLowerCase().includes("thumbnail")) ||
+      (product?.category && product.category.toLowerCase().includes("background")) ||
+      (product?.title && product.title.toLowerCase().includes("psd")) ||
+      (product?.title && product.title.toLowerCase().includes("background")) ||
+      (product?.sectionSlug === "thumbnail-psd") ||
+      (product?.sectionSlug === "4k-backgrounds") ||
+      (product?.aspectRatio === "1.09:1" || product?.aspectRatio === "1:1.09")
+    );
+
+  const defaultRatio = isTextEffectProduct
+    ? "2:1"
+    : isThumbnailProduct
+    ? "1.09:1"
+    : (product?.aspectRatio || "16:9");
 
   const getImageAspectRatio = (index: number) => {
     if (userSelectedRatio) return userSelectedRatio;
@@ -261,6 +274,9 @@ function ProductDetailContent() {
 
   const getAspectRatioClass = (ratio?: string) => {
     const r = String(ratio || "").trim();
+    if (r === "2:1" || r === "2/1") {
+      return "aspect-[2/1] max-w-[600px] w-full mx-auto";
+    }
     if (r === "1.09:1" || r === "1:1.09" || r === "1.09/1" || r === "1/1.09") {
       return "aspect-[1/1.09] max-w-[440px] w-full mx-auto";
     }
@@ -272,6 +288,9 @@ function ProductDetailContent() {
 
   const getThumbnailSizeClass = (ratio?: string) => {
     const r = String(ratio || "").trim();
+    if (r === "2:1" || r === "2/1") {
+      return "h-16 w-32 aspect-[2/1]";
+    }
     if (r === "1.09:1" || r === "1:1.09" || r === "1.09/1" || r === "1/1.09") {
       return "h-20 w-[74px] aspect-[1/1.09]";
     }
@@ -291,7 +310,9 @@ function ProductDetailContent() {
             className={`rounded-2xl overflow-hidden relative group border border-border bg-slate-900 flex items-center justify-center shadow-xl transition-all duration-300 ${getAspectRatioClass(currentActiveRatio)}`}
             style={{
               aspectRatio:
-                currentActiveRatio === "1.09:1" || currentActiveRatio === "1:1.09"
+                currentActiveRatio === "2:1" || currentActiveRatio === "2/1"
+                  ? "2 / 1"
+                  : currentActiveRatio === "1.09:1" || currentActiveRatio === "1:1.09"
                   ? "1 / 1.09"
                   : undefined,
             }}

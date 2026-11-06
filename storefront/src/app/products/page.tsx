@@ -18,6 +18,7 @@ interface Product {
   sellerName: string;
   isFeatured: boolean;
   aspectRatio?: string;
+  sectionSlug?: string;
 }
 
 const REAL_CATALOG_PRODUCTS: Product[] = [
@@ -43,6 +44,20 @@ const REAL_CATALOG_PRODUCTS: Product[] = [
     tags: ["NEW", "THUMBNAIL PSD"],
     coverImage: "https://res.cloudinary.com/dh0qmflg7/image/upload/v1793679196/ChatGPT_Image_Sep_27_2026_10_53_41_AM_y3n3ff.png",
     aspectRatio: "1.09:1",
+    sellerName: "Admin",
+    isFeatured: true,
+  },
+  {
+    id: "text-effect-sinera-psd-2026",
+    title: "Sinera 3D Text Effect PSD",
+    price: 99,
+    originalPrice: 199,
+    description: "Fully editable and scalable Photoshop text effect PSD (600x300, 2:1 ratio).",
+    category: "3D Text Effects PSD",
+    sectionSlug: "text-effects",
+    tags: ["NEW", "3D TEXT EFFECTS PSD"],
+    coverImage: "/images/demo-sections/demo-text-effects.jpg",
+    aspectRatio: "2:1",
     sellerName: "Admin",
     isFeatured: true,
   },
@@ -325,12 +340,25 @@ function ProductsContent() {
                 sellerName: product.sellerName || "Admin",
               };
 
+              const isTextEffect =
+                product.aspectRatio === "2:1" ||
+                product.aspectRatio === "2/1" ||
+                product.sectionSlug === "text-effects" ||
+                (product.category && product.category.toLowerCase().includes("text"));
+
               const isPortrait =
-                product.aspectRatio === "1.09:1" ||
-                product.aspectRatio === "1:1.09" ||
-                product.category?.toLowerCase().includes("thumbnail") ||
-                product.category?.toLowerCase().includes("background");
-              const aspectClass = isPortrait ? "aspect-[1/1.09]" : "aspect-video";
+                !isTextEffect && (
+                  product.aspectRatio === "1.09:1" ||
+                  product.aspectRatio === "1:1.09" ||
+                  product.category?.toLowerCase().includes("thumbnail") ||
+                  product.category?.toLowerCase().includes("background")
+                );
+
+              const aspectClass = isTextEffect
+                ? "aspect-[2/1]"
+                : isPortrait
+                ? "aspect-[1/1.09]"
+                : "aspect-video";
 
               return (
                 <motion.div
