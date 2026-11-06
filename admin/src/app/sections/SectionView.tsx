@@ -11,7 +11,7 @@ export interface SectionConfig {
   description: string;
   defaultCover: string;
   defaultAspectRatio?: string;
-  defaultOrientation?: "portrait" | "landscape";
+  defaultOrientation?: "portrait" | "landscape" | "custom";
 }
 
 export const SECTIONS_CONFIG: Record<string, SectionConfig> = {
@@ -31,9 +31,9 @@ export const SECTIONS_CONFIG: Record<string, SectionConfig> = {
     icon: "🖼️",
     badge: "4K ULTRA",
     description: "Ultra high-definition gaming environments, battlegrounds, and atmospheric skies.",
-    defaultCover: "/images/demo-sections/demo-4k-backgrounds.png",
-    defaultAspectRatio: "1.09:1",
-    defaultOrientation: "portrait",
+    defaultCover: "/images/demo-sections/demo-4k-backgrounds.jpg",
+    defaultAspectRatio: "600:550",
+    defaultOrientation: "landscape",
   },
   "3d-character": {
     slug: "3d-character",
@@ -146,9 +146,16 @@ export function matchProductForSection(p: any, slug: string, title?: string) {
 
 export default function SectionView({ slug }: { slug: string }) {
   const section = SECTIONS_CONFIG[slug] || SECTIONS_CONFIG["thumbnail-psd"];
-  const isThumbnailPsd = slug === "thumbnail-psd" || slug === "4k-backgrounds";
+  const isThumbnailPsd = slug === "thumbnail-psd";
+  const is4kBackgrounds = slug === "4k-backgrounds";
   const isTextEffects = slug === "text-effects";
-  const defaultSectionRatio = isTextEffects ? "2:1" : (isThumbnailPsd ? "1.09:1" : "16:10");
+  const defaultSectionRatio = is4kBackgrounds
+    ? "600:550"
+    : isTextEffects
+    ? "2:1"
+    : isThumbnailPsd
+    ? "1.09:1"
+    : "16:10";
 
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -558,20 +565,33 @@ export default function SectionView({ slug }: { slug: string }) {
             }`}
           >
             {products.map((item) => {
+              const itemIs4k =
+                is4kBackgrounds ||
+                item.sectionSlug === "4k-backgrounds" ||
+                item.aspectRatio === "600:550" ||
+                item.aspectRatio === "600/550" ||
+                item.aspectRatio === "12:11" ||
+                (item.category && item.category.toLowerCase().includes("4k background"));
+
               const itemIsTextEffects =
-                isTextEffects ||
-                item.aspectRatio === "2:1" ||
-                item.sectionSlug === "text-effects" ||
-                (item.category && item.category.toLowerCase().includes("text"));
+                !itemIs4k && (
+                  isTextEffects ||
+                  item.aspectRatio === "2:1" ||
+                  item.sectionSlug === "text-effects" ||
+                  (item.category && item.category.toLowerCase().includes("text"))
+                );
 
               const itemIsPortrait =
+                !itemIs4k &&
                 !itemIsTextEffects && (
                   isThumbnailPsd ||
                   item.aspectRatio === "1.09:1" ||
                   item.orientation === "portrait"
                 );
 
-              const cardRatioStyle = itemIsTextEffects
+              const cardRatioStyle = itemIs4k
+                ? "600 / 550"
+                : itemIsTextEffects
                 ? "2 / 1"
                 : itemIsPortrait
                 ? "1 / 1.09"
@@ -605,6 +625,11 @@ export default function SectionView({ slug }: { slug: string }) {
                         {item.category && (
                           <span className="px-2 py-0.5 rounded-md bg-primary/85 backdrop-blur-md text-[9px] font-black text-white uppercase tracking-wider">
                             {item.category}
+                          </span>
+                        )}
+                        {itemIs4k && (
+                          <span className="px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-md text-[8px] font-bold text-emerald-300 border border-emerald-300/30">
+                            🖼️ 600x550
                           </span>
                         )}
                         {itemIsTextEffects && (
@@ -737,7 +762,9 @@ export default function SectionView({ slug }: { slug: string }) {
                     <span>🖼️ Cover PNG Upload</span>
                   </label>
                   <span className="text-[10px] font-mono font-bold bg-sky-500/15 text-sky-400 border border-sky-500/30 px-2 py-0.5 rounded-full">
-                    {selectedAspectRatio === "1.09:1"
+                    {selectedAspectRatio === "600:550"
+                      ? "4K Backgrounds (600x550)"
+                      : selectedAspectRatio === "1.09:1"
                       ? "Orientation: Portrait (Vertical 1.09:1)"
                       : `Aspect: ${selectedAspectRatio}`}
                   </span>
@@ -746,12 +773,18 @@ export default function SectionView({ slug }: { slug: string }) {
                 {/* Aspect Ratio Selector Pills */}
                 <div className="flex items-center gap-2 pt-1 flex-wrap">
                   {[
+                    ...(is4kBackgrounds
+                      ? [{ id: "600:550", label: "🖼️ 600x550 4K Backgrounds" }]
+                      : []),
                     ...(isTextEffects
                       ? [{ id: "2:1", label: "🔤 2:1 Text Effects (600x300)" }]
                       : []),
+                    ...(!is4kBackgrounds
+                      ? [{ id: "600:550", label: "🖼️ 600x550 4K (12:11)" }]
+                      : []),
                     { id: "1.09:1", label: "📱 1.09:1 Portrait (Vertical)" },
                     ...(!isTextEffects
-                      ? [{ id: "2:1", label: "🔤 2:1 Text Effects (600x300)" }]
+                      ? [{ id: "2:1", label: "🔤 2:1 Wide Banner (600x300)" }]
                       : []),
                     { id: "1:1", label: "🔲 1:1 Square" },
                     { id: "16:10", label: "🖥️ 16:10 Landscape" },

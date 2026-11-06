@@ -93,26 +93,37 @@ export default function ProductDetailPage() {
     fileUrls: product.fileUrls || [],
   };
 
+  const is4kBackgroundProduct =
+    product?.aspectRatio === "600:550" ||
+    product?.aspectRatio === "600/550" ||
+    product?.aspectRatio === "12:11" ||
+    product?.sectionSlug === "4k-backgrounds" ||
+    (product?.category && product.category.toLowerCase().includes("background")) ||
+    (product?.title && product.title.toLowerCase().includes("background"));
+
   const isTextEffectProduct =
-    product?.aspectRatio === "2:1" ||
-    product?.aspectRatio === "2/1" ||
-    product?.sectionSlug === "text-effects" ||
-    (product?.category && (product.category.toLowerCase().includes("text effect") || product.category.toLowerCase() === "3d text effects psd")) ||
-    (product?.title && product.title.toLowerCase().includes("text"));
+    !is4kBackgroundProduct && (
+      product?.aspectRatio === "2:1" ||
+      product?.aspectRatio === "2/1" ||
+      product?.sectionSlug === "text-effects" ||
+      (product?.category && (product.category.toLowerCase().includes("text effect") || product.category.toLowerCase() === "3d text effects psd")) ||
+      (product?.title && product.title.toLowerCase().includes("text"))
+    );
 
   const isThumbnailProduct =
+    !is4kBackgroundProduct &&
     !isTextEffectProduct && (
       (product?.category && product.category.toLowerCase().includes("psd")) ||
       (product?.category && product.category.toLowerCase().includes("thumbnail")) ||
-      (product?.category && product.category.toLowerCase().includes("background")) ||
       (product?.title && product.title.toLowerCase().includes("psd")) ||
-      (product?.title && product.title.toLowerCase().includes("background")) ||
+      (product?.title && product.title.toLowerCase().includes("thumbnail")) ||
       (product?.sectionSlug === "thumbnail-psd") ||
-      (product?.sectionSlug === "4k-backgrounds") ||
       (product?.aspectRatio === "1.09:1" || product?.aspectRatio === "1:1.09")
     );
 
-  const defaultRatio = isTextEffectProduct
+  const defaultRatio = is4kBackgroundProduct
+    ? "600:550"
+    : isTextEffectProduct
     ? "2:1"
     : isThumbnailProduct
     ? "1.09:1"
@@ -121,6 +132,9 @@ export default function ProductDetailPage() {
 
   const getAspectRatioClass = (ratio?: string) => {
     const r = String(ratio || "").trim();
+    if (r === "600:550" || r === "600/550" || r === "12:11" || r === "12/11") {
+      return "aspect-[600/550] max-w-[550px] w-full mx-auto";
+    }
     if (r === "2:1" || r === "2/1") {
       return "aspect-[2/1] max-w-[600px] w-full mx-auto";
     }
@@ -144,7 +158,9 @@ export default function ProductDetailPage() {
             className={`rounded-2xl overflow-hidden relative group border border-border bg-slate-900 flex items-center justify-center shadow-xl transition-all duration-300 ${getAspectRatioClass(currentActiveRatio)}`}
             style={{
               aspectRatio:
-                currentActiveRatio === "2:1" || currentActiveRatio === "2/1"
+                currentActiveRatio === "600:550" || currentActiveRatio === "600/550" || currentActiveRatio === "12:11"
+                  ? "600 / 550"
+                  : currentActiveRatio === "2:1" || currentActiveRatio === "2/1"
                   ? "2 / 1"
                   : currentActiveRatio === "1.09:1" || currentActiveRatio === "1:1.09"
                   ? "1 / 1.09"

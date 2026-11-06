@@ -45,6 +45,23 @@ const ANNU_GLOW_ANIME_PRODUCT: Product = {
   isFeatured: true,
 };
 
+const BACKGROUND_4K_PRODUCT: Product = {
+  id: "bg-4k-ultra-pack-2026",
+  title: "4K Backgrounds High Creative Pack",
+  description: "20+/JPG Files - High Creative and Quality Battleground 4K Backgrounds (600x550, 12:11 ratio).",
+  price: 99,
+  originalPrice: 199,
+  category: "4K Backgrounds",
+  sectionSlug: "4k-backgrounds",
+  aspectRatio: "600:550",
+  tags: ["NEW", "4K BACKGROUNDS", "20+ JPG"],
+  coverImage: "/images/demo-sections/demo-4k-backgrounds.jpg",
+  sellerName: "Admin",
+  rating: 5.0,
+  reviewsCount: 1,
+  isFeatured: true,
+};
+
 const TEXT_EFFECT_PRODUCT: Product = {
   id: "text-effect-sinera-psd-2026",
   title: "Sinera 3D Text Effect PSD",
@@ -64,6 +81,7 @@ const TEXT_EFFECT_PRODUCT: Product = {
 
 const REAL_STORE_PRODUCTS: Product[] = [
   PSD_PRODUCT,
+  BACKGROUND_4K_PRODUCT,
   ANNU_GLOW_ANIME_PRODUCT,
   TEXT_EFFECT_PRODUCT,
 ];
@@ -175,6 +193,8 @@ export default function Home() {
     (p) =>
       p.sectionSlug === "4k-backgrounds" ||
       p.category?.toLowerCase() === "4k backgrounds" ||
+      p.category?.toLowerCase().includes("background") ||
+      p.title.toLowerCase().includes("background") ||
       (Array.isArray(p.tags) &&
         p.tags.some(
           (t: string) =>
@@ -182,7 +202,7 @@ export default function Home() {
             (t.toLowerCase().includes("4k background") || t.toLowerCase() === "4k")
         ))
   );
-  const backgroundProducts = apiBackgrounds;
+  const backgroundProducts = apiBackgrounds.length > 0 ? apiBackgrounds : [BACKGROUND_4K_PRODUCT];
 
   // 3. 3D Character Products (Showcase Section 3 - Only Real API Products)
   const apiCharacters = products.filter(
@@ -294,7 +314,7 @@ export default function Home() {
         title="4K Backgrounds"
         viewAllHref="/products?category=presets"
         products={backgroundProducts}
-        aspectRatio="portrait"
+        aspectRatio="600:550"
         onRequireAuth={() => setIsAuthModalOpen(true)}
       />
 

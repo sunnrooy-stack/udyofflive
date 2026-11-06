@@ -11,7 +11,7 @@ interface ShowcaseSectionProps {
   subtitle?: string;
   viewAllHref?: string;
   products: Product[];
-  aspectRatio?: "video" | "square" | "portrait" | "2:1";
+  aspectRatio?: "video" | "square" | "portrait" | "2:1" | "600:550";
   onRequireAuth?: () => void;
   badge?: string;
 }
@@ -112,17 +112,28 @@ export default function ShowcaseSection({
             style={{ scrollSnapType: "x mandatory" }}
           >
             {products.map((product) => {
+              const is4k =
+                aspectRatio === "600:550" ||
+                product.aspectRatio === "600:550" ||
+                product.aspectRatio === "600/550" ||
+                product.sectionSlug === "4k-backgrounds" ||
+                (product.category && product.category.toLowerCase().includes("background"));
+
               const is2to1 =
-                aspectRatio === "2:1" ||
-                product.aspectRatio === "2:1" ||
-                product.sectionSlug === "text-effects" ||
-                (product.category && product.category.toLowerCase().includes("text"));
+                !is4k && (
+                  aspectRatio === "2:1" ||
+                  product.aspectRatio === "2:1" ||
+                  product.sectionSlug === "text-effects" ||
+                  (product.category && product.category.toLowerCase().includes("text"))
+                );
 
               return (
                 <div
                   key={product.id}
                   className={
-                    is2to1
+                    is4k
+                      ? "w-[270px] sm:w-[295px] md:w-[325px] shrink-0"
+                      : is2to1
                       ? "w-[300px] sm:w-[350px] md:w-[390px] shrink-0"
                       : "w-[260px] sm:w-[285px] md:w-[310px] shrink-0"
                   }

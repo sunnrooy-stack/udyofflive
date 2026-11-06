@@ -27,7 +27,7 @@ export interface Product {
 
 interface ProductCardProps {
   product: Product;
-  aspectRatio?: "video" | "square" | "portrait" | "2:1";
+  aspectRatio?: "video" | "square" | "portrait" | "2:1" | "600:550";
   onRequireAuth?: () => void;
 }
 
@@ -98,26 +98,39 @@ export default function ProductCard({
     });
   };
 
+  const is4kBackground =
+    product.aspectRatio === "600:550" ||
+    product.aspectRatio === "600/550" ||
+    product.aspectRatio === "12:11" ||
+    product.sectionSlug === "4k-backgrounds" ||
+    aspectRatio === "600:550" ||
+    (product.category && product.category.toLowerCase().includes("background")) ||
+    (product.title && product.title.toLowerCase().includes("background"));
+
   const isTextEffect =
-    product.aspectRatio === "2:1" ||
-    product.aspectRatio === "2/1" ||
-    product.sectionSlug === "text-effects" ||
-    aspectRatio === "2:1" ||
-    (product.category && (product.category.toLowerCase().includes("text effect") || product.category.toLowerCase() === "3d text effects psd")) ||
-    (product.title && (product.title.toLowerCase().includes("text effect") || product.title.toLowerCase().includes("sinera")));
+    !is4kBackground && (
+      product.aspectRatio === "2:1" ||
+      product.aspectRatio === "2/1" ||
+      product.sectionSlug === "text-effects" ||
+      aspectRatio === "2:1" ||
+      (product.category && (product.category.toLowerCase().includes("text effect") || product.category.toLowerCase() === "3d text effects psd")) ||
+      (product.title && (product.title.toLowerCase().includes("text effect") || product.title.toLowerCase().includes("sinera")))
+    );
 
   const isThumbnail =
+    !is4kBackground &&
     !isTextEffect && (
       product.aspectRatio === "1.09:1" ||
       product.aspectRatio === "1:1.09" ||
       product.sectionSlug === "thumbnail-psd" ||
-      product.sectionSlug === "4k-backgrounds" ||
       aspectRatio === "portrait" ||
-      (product.category && (product.category.toLowerCase().includes("thumbnail") || product.category.toLowerCase().includes("background"))) ||
-      (product.title && (product.title.toLowerCase().includes("thumbnail") || product.title.toLowerCase().includes("background")))
+      (product.category && product.category.toLowerCase().includes("thumbnail")) ||
+      (product.title && product.title.toLowerCase().includes("thumbnail"))
     );
 
-  const aspectClass = isTextEffect
+  const aspectClass = is4kBackground
+    ? "aspect-[600/550]"
+    : isTextEffect
     ? "aspect-[2/1]"
     : isThumbnail
     ? "aspect-[1/1.09]"
@@ -126,6 +139,7 @@ export default function ProductCard({
         square: "aspect-square",
         portrait: "aspect-[1/1.09]",
         "2:1": "aspect-[2/1]",
+        "600:550": "aspect-[600/550]",
       }[aspectRatio] || "aspect-[16/10]";
 
   return (

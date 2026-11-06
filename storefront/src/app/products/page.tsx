@@ -48,6 +48,20 @@ const REAL_CATALOG_PRODUCTS: Product[] = [
     isFeatured: true,
   },
   {
+    id: "bg-4k-ultra-pack-2026",
+    title: "4K Backgrounds High Creative Pack",
+    price: 99,
+    originalPrice: 199,
+    description: "20+/JPG Files - High Creative and Quality Battleground 4K Backgrounds (600x550, 12:11 ratio).",
+    category: "4K Backgrounds",
+    sectionSlug: "4k-backgrounds",
+    tags: ["NEW", "4K BACKGROUNDS", "20+ JPG"],
+    coverImage: "/images/demo-sections/demo-4k-backgrounds.jpg",
+    aspectRatio: "600:550",
+    sellerName: "Admin",
+    isFeatured: true,
+  },
+  {
     id: "text-effect-sinera-psd-2026",
     title: "Sinera 3D Text Effect PSD",
     price: 99,
@@ -340,21 +354,33 @@ function ProductsContent() {
                 sellerName: product.sellerName || "Admin",
               };
 
+              const is4kBackground =
+                product.aspectRatio === "600:550" ||
+                product.aspectRatio === "600/550" ||
+                product.aspectRatio === "12:11" ||
+                product.sectionSlug === "4k-backgrounds" ||
+                (product.category && product.category.toLowerCase().includes("background")) ||
+                (product.title && product.title.toLowerCase().includes("background"));
+
               const isTextEffect =
-                product.aspectRatio === "2:1" ||
-                product.aspectRatio === "2/1" ||
-                product.sectionSlug === "text-effects" ||
-                (product.category && product.category.toLowerCase().includes("text"));
+                !is4kBackground && (
+                  product.aspectRatio === "2:1" ||
+                  product.aspectRatio === "2/1" ||
+                  product.sectionSlug === "text-effects" ||
+                  (product.category && product.category.toLowerCase().includes("text"))
+                );
 
               const isPortrait =
+                !is4kBackground &&
                 !isTextEffect && (
                   product.aspectRatio === "1.09:1" ||
                   product.aspectRatio === "1:1.09" ||
-                  product.category?.toLowerCase().includes("thumbnail") ||
-                  product.category?.toLowerCase().includes("background")
+                  product.category?.toLowerCase().includes("thumbnail")
                 );
 
-              const aspectClass = isTextEffect
+              const aspectClass = is4kBackground
+                ? "aspect-[600/550]"
+                : isTextEffect
                 ? "aspect-[2/1]"
                 : isPortrait
                 ? "aspect-[1/1.09]"
