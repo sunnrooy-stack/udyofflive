@@ -13,7 +13,7 @@ export default function CheckoutPage() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [gatewayName, setGatewayName] = useState<string>("Razorpay Option 2 (Live Gateway)");
+  const [gatewayName, setGatewayName] = useState<string>("Razorpay Live Gateway");
   const [gatewayMode, setGatewayMode] = useState<string>("Live Payments");
 
   useEffect(() => {
@@ -39,13 +39,8 @@ export default function CheckoutPage() {
           if (res && res.ok) {
             const data = await res.json().catch(() => null);
             if (data && data.success) {
-              if (data.activeAccount === "1") {
-                setGatewayName("Razorpay Option 1 (Test / Sandbox)");
-                setGatewayMode("Test Sandbox Mode");
-              } else {
-                setGatewayName("Razorpay Option 2 (Live Gateway)");
-                setGatewayMode("Live Real Payments");
-              }
+              setGatewayName(data.account1?.name || "Razorpay Live Gateway");
+              setGatewayMode("Live Real Payments");
               break;
             }
           }

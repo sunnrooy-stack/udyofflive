@@ -249,10 +249,10 @@ app.post('/api/create-order', async (req, res) => {
       return res.json({ isFree: true, totalAmount: 0 });
     }
 
-    // Load active Razorpay Account (Option 1 or Option 2)
+    // Load active Razorpay Account
     const activeGateway = getActiveRazorpay();
-    const keyId = activeGateway.keyId;
-    const keySecret = activeGateway.keySecret;
+    const keyId = process.env.RAZORPAY_KEY_ID || activeGateway.keyId || 'rzp_live_T3nxTH4mjFTNK8';
+    const keySecret = process.env.RAZORPAY_KEY_SECRET || activeGateway.keySecret || 'spFAtkmHQhl5hpcgin3MkJX5';
 
     if (!keyId || !keySecret || keyId === 'dummy_key' || keyId.includes('YOUR_KEY')) {
       const testOrderId = `order_test_${Date.now()}`;

@@ -22,9 +22,11 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
     const totalAmount = products.reduce((sum, p) => sum + p.price, 0);
 
     const activeGateway = getActiveRazorpay();
+    const keyId = process.env.RAZORPAY_KEY_ID || activeGateway.keyId || 'rzp_live_T3nxTH4mjFTNK8';
+    const keySecret = process.env.RAZORPAY_KEY_SECRET || activeGateway.keySecret || 'spFAtkmHQhl5hpcgin3MkJX5';
     const razorpay = new Razorpay({
-      key_id: activeGateway.keyId,
-      key_secret: activeGateway.keySecret,
+      key_id: keyId,
+      key_secret: keySecret,
     });
 
     // Create Razorpay order

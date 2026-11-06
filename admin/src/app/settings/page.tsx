@@ -10,9 +10,9 @@ export default function AdminSettings() {
   const [savedNotice, setSavedNotice] = useState<boolean>(false);
 
   // Razorpay Multi-Account Gateway State
-  const [activeGateway, setActiveGateway] = useState<"1" | "2">("2");
-  const [acc1KeyId, setAcc1KeyId] = useState("rzp_test_TvF0iIwMv1MxWV");
-  const [acc1KeySecret, setAcc1KeySecret] = useState("4Ucfs5fbQLMkTBoEajVfDoQp");
+  const [activeGateway, setActiveGateway] = useState<"1" | "2">("1");
+  const [acc1KeyId, setAcc1KeyId] = useState("rzp_live_T3nxTH4mjFTNK8");
+  const [acc1KeySecret, setAcc1KeySecret] = useState("spFAtkmHQhl5hpcgin3MkJX5");
   const [acc2KeyId, setAcc2KeyId] = useState("rzp_live_T3nxTH4mjFTNK8");
   const [acc2KeySecret, setAcc2KeySecret] = useState("spFAtkmHQhl5hpcgin3MkJX5");
   const [showSecret1, setShowSecret1] = useState(false);
