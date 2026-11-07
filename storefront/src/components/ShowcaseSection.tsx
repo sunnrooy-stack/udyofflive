@@ -11,7 +11,7 @@ interface ShowcaseSectionProps {
   subtitle?: string;
   viewAllHref?: string;
   products: Product[];
-  aspectRatio?: "video" | "square" | "portrait" | "2:1" | "600:550" | "600:706";
+  aspectRatio?: "video" | "square" | "portrait" | "2:1" | "600:550" | "600:706" | "600:692";
   onRequireAuth?: () => void;
   badge?: string;
 }
@@ -112,14 +112,24 @@ export default function ShowcaseSection({
             style={{ scrollSnapType: "x mandatory" }}
           >
             {products.map((product) => {
+              const is3dChar =
+                aspectRatio === "600:692" ||
+                product.aspectRatio === "600:692" ||
+                product.aspectRatio === "600/692" ||
+                product.sectionSlug === "3d-character" ||
+                (product.category && product.category.toLowerCase().includes("character"));
+
               const isGlowAnime =
-                aspectRatio === "600:706" ||
-                product.aspectRatio === "600:706" ||
-                product.aspectRatio === "600/706" ||
-                product.sectionSlug === "glow-anime-logo" ||
-                (product.category && product.category.toLowerCase().includes("glow anime"));
+                !is3dChar && (
+                  aspectRatio === "600:706" ||
+                  product.aspectRatio === "600:706" ||
+                  product.aspectRatio === "600/706" ||
+                  product.sectionSlug === "glow-anime-logo" ||
+                  (product.category && product.category.toLowerCase().includes("glow anime"))
+                );
 
               const is4k =
+                !is3dChar &&
                 !isGlowAnime && (
                   aspectRatio === "600:550" ||
                   product.aspectRatio === "600:550" ||
@@ -129,6 +139,7 @@ export default function ShowcaseSection({
                 );
 
               const is2to1 =
+                !is3dChar &&
                 !isGlowAnime &&
                 !is4k && (
                   aspectRatio === "2:1" ||
@@ -141,7 +152,9 @@ export default function ShowcaseSection({
                 <div
                   key={product.id}
                   className={
-                    isGlowAnime
+                    is3dChar
+                      ? "w-[245px] sm:w-[270px] md:w-[290px] shrink-0"
+                      : isGlowAnime
                       ? "w-[240px] sm:w-[265px] md:w-[285px] shrink-0"
                       : is4k
                       ? "w-[270px] sm:w-[295px] md:w-[325px] shrink-0"

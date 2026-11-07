@@ -93,14 +93,24 @@ export default function ProductDetailPage() {
     fileUrls: product.fileUrls || [],
   };
 
+  const is3dCharProduct =
+    product?.aspectRatio === "600:692" ||
+    product?.aspectRatio === "600/692" ||
+    product?.sectionSlug === "3d-character" ||
+    (product?.category && product.category.toLowerCase().includes("character")) ||
+    (product?.title && product.title.toLowerCase().includes("character"));
+
   const isGlowAnimeProduct =
-    product?.aspectRatio === "600:706" ||
-    product?.aspectRatio === "600/706" ||
-    product?.sectionSlug === "glow-anime-logo" ||
-    (product?.category && product.category.toLowerCase().includes("glow anime")) ||
-    (product?.title && (product.title.toLowerCase().includes("glow anime") || product.title.toLowerCase().includes("annu palyz") || product.title.toLowerCase().includes("sweety")));
+    !is3dCharProduct && (
+      product?.aspectRatio === "600:706" ||
+      product?.aspectRatio === "600/706" ||
+      product?.sectionSlug === "glow-anime-logo" ||
+      (product?.category && product.category.toLowerCase().includes("glow anime")) ||
+      (product?.title && (product.title.toLowerCase().includes("glow anime") || product.title.toLowerCase().includes("annu palyz") || product.title.toLowerCase().includes("sweety")))
+    );
 
   const is4kBackgroundProduct =
+    !is3dCharProduct &&
     !isGlowAnimeProduct && (
       product?.aspectRatio === "600:550" ||
       product?.aspectRatio === "600/550" ||
@@ -111,6 +121,7 @@ export default function ProductDetailPage() {
     );
 
   const isTextEffectProduct =
+    !is3dCharProduct &&
     !isGlowAnimeProduct &&
     !is4kBackgroundProduct && (
       product?.aspectRatio === "2:1" ||
@@ -121,6 +132,7 @@ export default function ProductDetailPage() {
     );
 
   const isThumbnailProduct =
+    !is3dCharProduct &&
     !isGlowAnimeProduct &&
     !is4kBackgroundProduct &&
     !isTextEffectProduct && (
@@ -132,7 +144,9 @@ export default function ProductDetailPage() {
       (product?.aspectRatio === "1.09:1" || product?.aspectRatio === "1:1.09")
     );
 
-  const defaultRatio = isGlowAnimeProduct
+  const defaultRatio = is3dCharProduct
+    ? "600:692"
+    : isGlowAnimeProduct
     ? "600:706"
     : is4kBackgroundProduct
     ? "600:550"
@@ -145,6 +159,9 @@ export default function ProductDetailPage() {
 
   const getAspectRatioClass = (ratio?: string) => {
     const r = String(ratio || "").trim();
+    if (r === "600:692" || r === "600/692") {
+      return "aspect-[600/692] max-w-[470px] w-full mx-auto";
+    }
     if (r === "600:706" || r === "600/706") {
       return "aspect-[600/706] max-w-[460px] w-full mx-auto";
     }
@@ -174,7 +191,9 @@ export default function ProductDetailPage() {
             className={`rounded-2xl overflow-hidden relative group border border-border bg-slate-900 flex items-center justify-center shadow-xl transition-all duration-300 ${getAspectRatioClass(currentActiveRatio)}`}
             style={{
               aspectRatio:
-                currentActiveRatio === "600:706" || currentActiveRatio === "600/706"
+                currentActiveRatio === "600:692" || currentActiveRatio === "600/692"
+                  ? "600 / 692"
+                  : currentActiveRatio === "600:706" || currentActiveRatio === "600/706"
                   ? "600 / 706"
                   : currentActiveRatio === "600:550" || currentActiveRatio === "600/550" || currentActiveRatio === "12:11"
                   ? "600 / 550"

@@ -41,9 +41,9 @@ export const SECTIONS_CONFIG: Record<string, SectionConfig> = {
     icon: "🎮",
     badge: "EXCLUSIVE",
     description: "Battle-royale character models, weapon renders, and transparent PNG cutouts.",
-    defaultCover: "/images/demo-sections/demo-3d-character.png",
-    defaultAspectRatio: "16:10",
-    defaultOrientation: "landscape",
+    defaultCover: "/images/demo-sections/demo-3d-character.jpg",
+    defaultAspectRatio: "600:692",
+    defaultOrientation: "portrait",
   },
   "glow-anime-logo": {
     slug: "glow-anime-logo",
@@ -150,7 +150,10 @@ export default function SectionView({ slug }: { slug: string }) {
   const is4kBackgrounds = slug === "4k-backgrounds";
   const isTextEffects = slug === "text-effects";
   const isGlowAnimeLogo = slug === "glow-anime-logo";
-  const defaultSectionRatio = isGlowAnimeLogo
+  const is3dCharacter = slug === "3d-character";
+  const defaultSectionRatio = is3dCharacter
+    ? "600:692"
+    : isGlowAnimeLogo
     ? "600:706"
     : is4kBackgrounds
     ? "600:550"
@@ -562,20 +565,30 @@ export default function SectionView({ slug }: { slug: string }) {
             className={`grid gap-5 ${
               isTextEffects
                 ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
-                : isGlowAnimeLogo || isThumbnailPsd
+                : is3dCharacter || isGlowAnimeLogo || isThumbnailPsd
                 ? "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4"
                 : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
             }`}
           >
             {products.map((item) => {
+              const itemIs3dChar =
+                is3dCharacter ||
+                item.sectionSlug === "3d-character" ||
+                item.aspectRatio === "600:692" ||
+                item.aspectRatio === "600/692" ||
+                (item.category && item.category.toLowerCase().includes("character"));
+
               const itemIsGlowAnime =
-                isGlowAnimeLogo ||
-                item.sectionSlug === "glow-anime-logo" ||
-                item.aspectRatio === "600:706" ||
-                item.aspectRatio === "600/706" ||
-                (item.category && item.category.toLowerCase().includes("glow anime"));
+                !itemIs3dChar && (
+                  isGlowAnimeLogo ||
+                  item.sectionSlug === "glow-anime-logo" ||
+                  item.aspectRatio === "600:706" ||
+                  item.aspectRatio === "600/706" ||
+                  (item.category && item.category.toLowerCase().includes("glow anime"))
+                );
 
               const itemIs4k =
+                !itemIs3dChar &&
                 !itemIsGlowAnime && (
                   is4kBackgrounds ||
                   item.sectionSlug === "4k-backgrounds" ||
@@ -586,6 +599,7 @@ export default function SectionView({ slug }: { slug: string }) {
                 );
 
               const itemIsTextEffects =
+                !itemIs3dChar &&
                 !itemIsGlowAnime &&
                 !itemIs4k && (
                   isTextEffects ||
@@ -595,6 +609,7 @@ export default function SectionView({ slug }: { slug: string }) {
                 );
 
               const itemIsPortrait =
+                !itemIs3dChar &&
                 !itemIsGlowAnime &&
                 !itemIs4k &&
                 !itemIsTextEffects && (
@@ -603,7 +618,9 @@ export default function SectionView({ slug }: { slug: string }) {
                   item.orientation === "portrait"
                 );
 
-              const cardRatioStyle = itemIsGlowAnime
+              const cardRatioStyle = itemIs3dChar
+                ? "600 / 692"
+                : itemIsGlowAnime
                 ? "600 / 706"
                 : itemIs4k
                 ? "600 / 550"
@@ -641,6 +658,11 @@ export default function SectionView({ slug }: { slug: string }) {
                         {item.category && (
                           <span className="px-2 py-0.5 rounded-md bg-primary/85 backdrop-blur-md text-[9px] font-black text-white uppercase tracking-wider">
                             {item.category}
+                          </span>
+                        )}
+                        {itemIs3dChar && (
+                          <span className="px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-md text-[8px] font-bold text-purple-300 border border-purple-300/30">
+                            🎮 600x692
                           </span>
                         )}
                         {itemIsGlowAnime && (
@@ -783,7 +805,9 @@ export default function SectionView({ slug }: { slug: string }) {
                     <span>🖼️ Cover PNG Upload</span>
                   </label>
                   <span className="text-[10px] font-mono font-bold bg-sky-500/15 text-sky-400 border border-sky-500/30 px-2 py-0.5 rounded-full">
-                    {selectedAspectRatio === "600:706"
+                    {selectedAspectRatio === "600:692"
+                      ? "3D Character (600x692)"
+                      : selectedAspectRatio === "600:706"
                       ? "Glow Anime Logo (600x706)"
                       : selectedAspectRatio === "600:550"
                       ? "4K Backgrounds (600x550)"
@@ -796,6 +820,9 @@ export default function SectionView({ slug }: { slug: string }) {
                 {/* Aspect Ratio Selector Pills */}
                 <div className="flex items-center gap-2 pt-1 flex-wrap">
                   {[
+                    ...(is3dCharacter
+                      ? [{ id: "600:692", label: "🎮 600x692 3D Character" }]
+                      : []),
                     ...(isGlowAnimeLogo
                       ? [{ id: "600:706", label: "✨ 600x706 Glow Anime Logo" }]
                       : []),
@@ -804,6 +831,9 @@ export default function SectionView({ slug }: { slug: string }) {
                       : []),
                     ...(isTextEffects
                       ? [{ id: "2:1", label: "🔤 2:1 Text Effects (600x300)" }]
+                      : []),
+                    ...(!is3dCharacter
+                      ? [{ id: "600:692", label: "🎮 600x692 3D Character" }]
                       : []),
                     ...(!isGlowAnimeLogo
                       ? [{ id: "600:706", label: "✨ 600x706 Anime Logo" }]

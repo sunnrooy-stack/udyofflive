@@ -23,6 +23,20 @@ interface Product {
 
 const REAL_CATALOG_PRODUCTS: Product[] = [
   {
+    id: "char-3d-battle-pack-2026",
+    title: "6+ Characters 4K PNG 3D Character Pack",
+    price: 199,
+    originalPrice: 399,
+    description: "Battle-royale character models, weapon renders, and transparent PNG cutouts (600x692).",
+    category: "3D Character",
+    sectionSlug: "3d-character",
+    aspectRatio: "600:692",
+    tags: ["NEW", "3D CHARACTER", "6+ CHARACTERS"],
+    coverImage: "/images/demo-sections/demo-3d-character.jpg",
+    sellerName: "Admin",
+    isFeatured: true,
+  },
+  {
     id: "6ae8508c7a36210fc0dc8e0a",
     title: "Sweety Queen Plays Glow Anime Logo",
     price: 299,
@@ -356,14 +370,24 @@ function ProductsContent() {
                 sellerName: product.sellerName || "Admin",
               };
 
+              const is3dChar =
+                product.aspectRatio === "600:692" ||
+                product.aspectRatio === "600/692" ||
+                product.sectionSlug === "3d-character" ||
+                (product.category && product.category.toLowerCase().includes("character")) ||
+                (product.title && product.title.toLowerCase().includes("character"));
+
               const isGlowAnime =
-                product.aspectRatio === "600:706" ||
-                product.aspectRatio === "600/706" ||
-                product.sectionSlug === "glow-anime-logo" ||
-                (product.category && product.category.toLowerCase().includes("glow anime")) ||
-                (product.title && (product.title.toLowerCase().includes("glow anime") || product.title.toLowerCase().includes("annu palyz") || product.title.toLowerCase().includes("sweety")));
+                !is3dChar && (
+                  product.aspectRatio === "600:706" ||
+                  product.aspectRatio === "600/706" ||
+                  product.sectionSlug === "glow-anime-logo" ||
+                  (product.category && product.category.toLowerCase().includes("glow anime")) ||
+                  (product.title && (product.title.toLowerCase().includes("glow anime") || product.title.toLowerCase().includes("annu palyz") || product.title.toLowerCase().includes("sweety")))
+                );
 
               const is4kBackground =
+                !is3dChar &&
                 !isGlowAnime && (
                   product.aspectRatio === "600:550" ||
                   product.aspectRatio === "600/550" ||
@@ -374,6 +398,7 @@ function ProductsContent() {
                 );
 
               const isTextEffect =
+                !is3dChar &&
                 !isGlowAnime &&
                 !is4kBackground && (
                   product.aspectRatio === "2:1" ||
@@ -383,6 +408,7 @@ function ProductsContent() {
                 );
 
               const isPortrait =
+                !is3dChar &&
                 !isGlowAnime &&
                 !is4kBackground &&
                 !isTextEffect && (
@@ -391,7 +417,9 @@ function ProductsContent() {
                   product.category?.toLowerCase().includes("thumbnail")
                 );
 
-              const aspectClass = isGlowAnime
+              const aspectClass = is3dChar
+                ? "aspect-[600/692]"
+                : isGlowAnime
                 ? "aspect-[600/706]"
                 : is4kBackground
                 ? "aspect-[600/550]"

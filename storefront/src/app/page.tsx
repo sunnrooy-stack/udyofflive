@@ -29,6 +29,23 @@ const PSD_PRODUCT: Product = {
   isFeatured: true,
 };
 
+const CHARACTER_3D_PRODUCT: Product = {
+  id: "char-3d-battle-pack-2026",
+  title: "6+ Characters 4K PNG 3D Character Pack",
+  description: "Battle-royale character models, weapon renders, and transparent PNG cutouts (600x692).",
+  price: 199,
+  originalPrice: 399,
+  category: "3D Character",
+  sectionSlug: "3d-character",
+  aspectRatio: "600:692",
+  tags: ["NEW", "3D CHARACTER", "6+ CHARACTERS"],
+  coverImage: "/images/demo-sections/demo-3d-character.jpg",
+  sellerName: "Admin",
+  rating: 5.0,
+  reviewsCount: 1,
+  isFeatured: true,
+};
+
 const ANNU_GLOW_ANIME_PRODUCT: Product = {
   id: "6ae8508c7a36210fc0dc8e0a",
   title: "Sweety Queen Plays Glow Anime Logo",
@@ -83,6 +100,7 @@ const TEXT_EFFECT_PRODUCT: Product = {
 const REAL_STORE_PRODUCTS: Product[] = [
   PSD_PRODUCT,
   BACKGROUND_4K_PRODUCT,
+  CHARACTER_3D_PRODUCT,
   ANNU_GLOW_ANIME_PRODUCT,
   TEXT_EFFECT_PRODUCT,
 ];
@@ -219,7 +237,7 @@ export default function Home() {
             t.toLowerCase().includes("character")
         ))
   );
-  const characterProducts = apiCharacters;
+  const characterProducts = apiCharacters.length > 0 ? apiCharacters : [CHARACTER_3D_PRODUCT];
 
   // 4. Glow anime logo Products (Live from API matching Admin Panel)
   const apiGlowAnime = products.filter(
@@ -325,6 +343,7 @@ export default function Home() {
         title="3D Character"
         viewAllHref="/products?category=character-pack"
         products={characterProducts}
+        aspectRatio="600:692"
         onRequireAuth={() => setIsAuthModalOpen(true)}
       />
 
