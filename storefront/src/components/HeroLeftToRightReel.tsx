@@ -28,7 +28,7 @@ const DEFAULT_HERO_REEL: HeroReelItem[] = [
     id: "hero-yt-2",
     title: "Puja Pink Sakura Stream Overlay",
     coverImage: "/images/yt-showcase/yt-puja-pink.jpg",
-    videoUrl: "/hero-wallpaper.mp4",
+    videoUrl: "https://res.cloudinary.com/demo/video/upload/snow_horses.mp4",
     badge: "TRENDING",
     category: "Stream Pack",
     price: 399,
@@ -37,7 +37,7 @@ const DEFAULT_HERO_REEL: HeroReelItem[] = [
     id: "hero-yt-3",
     title: "Sejal Vintage Retro Special Live",
     coverImage: "/images/yt-showcase/yt-sejal-vintage.jpg",
-    videoUrl: "/hero-wallpaper.mp4",
+    videoUrl: "https://res.cloudinary.com/demo/video/upload/kitten_fighting.mp4",
     badge: "VIRAL",
     category: "Vibrant CC",
     price: 549,
@@ -46,7 +46,7 @@ const DEFAULT_HERO_REEL: HeroReelItem[] = [
     id: "hero-yt-4",
     title: "Syco Killer Obsessed With Me Thriller",
     coverImage: "/images/yt-showcase/yt-syco-thriller.jpg",
-    videoUrl: "/hero-wallpaper.mp4",
+    videoUrl: "https://res.cloudinary.com/dh0qmflg7/video/upload/v1793469435/vidssave.com_Halloween_Spooky_Cemetery_Projection_Loop_with_Music_1080P_wmqwic.mp4",
     badge: "HOT PICK",
     category: "Thriller PSD",
     price: 599,
@@ -55,10 +55,100 @@ const DEFAULT_HERO_REEL: HeroReelItem[] = [
     id: "hero-yt-5",
     title: "Habibi 1M Celebration Special Q&A",
     coverImage: "/images/yt-showcase/yt-habibi-1m.jpg",
-    videoUrl: "/hero-wallpaper.mp4",
+    videoUrl: "https://res.cloudinary.com/demo/video/upload/dog.mp4",
     badge: "1M SPECIAL",
     category: "Vlog PSD",
     price: 449,
+  },
+  {
+    id: "hero-yt-6",
+    title: "Krish Gaming Ultra FPS Pack",
+    coverImage: "/images/yt-showcase/yt-krish-gaming.jpg",
+    videoUrl: "https://res.cloudinary.com/demo/video/upload/elephants.mp4",
+    badge: "GAMING PRO",
+    category: "Gaming PSD",
+    price: 399,
+  },
+  {
+    id: "hero-yt-7",
+    title: "Ayush Jordy Japanese Sakura Theme",
+    coverImage: "/images/yt-showcase/yt-ayush-jordy.jpg",
+    videoUrl: "/hero-wallpaper.mp4",
+    badge: "EXCLUSIVE",
+    category: "Cinematic PSD",
+    price: 499,
+  },
+  {
+    id: "hero-yt-8",
+    title: "Satvik Face Reveal Special Premiere",
+    coverImage: "/images/yt-showcase/yt-satvik-face-reveal.jpg",
+    videoUrl: "https://res.cloudinary.com/demo/video/upload/snow_horses.mp4",
+    badge: "PREMIERE",
+    category: "Viral PSD",
+    price: 549,
+  },
+  {
+    id: "hero-yt-9",
+    title: "Priya Headphones Neon Cyber Vibe",
+    coverImage: "/images/yt-showcase/yt-priya-headphones.jpg",
+    videoUrl: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
+    badge: "NEON GLOW",
+    category: "Music Stream",
+    price: 429,
+  },
+  {
+    id: "hero-yt-10",
+    title: "Priti Samurai Warrior 4K Action",
+    coverImage: "/images/yt-showcase/yt-priti-samurai.jpg",
+    videoUrl: "https://res.cloudinary.com/dh0qmflg7/video/upload/v1793469435/vidssave.com_Halloween_Spooky_Cemetery_Projection_Loop_with_Music_1080P_wmqwic.mp4",
+    badge: "SAMURAI 4K",
+    category: "Action Pack",
+    price: 599,
+  },
+  {
+    id: "hero-yt-11",
+    title: "Creator Custom Master Suite",
+    coverImage: "/images/yt-showcase/yt-creator-custom.jpg",
+    videoUrl: "https://res.cloudinary.com/demo/video/upload/kitten_fighting.mp4",
+    badge: "MASTER SUITE",
+    category: "Full Bundle",
+    price: 699,
+  },
+  {
+    id: "hero-yt-12",
+    title: "Ultra HDR YouTube CC Enhancer",
+    coverImage: "/images/demo-sections/demo-thumbnail-editing-main.png",
+    videoUrl: "/hero-wallpaper.mp4",
+    badge: "HDR CC",
+    category: "Color Grade",
+    price: 349,
+  },
+  {
+    id: "hero-yt-13",
+    title: "Mythic Kingdom 4K Backgrounds Pack",
+    coverImage: "/images/demo-sections/demo-4k-backgrounds-main.png",
+    videoUrl: "https://res.cloudinary.com/demo/video/upload/elephants.mp4",
+    badge: "4K MATTE",
+    category: "Backgrounds",
+    price: 499,
+  },
+  {
+    id: "hero-yt-14",
+    title: "Sweety Queen Plays Glow Anime Logo",
+    coverImage: "/images/demo-sections/demo-glow-anime-logo-main.png",
+    videoUrl: "https://res.cloudinary.com/demo/video/upload/dog.mp4",
+    badge: "GLOW LOGO",
+    category: "Anime Vectors",
+    price: 399,
+  },
+  {
+    id: "hero-yt-15",
+    title: "Elite Cyber 3D Character Renders",
+    coverImage: "/images/demo-sections/demo-3d-character-main.png",
+    videoUrl: "https://res.cloudinary.com/demo/video/upload/snow_horses.mp4",
+    badge: "3D ASSETS",
+    category: "Character PNG",
+    price: 549,
   },
 ];
 
@@ -106,7 +196,7 @@ function HeroCard({ item }: { item: HeroReelItem }) {
       onClick={handleClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className="relative w-[340px] sm:w-[480px] md:w-[620px] lg:w-[760px] xl:w-[860px] aspect-video rounded-2xl sm:rounded-3xl overflow-hidden bg-slate-950 border border-white/20 shrink-0 transform transition-all duration-300 hover:scale-[1.02] hover:z-30 hover:border-sky-400 hover:shadow-[0_20px_60px_rgba(56,189,248,0.4)] cursor-pointer group select-none shadow-2xl"
+      className="relative w-[280px] sm:w-[350px] md:w-[410px] aspect-video rounded-2xl overflow-hidden bg-slate-950 border border-white/15 shrink-0 transform transition-all duration-300 hover:scale-105 hover:z-30 hover:border-sky-400 hover:shadow-[0_12px_45px_rgba(56,189,248,0.4)] cursor-pointer group select-none shadow-xl"
     >
       {/* 1. Full Photo Thumbnail: Initially moving left-to-right */}
       <img
@@ -134,38 +224,38 @@ function HeroCard({ item }: { item: HeroReelItem }) {
         }`}
       />
 
-      {/* Subtle bottom vignette so thumbnail art stays crisp & vibrant */}
-      <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/85 via-black/30 to-transparent pointer-events-none transition-opacity duration-300" />
+      {/* Gradient Vignette for clear contrast */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none transition-opacity duration-300" />
 
       {/* Top Badges */}
-      <div className="absolute top-3 sm:top-4 left-3 sm:left-4 right-3 sm:right-4 flex items-center justify-between pointer-events-none z-10">
-        <span className="px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-black/75 backdrop-blur-md text-[11px] sm:text-xs font-black uppercase tracking-wider text-white border border-white/20 shadow-lg flex items-center gap-1.5">
-          <Sparkles className="w-3.5 h-3.5 text-sky-400" />
+      <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none z-10">
+        <span className="px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md text-[10px] font-black uppercase tracking-wider text-white border border-white/20 shadow-md flex items-center gap-1">
+          <Sparkles className="w-3 h-3 text-sky-400" />
           {item.badge || "EXCLUSIVE"}
         </span>
         {isHovered ? (
-          <span className="px-3 py-1 rounded-full bg-rose-600/95 text-[11px] sm:text-xs font-black uppercase text-white tracking-widest shadow-lg flex items-center gap-1.5 animate-pulse">
-            <span className="w-2 h-2 rounded-full bg-white animate-ping" />
-            LIVE VIDEO PLAYING
+          <span className="px-2.5 py-0.5 rounded-full bg-rose-600/90 text-[10px] font-black uppercase text-white tracking-widest shadow-md flex items-center gap-1 animate-pulse">
+            <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
+            LIVE VIDEO
           </span>
         ) : (
-          <span className="px-2.5 py-1 rounded-md bg-black/60 backdrop-blur-md text-[10px] sm:text-xs font-bold text-white/90 border border-white/10">
+          <span className="px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-md text-[10px] font-bold text-white/90 border border-white/10">
             {item.category || "PRO 8K"}
           </span>
         )}
       </div>
 
       {/* Bottom Title & Price */}
-      <div className="absolute bottom-0 inset-x-0 p-4 sm:p-6 flex flex-col justify-end z-10 pointer-events-none">
-        <h4 className="text-white font-black text-base sm:text-xl md:text-2xl leading-tight line-clamp-1 group-hover:text-sky-300 transition-colors drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">
+      <div className="absolute bottom-0 inset-x-0 p-4 flex flex-col justify-end z-10 pointer-events-none">
+        <h4 className="text-white font-extrabold text-sm sm:text-base leading-snug line-clamp-1 group-hover:text-sky-300 transition-colors drop-shadow-md">
           {item.title}
         </h4>
-        <div className="flex items-center justify-between mt-2 pt-2 border-t border-white/20 text-xs sm:text-sm">
-          <span className="text-white/80 font-semibold text-xs sm:text-sm flex items-center gap-1.5">
-            {isHovered ? "🎬 Hovering - Video Playing" : "Hover mouse to play video preview"}
+        <div className="flex items-center justify-between mt-1 pt-1.5 border-t border-white/15 text-xs">
+          <span className="text-white/70 font-semibold text-[11px] flex items-center gap-1">
+            {isHovered ? "🎬 Video playing on hover" : "Hover mouse to play video"}
           </span>
           {item.price !== undefined && item.price > 0 && (
-            <span className="font-black text-sky-400 text-base sm:text-lg drop-shadow">
+            <span className="font-black text-sky-400 text-sm">
               ₹{item.price}
             </span>
           )}

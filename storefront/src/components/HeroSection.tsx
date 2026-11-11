@@ -122,17 +122,17 @@ export default function HeroSection({ carouselItems = [] }: HeroSectionProps) {
             Browse Categories
           </a>
         </motion.div>
-      </div>
 
-      {/* FULL WIDTH Edge-to-Edge Left-to-Right Moving Reel with Video On Hover */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.4 }}
-        className="w-full mt-10 relative z-10 overflow-hidden"
-      >
-        <HeroLeftToRightReel />
-      </motion.div>
+        {/* Left-to-Right Moving Reel with Video On Hover (Original Balanced Size) */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="w-full mt-10 overflow-hidden"
+        >
+          <HeroLeftToRightReel />
+        </motion.div>
+      </div>
     </section>
   );
 }
