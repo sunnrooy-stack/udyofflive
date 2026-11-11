@@ -107,7 +107,14 @@
 }
 
 .animate-marquee-reverse {
-  animation: marquee-reverse 35s linear infinite;
+  animation: marquee-reverse 40s linear infinite;
+}
+
+.animate-marquee:hover,
+.animate-marquee-reverse:hover,
+.hero-reel-container:hover .animate-marquee-reverse,
+[data-marquee-track]:hover {
+  animation-play-state: paused !important;
 }
 
 

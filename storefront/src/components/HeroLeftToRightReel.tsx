@@ -91,17 +91,28 @@ function HeroCard({ item }: { item: HeroReelItem }) {
     }
   };
 
+  const handleClick = () => {
+    if (item.href) {
+      window.location.href = item.href;
+    } else if (item.id && !item.id.startsWith("hero-yt")) {
+      window.location.href = `/product/${item.id}`;
+    } else {
+      window.location.href = "/products";
+    }
+  };
+
   return (
     <div
+      onClick={handleClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className="relative w-[280px] sm:w-[350px] md:w-[410px] aspect-video rounded-2xl overflow-hidden bg-slate-950 border border-white/15 shrink-0 transform transition-all duration-300 hover:scale-105 hover:z-30 hover:border-sky-400 hover:shadow-[0_12px_45px_rgba(56,189,248,0.4)] cursor-pointer group select-none"
+      className="relative w-[340px] sm:w-[480px] md:w-[620px] lg:w-[760px] xl:w-[860px] aspect-video rounded-2xl sm:rounded-3xl overflow-hidden bg-slate-950 border border-white/20 shrink-0 transform transition-all duration-300 hover:scale-[1.02] hover:z-30 hover:border-sky-400 hover:shadow-[0_20px_60px_rgba(56,189,248,0.4)] cursor-pointer group select-none shadow-2xl"
     >
-      {/* 1. Photo: Initially moving left-to-right */}
+      {/* 1. Full Photo Thumbnail: Initially moving left-to-right */}
       <img
         src={item.coverImage}
         alt={item.title}
-        className={`w-full h-full object-cover transition-opacity duration-500 ${
+        className={`w-full h-full object-cover transition-opacity duration-300 ${
           isHovered && isPlaying ? "opacity-0" : "opacity-100"
         }`}
         loading="lazy"
@@ -110,7 +121,7 @@ function HeroCard({ item }: { item: HeroReelItem }) {
         }}
       />
 
-      {/* 2. Video: Plays automatically when mouse arrow hovers */}
+      {/* 2. Full Video: Plays automatically when mouse arrow hovers */}
       <video
         ref={videoRef}
         src={videoSource}
@@ -123,38 +134,38 @@ function HeroCard({ item }: { item: HeroReelItem }) {
         }`}
       />
 
-      {/* Gradient Vignette for clear contrast */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent pointer-events-none" />
+      {/* Subtle bottom vignette so thumbnail art stays crisp & vibrant */}
+      <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/85 via-black/30 to-transparent pointer-events-none transition-opacity duration-300" />
 
       {/* Top Badges */}
-      <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none z-10">
-        <span className="px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md text-[10px] font-black uppercase tracking-wider text-white border border-white/20 shadow-md flex items-center gap-1">
-          <Sparkles className="w-3 h-3 text-sky-400" />
+      <div className="absolute top-3 sm:top-4 left-3 sm:left-4 right-3 sm:right-4 flex items-center justify-between pointer-events-none z-10">
+        <span className="px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-black/75 backdrop-blur-md text-[11px] sm:text-xs font-black uppercase tracking-wider text-white border border-white/20 shadow-lg flex items-center gap-1.5">
+          <Sparkles className="w-3.5 h-3.5 text-sky-400" />
           {item.badge || "EXCLUSIVE"}
         </span>
         {isHovered ? (
-          <span className="px-2 py-0.5 rounded-full bg-rose-600/90 text-[10px] font-black uppercase text-white tracking-widest shadow-md animate-pulse flex items-center gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
-            LIVE VIDEO
+          <span className="px-3 py-1 rounded-full bg-rose-600/95 text-[11px] sm:text-xs font-black uppercase text-white tracking-widest shadow-lg flex items-center gap-1.5 animate-pulse">
+            <span className="w-2 h-2 rounded-full bg-white animate-ping" />
+            LIVE VIDEO PLAYING
           </span>
         ) : (
-          <span className="px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-md text-[10px] font-bold text-white/90 border border-white/10">
+          <span className="px-2.5 py-1 rounded-md bg-black/60 backdrop-blur-md text-[10px] sm:text-xs font-bold text-white/90 border border-white/10">
             {item.category || "PRO 8K"}
           </span>
         )}
       </div>
 
       {/* Bottom Title & Price */}
-      <div className="absolute bottom-0 inset-x-0 p-4 flex flex-col justify-end z-10 pointer-events-none">
-        <h4 className="text-white font-extrabold text-sm sm:text-base leading-snug line-clamp-1 group-hover:text-sky-300 transition-colors drop-shadow-md">
+      <div className="absolute bottom-0 inset-x-0 p-4 sm:p-6 flex flex-col justify-end z-10 pointer-events-none">
+        <h4 className="text-white font-black text-base sm:text-xl md:text-2xl leading-tight line-clamp-1 group-hover:text-sky-300 transition-colors drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">
           {item.title}
         </h4>
-        <div className="flex items-center justify-between mt-1 pt-1.5 border-t border-white/15 text-xs">
-          <span className="text-white/70 font-semibold text-[11px]">
-            {isHovered ? "🎬 Video playing on hover" : "Hover mouse to play video"}
+        <div className="flex items-center justify-between mt-2 pt-2 border-t border-white/20 text-xs sm:text-sm">
+          <span className="text-white/80 font-semibold text-xs sm:text-sm flex items-center gap-1.5">
+            {isHovered ? "🎬 Hovering - Video Playing" : "Hover mouse to play video preview"}
           </span>
           {item.price !== undefined && item.price > 0 && (
-            <span className="font-black text-sky-400 text-sm">
+            <span className="font-black text-sky-400 text-base sm:text-lg drop-shadow">
               ₹{item.price}
             </span>
           )}
@@ -172,6 +183,7 @@ export default function HeroLeftToRightReel({
   const [items, setItems] = useState<HeroReelItem[]>(
     customItems.length > 0 ? customItems : DEFAULT_HERO_REEL
   );
+  const [isReelPaused, setIsReelPaused] = useState(false);
 
   // Dynamic API Fetch to sync with Admin Panel "hero" section
   useEffect(() => {
@@ -244,17 +256,33 @@ export default function HeroLeftToRightReel({
     };
   }, []);
 
-  // Triple items for seamless, non-stop infinite marquee loop
-  const displayItems = [...items, ...items, ...items];
+  // Normalize items so we always have enough to seamlessly loop from -50% to 0%
+  const baseItems = items.length > 0 ? items : DEFAULT_HERO_REEL;
+  let normalized = [...baseItems];
+  while (normalized.length < 5) {
+    normalized = [...normalized, ...baseItems];
+  }
+  const displayItems = [...normalized, ...normalized];
 
   return (
-    <div className="relative w-full overflow-hidden py-4 select-none group">
-      {/* Soft gradient edge masks */}
-      <div className="absolute top-0 bottom-0 left-0 w-16 sm:w-36 bg-gradient-to-r from-black via-black/80 to-transparent z-20 pointer-events-none" />
-      <div className="absolute top-0 bottom-0 right-0 w-16 sm:w-36 bg-gradient-to-l from-black via-black/80 to-transparent z-20 pointer-events-none" />
+    <div
+      onMouseEnter={() => setIsReelPaused(true)}
+      onMouseLeave={() => setIsReelPaused(false)}
+      className="hero-reel-container relative w-full overflow-hidden py-4 sm:py-6 select-none group"
+    >
+      {/* Subtle edge masks for seamless entry/exit without hiding large parts */}
+      <div className="absolute top-0 bottom-0 left-0 w-8 sm:w-20 bg-gradient-to-r from-black/80 to-transparent z-20 pointer-events-none" />
+      <div className="absolute top-0 bottom-0 right-0 w-8 sm:w-20 bg-gradient-to-l from-black/80 to-transparent z-20 pointer-events-none" />
 
-      {/* LEFT TO RIGHT Smooth Infinite Moving Reel */}
-      <div className="flex w-max gap-5 sm:gap-6 animate-marquee-reverse hover:[animation-play-state:paused] will-change-transform">
+      {/* FULL SIZE LEFT-TO-RIGHT Continuous Infinite Moving Reel */}
+      {/* Instantly freezes when mouse arrow enters any card or the track */}
+      <div
+        data-marquee-track
+        style={{
+          animationPlayState: isReelPaused ? "paused" : "running",
+        }}
+        className="flex w-max gap-5 sm:gap-7 animate-marquee-reverse will-change-transform"
+      >
         {displayItems.map((item, idx) => (
           <HeroCard key={`hero-reel-${item.id}-${idx}`} item={item} />
         ))}
@@ -262,3 +290,4 @@ export default function HeroLeftToRightReel({
     </div>
   );
 }
+
