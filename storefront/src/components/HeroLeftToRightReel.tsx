@@ -196,9 +196,9 @@ function HeroCard({ item }: { item: HeroReelItem }) {
       onClick={handleClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className="relative w-[280px] sm:w-[350px] md:w-[410px] aspect-video rounded-2xl overflow-hidden bg-slate-950 border border-white/15 shrink-0 transform transition-all duration-300 hover:scale-105 hover:z-30 hover:border-sky-400 hover:shadow-[0_12px_45px_rgba(56,189,248,0.4)] cursor-pointer group select-none shadow-xl"
+      className="relative w-[260px] sm:w-[320px] md:w-[380px] lg:w-[420px] aspect-video rounded-2xl overflow-hidden bg-slate-950 border border-white/10 shrink-0 transform transition-all duration-300 hover:scale-[1.03] hover:z-30 hover:border-sky-400 hover:shadow-[0_12px_45px_rgba(56,189,248,0.35)] cursor-pointer group select-none shadow-xl"
     >
-      {/* 1. Full Photo Thumbnail: Initially moving left-to-right */}
+      {/* 1. Pure Clean Thumbnail Photo: Initially moving left-to-right */}
       <img
         src={item.coverImage}
         alt={item.title}
@@ -211,7 +211,7 @@ function HeroCard({ item }: { item: HeroReelItem }) {
         }}
       />
 
-      {/* 2. Full Video: Plays automatically when mouse arrow hovers */}
+      {/* 2. Pure Clean Video: Plays automatically when mouse arrow hovers */}
       <video
         ref={videoRef}
         src={videoSource}
@@ -223,44 +223,6 @@ function HeroCard({ item }: { item: HeroReelItem }) {
           isHovered ? "opacity-100" : "opacity-0"
         }`}
       />
-
-      {/* Gradient Vignette for clear contrast */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none transition-opacity duration-300" />
-
-      {/* Top Badges */}
-      <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none z-10">
-        <span className="px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md text-[10px] font-black uppercase tracking-wider text-white border border-white/20 shadow-md flex items-center gap-1">
-          <Sparkles className="w-3 h-3 text-sky-400" />
-          {item.badge || "EXCLUSIVE"}
-        </span>
-        {isHovered ? (
-          <span className="px-2.5 py-0.5 rounded-full bg-rose-600/90 text-[10px] font-black uppercase text-white tracking-widest shadow-md flex items-center gap-1 animate-pulse">
-            <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
-            LIVE VIDEO
-          </span>
-        ) : (
-          <span className="px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-md text-[10px] font-bold text-white/90 border border-white/10">
-            {item.category || "PRO 8K"}
-          </span>
-        )}
-      </div>
-
-      {/* Bottom Title & Price */}
-      <div className="absolute bottom-0 inset-x-0 p-4 flex flex-col justify-end z-10 pointer-events-none">
-        <h4 className="text-white font-extrabold text-sm sm:text-base leading-snug line-clamp-1 group-hover:text-sky-300 transition-colors drop-shadow-md">
-          {item.title}
-        </h4>
-        <div className="flex items-center justify-between mt-1 pt-1.5 border-t border-white/15 text-xs">
-          <span className="text-white/70 font-semibold text-[11px] flex items-center gap-1">
-            {isHovered ? "🎬 Video playing on hover" : "Hover mouse to play video"}
-          </span>
-          {item.price !== undefined && item.price > 0 && (
-            <span className="font-black text-sky-400 text-sm">
-              ₹{item.price}
-            </span>
-          )}
-        </div>
-      </div>
     </div>
   );
 }
@@ -358,20 +320,20 @@ export default function HeroLeftToRightReel({
     <div
       onMouseEnter={() => setIsReelPaused(true)}
       onMouseLeave={() => setIsReelPaused(false)}
-      className="hero-reel-container relative w-full overflow-hidden py-4 sm:py-6 select-none group"
+      className="hero-reel-container relative w-full overflow-hidden py-3 sm:py-4 select-none group"
     >
-      {/* Subtle edge masks for seamless entry/exit without hiding large parts */}
-      <div className="absolute top-0 bottom-0 left-0 w-8 sm:w-20 bg-gradient-to-r from-black/80 to-transparent z-20 pointer-events-none" />
-      <div className="absolute top-0 bottom-0 right-0 w-8 sm:w-20 bg-gradient-to-l from-black/80 to-transparent z-20 pointer-events-none" />
+      {/* Subtle edge masks for seamless cinematic entry/exit */}
+      <div className="absolute top-0 bottom-0 left-0 w-12 sm:w-28 bg-gradient-to-r from-black via-black/80 to-transparent z-20 pointer-events-none" />
+      <div className="absolute top-0 bottom-0 right-0 w-12 sm:w-28 bg-gradient-to-l from-black via-black/80 to-transparent z-20 pointer-events-none" />
 
-      {/* FULL SIZE LEFT-TO-RIGHT Continuous Infinite Moving Reel */}
+      {/* Pure Clean YouTube Thumbnails Reel moving Left to Right */}
       {/* Instantly freezes when mouse arrow enters any card or the track */}
       <div
         data-marquee-track
         style={{
           animationPlayState: isReelPaused ? "paused" : "running",
         }}
-        className="flex w-max gap-5 sm:gap-7 animate-marquee-reverse will-change-transform"
+        className="flex w-max gap-3 sm:gap-4 animate-marquee-reverse will-change-transform"
       >
         {displayItems.map((item, idx) => (
           <HeroCard key={`hero-reel-${item.id}-${idx}`} item={item} />

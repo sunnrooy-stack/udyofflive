@@ -99,12 +99,12 @@ export default function HeroSection({ carouselItems = [] }: HeroSectionProps) {
           Download hyper-realistic YouTube thumbnail PSDs, cinematic After Effects CC enhancers, manga packs, 4K overlays, and presets crafted for elite creators.
         </motion.p>
 
-        {/* Left-to-Right Moving Reel with Video On Hover (Original Balanced Size) */}
+        {/* Left-to-Right Moving Reel with Video On Hover */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.3 }}
-          className="w-full mt-8 overflow-hidden"
+          className="w-screen relative left-1/2 -translate-x-1/2 mt-8 overflow-hidden"
         >
           <HeroLeftToRightReel />
         </motion.div>
