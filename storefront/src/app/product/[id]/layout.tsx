@@ -1,3 +1,5 @@
+import React from "react";
+
 export async function generateStaticParams() {
   try {
     const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "https://udyofflive1111111111.onrender.com").replace(/\/$/, "");

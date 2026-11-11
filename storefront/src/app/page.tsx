@@ -127,13 +127,18 @@ export default function Home() {
     async function loadData() {
       let data: any[] | null = null;
       const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "https://udyofflive1111111111.onrender.com").replace(/\/$/, "");
-      const apiHost = typeof window !== "undefined" && window.location.hostname ? window.location.hostname : "localhost";
-      const endpoints = [
-        `${apiUrl}/api/products?t=${Date.now()}`,
-        `https://digital-product-1-l3qr.onrender.com/api/products?t=${Date.now()}`,
-        `http://${apiHost}:5000/api/products?t=${Date.now()}`,
-        `http://localhost:5000/api/products?t=${Date.now()}`,
-      ];
+      const isLocal = typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
+      const endpoints = isLocal
+        ? [
+            `http://localhost:5000/api/products?t=${Date.now()}`,
+            `${apiUrl}/api/products?t=${Date.now()}`,
+            `https://udyofflive1111111111.onrender.com/api/products?t=${Date.now()}`,
+          ]
+        : [
+            `${apiUrl}/api/products?t=${Date.now()}`,
+            `https://udyofflive1111111111.onrender.com/api/products?t=${Date.now()}`,
+            `http://localhost:5000/api/products?t=${Date.now()}`,
+          ];
 
       for (const endpoint of endpoints) {
         try {

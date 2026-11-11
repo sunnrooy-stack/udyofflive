@@ -77,11 +77,11 @@ export const getProducts = async (req: Request, res: Response) => {
       if (p.id) {
         const titleKey = p.title ? p.title.trim().toLowerCase() : "";
         if (mergedMap.has(String(p.id))) {
-          const existing = mergedMap.get(String(p.id)) || {};
+          const dbItem = mergedMap.get(String(p.id)) || {};
           mergedMap.set(String(p.id), {
-            ...existing,
             ...p,
-            isFeatured: p.isFeatured !== undefined ? p.isFeatured : existing.isFeatured,
+            ...dbItem,
+            isFeatured: dbItem.isFeatured !== undefined ? dbItem.isFeatured : p.isFeatured,
           });
         } else if (titleKey && !knownTitles.has(titleKey)) {
           mergedMap.set(String(p.id), p);
@@ -221,12 +221,19 @@ export const createProduct = async (req: Request, res: Response) => {
         title: title ? title.trim() : "Untitled Product",
         description: description ? description.trim() : "",
         price: parseFloat(price) || 0,
+        originalPrice: req.body.originalPrice ? parseFloat(req.body.originalPrice) : (parseFloat(price) > 0 ? Math.round(parseFloat(price) * 1.5) : 0),
         category: category || "Assets",
+        sectionSlug: req.body.sectionSlug || "",
+        aspectRatio: req.body.aspectRatio || "",
+        orientation: req.body.orientation || "landscape",
+        sellerName: req.body.sellerName || "Admin",
+        rating: typeof req.body.rating === "number" ? req.body.rating : 5.0,
+        reviewsCount: typeof req.body.reviewsCount === "number" ? req.body.reviewsCount : 1,
         tags: Array.isArray(tags) ? tags : [],
         coverImage: coverImage || "",
-        previewMedia: previewMedia || [],
-        fileUrls: fileUrls || [],
-        features: features || [],
+        previewMedia: Array.isArray(previewMedia) ? previewMedia : [],
+        fileUrls: Array.isArray(fileUrls) ? fileUrls : [],
+        features: Array.isArray(features) ? features : [],
         demoUrl: demoUrl || "",
         previewGallery: previewGallery || [],
         status: productStatus,
@@ -253,9 +260,12 @@ export const createProduct = async (req: Request, res: Response) => {
       originalPrice: req.body.originalPrice || (parseFloat(price) > 0 ? Math.round(parseFloat(price) * 1.5) : 0),
       category: category || "Assets",
       sectionSlug: req.body.sectionSlug || "",
+      aspectRatio: req.body.aspectRatio || "",
+      orientation: req.body.orientation || "landscape",
       tags: Array.isArray(tags) ? tags : [],
       coverImage: coverImage || "",
-      sellerName: "Admin",
+      fileUrls: Array.isArray(fileUrls) ? fileUrls : [],
+      sellerName: req.body.sellerName || "Admin",
       rating: 5.0,
       reviewsCount: 1,
       isFeatured: isFeatured !== undefined ? isFeatured : true,
@@ -283,14 +293,32 @@ export const createProduct = async (req: Request, res: Response) => {
 export const updateProduct = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { id: _, sellerId, categoryRef, seller, publishDate, ...updateData } = req.body;
+    const allowedKeys = [
+      'title', 'description', 'price', 'originalPrice', 'category', 'sectionSlug',
+      'aspectRatio', 'orientation', 'sellerName', 'rating', 'reviewsCount',
+      'tags', 'coverImage', 'previewMedia', 'fileUrls', 'features', 'demoUrl',
+      'previewGallery', 'status', 'isPublished', 'isFeatured', 'metaTitle', 'metaDescription'
+    ];
+
+    const prismaUpdateData: any = {};
+    for (const key of allowedKeys) {
+      if (req.body[key] !== undefined) {
+        if (key === 'price' || key === 'originalPrice' || key === 'rating') {
+          prismaUpdateData[key] = parseFloat(req.body[key]) || 0;
+        } else if (key === 'reviewsCount') {
+          prismaUpdateData[key] = parseInt(req.body[key], 10) || 1;
+        } else {
+          prismaUpdateData[key] = req.body[key];
+        }
+      }
+    }
 
     let product: any = null;
     try {
       if (id && /^[0-9a-fA-F]{24}$/.test(id)) {
         product = await prisma.product.update({
           where: { id },
-          data: updateData,
+          data: prismaUpdateData,
         });
         console.log(`✅ Updated product in MongoDB Database! ID: ${id}`);
       }
@@ -298,18 +326,62 @@ export const updateProduct = async (req: Request, res: Response) => {
       console.warn("Prisma update product:", (e as any).message);
     }
 
+    // If product was not in MongoDB (e.g. non-ObjectId preset or new item), persist it now
+    if (!product) {
+      try {
+        let sellerId = "6a3974739269002825c885c2";
+        const existingUser = await prisma.user.findFirst();
+        if (existingUser) sellerId = existingUser.id;
+
+        product = await prisma.product.create({
+          data: {
+            title: req.body.title ? req.body.title.trim() : "Untitled Product",
+            description: req.body.description ? req.body.description.trim() : "",
+            price: parseFloat(req.body.price) || 0,
+            originalPrice: parseFloat(req.body.originalPrice) || 0,
+            category: req.body.category || "Assets",
+            sectionSlug: req.body.sectionSlug || "",
+            aspectRatio: req.body.aspectRatio || "",
+            orientation: req.body.orientation || "landscape",
+            sellerName: req.body.sellerName || "Admin",
+            rating: typeof req.body.rating === "number" ? req.body.rating : 5.0,
+            reviewsCount: typeof req.body.reviewsCount === "number" ? req.body.reviewsCount : 1,
+            tags: Array.isArray(req.body.tags) ? req.body.tags : [],
+            coverImage: req.body.coverImage || "",
+            fileUrls: Array.isArray(req.body.fileUrls) ? req.body.fileUrls : [],
+            sellerId,
+            status: "APPROVED",
+            isPublished: true,
+            isFeatured: true,
+            ...prismaUpdateData,
+          }
+        });
+        console.log(`✅ Upserted product into MongoDB Database! ID: ${product.id}`);
+      } catch (upsertErr) {
+        console.warn("Prisma upsert notice:", (upsertErr as any).message);
+      }
+    }
+
+    const savedProduct = product ? {
+      ...product,
+      id: String(product.id),
+      originalPrice: product.originalPrice || req.body.originalPrice,
+      sectionSlug: product.sectionSlug || req.body.sectionSlug,
+      aspectRatio: product.aspectRatio || req.body.aspectRatio,
+    } : { id, ...req.body };
+
     // Update in memory store
-    const memIndex = inMemoryProductsStore.findIndex(p => String(p.id) === String(id));
+    const memIndex = inMemoryProductsStore.findIndex(p => String(p.id) === String(id) || (p.title && savedProduct.title && p.title.trim().toLowerCase() === savedProduct.title.trim().toLowerCase()));
     if (memIndex !== -1) {
       inMemoryProductsStore[memIndex] = {
         ...inMemoryProductsStore[memIndex],
-        ...updateData,
+        ...savedProduct,
       };
     } else {
-      inMemoryProductsStore.push({ id, ...updateData });
+      inMemoryProductsStore.unshift(savedProduct);
     }
 
-    res.status(200).json({ message: 'Product updated successfully', product: product || updateData });
+    res.status(200).json({ message: 'Product updated and saved to database successfully', product: savedProduct });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to update product' });

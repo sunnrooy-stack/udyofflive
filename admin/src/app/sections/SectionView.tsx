@@ -144,6 +144,25 @@ export function matchProductForSection(p: any, slug: string, title?: string) {
   return false;
 }
 
+export const getSectionApiEndpoints = () => {
+  const isLocal = typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
+  const envApi = process.env.NEXT_PUBLIC_API_URL ? process.env.NEXT_PUBLIC_API_URL.replace(/\/$/, "") : "";
+  const list: string[] = [];
+  if (isLocal) {
+    list.push("http://localhost:5000");
+  }
+  if (envApi && !list.includes(envApi)) {
+    list.push(envApi);
+  }
+  if (!list.includes("https://udyofflive1111111111.onrender.com")) {
+    list.push("https://udyofflive1111111111.onrender.com");
+  }
+  if (!list.includes("http://localhost:5000")) {
+    list.push("http://localhost:5000");
+  }
+  return list;
+};
+
 export default function SectionView({ slug }: { slug: string }) {
   const section = SECTIONS_CONFIG[slug] || SECTIONS_CONFIG["thumbnail-psd"];
   const isThumbnailPsd = slug === "thumbnail-psd";
@@ -191,34 +210,28 @@ export default function SectionView({ slug }: { slug: string }) {
       if (stored) localItems = JSON.parse(stored);
     } catch (e) {}
 
-    const primaryApi = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-    const fallbackApi = "https://udyofflive1111111111.onrender.com";
-
+    const endpoints = getSectionApiEndpoints();
     let apiItems: any[] = [];
+    let connectedApi = "Local API";
 
-    try {
-      const res = await fetch(`${primaryApi}/api/products?admin=true&t=${Date.now()}`, {
-        cache: "no-store",
-      });
-      if (res.ok) {
-        apiItems = await res.json();
-        setApiSource(primaryApi);
-      } else {
-        throw new Error("Primary API failed");
-      }
-    } catch {
+    for (const endpoint of endpoints) {
       try {
-        const fRes = await fetch(`${fallbackApi}/api/products?admin=true&t=${Date.now()}`, {
+        const res = await fetch(`${endpoint}/api/products?admin=true&t=${Date.now()}`, {
           cache: "no-store",
         });
-        if (fRes.ok) {
-          apiItems = await fRes.json();
-          setApiSource(fallbackApi);
+        if (res.ok) {
+          const json = await res.json();
+          if (Array.isArray(json)) {
+            apiItems = json;
+            connectedApi = endpoint;
+            break;
+          }
         }
       } catch (e) {
-        console.error("Both primary and fallback APIs failed:", e);
+        // try next endpoint
       }
     }
+    setApiSource(connectedApi);
 
     const allItems = Array.isArray(apiItems) ? [...apiItems, ...localItems] : localItems;
     // Deduplicate by id
@@ -366,30 +379,52 @@ export default function SectionView({ slug }: { slug: string }) {
       newProduct.id = editingId;
     }
 
-    // 1. Save directly to Database via backend API
-    const primaryApi = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-    try {
-      if (editingId) {
-        await fetch(`${primaryApi}/api/products/${editingId}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(newProduct),
-        });
-      } else {
-        const res = await fetch(`${primaryApi}/api/products`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(newProduct),
-        });
-        if (res.ok) {
-          const resJson = await res.json();
-          if (resJson && resJson.product && resJson.product.id) {
-            newProduct.id = resJson.product.id;
+    // 1. Save directly to Database via backend API across available endpoints
+    const endpoints = getSectionApiEndpoints();
+    let savedToDb = false;
+
+    for (const endpoint of endpoints) {
+      try {
+        if (editingId) {
+          const res = await fetch(`${endpoint}/api/products/${editingId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(newProduct),
+          });
+          if (res.ok) {
+            const resJson = await res.json();
+            if (resJson && resJson.product && resJson.product.id) {
+              newProduct.id = String(resJson.product.id);
+            }
+            savedToDb = true;
+            setApiSource(endpoint);
+            console.log(`✅ Saved product to database via ${endpoint}! ID: ${newProduct.id}`);
+            break;
+          }
+        } else {
+          const res = await fetch(`${endpoint}/api/products`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(newProduct),
+          });
+          if (res.ok) {
+            const resJson = await res.json();
+            if (resJson && resJson.product && resJson.product.id) {
+              newProduct.id = String(resJson.product.id);
+            }
+            savedToDb = true;
+            setApiSource(endpoint);
+            console.log(`✅ Created product in database via ${endpoint}! ID: ${newProduct.id}`);
+            break;
           }
         }
+      } catch (err) {
+        console.warn(`Database save via ${endpoint} failed, trying next:`, err);
       }
-    } catch (err) {
-      console.error("Backend database save failed:", err);
+    }
+
+    if (!savedToDb) {
+      console.warn("Backend database save failed on all endpoints, stored in local cache.");
     }
 
     // 2. Save locally as persistent cache
@@ -427,10 +462,16 @@ export default function SectionView({ slug }: { slug: string }) {
       }
     } catch (e) {}
 
-    const primaryApi = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-    try {
-      await fetch(`${primaryApi}/api/products/${id}`, { method: "DELETE" });
-    } catch (e) {}
+    const endpoints = getSectionApiEndpoints();
+    for (const endpoint of endpoints) {
+      try {
+        const res = await fetch(`${endpoint}/api/products/${id}`, { method: "DELETE" });
+        if (res.ok) {
+          console.log(`✅ Deleted product ${id} from database via ${endpoint}`);
+          break;
+        }
+      } catch (e) {}
+    }
 
     setProducts((prev) => prev.filter((p) => String(p.id) !== String(id)));
   };

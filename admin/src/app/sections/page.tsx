@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { SECTIONS_CONFIG, matchProductForSection } from "./SectionView";
+import { SECTIONS_CONFIG, matchProductForSection, getSectionApiEndpoints } from "./SectionView";
 
 export default function SectionsOverviewPage() {
   const sections = Object.values(SECTIONS_CONFIG);
@@ -24,36 +24,27 @@ export default function SectionsOverviewPage() {
       if (stored) localItems = JSON.parse(stored);
     } catch {}
 
-    const primaryApi = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-    const fallbackApi = "https://udyofflive1111111111.onrender.com";
-
+    const endpoints = getSectionApiEndpoints();
     let apiItems: any[] = [];
-    let activeApi = primaryApi;
+    let activeApi = endpoints[0] || "http://localhost:5000";
     let status: "connected" | "fallback" = "connected";
 
-    try {
-      const res = await fetch(`${primaryApi}/api/products?admin=true&t=${Date.now()}`, {
-        cache: "no-store",
-      });
-      if (res.ok) {
-        apiItems = await res.json();
-        activeApi = primaryApi;
-        status = "connected";
-      } else {
-        throw new Error("Primary API not ok");
-      }
-    } catch {
+    for (const endpoint of endpoints) {
       try {
-        const fallbackRes = await fetch(`${fallbackApi}/api/products?admin=true&t=${Date.now()}`, {
+        const res = await fetch(`${endpoint}/api/products?admin=true&t=${Date.now()}`, {
           cache: "no-store",
         });
-        if (fallbackRes.ok) {
-          apiItems = await fallbackRes.json();
-          activeApi = fallbackApi;
-          status = "fallback";
+        if (res.ok) {
+          const json = await res.json();
+          if (Array.isArray(json)) {
+            apiItems = json;
+            activeApi = endpoint;
+            status = endpoint.includes("onrender.com") ? "fallback" : "connected";
+            break;
+          }
         }
       } catch (e) {
-        console.error("API Fetch error:", e);
+        // try next endpoint
       }
     }
 

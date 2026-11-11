@@ -52,7 +52,14 @@ model Product {
   title         String
   description   String
   price         Float
+  originalPrice Float?
   category      String
+  sectionSlug   String?
+  aspectRatio   String?
+  orientation   String?
+  sellerName    String?   @default("Admin")
+  rating        Float?    @default(5.0)
+  reviewsCount  Int?      @default(1)
   tags          String[]
   coverImage    String
   previewMedia  String[]  // Array of image/video URLs
