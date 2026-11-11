@@ -235,6 +235,7 @@ export const createProduct = async (req: Request, res: Response) => {
         fileUrls: Array.isArray(fileUrls) ? fileUrls : [],
         features: Array.isArray(features) ? features : [],
         demoUrl: demoUrl || "",
+        videoUrl: req.body.videoUrl || demoUrl || "",
         previewGallery: previewGallery || [],
         status: productStatus,
         isPublished: isPublished,
@@ -262,6 +263,7 @@ export const createProduct = async (req: Request, res: Response) => {
       sectionSlug: req.body.sectionSlug || "",
       aspectRatio: req.body.aspectRatio || "",
       orientation: req.body.orientation || "landscape",
+      videoUrl: req.body.videoUrl || demoUrl || "",
       tags: Array.isArray(tags) ? tags : [],
       coverImage: coverImage || "",
       fileUrls: Array.isArray(fileUrls) ? fileUrls : [],
@@ -296,7 +298,7 @@ export const updateProduct = async (req: Request, res: Response) => {
     const allowedKeys = [
       'title', 'description', 'price', 'originalPrice', 'category', 'sectionSlug',
       'aspectRatio', 'orientation', 'sellerName', 'rating', 'reviewsCount',
-      'tags', 'coverImage', 'previewMedia', 'fileUrls', 'features', 'demoUrl',
+      'tags', 'coverImage', 'previewMedia', 'fileUrls', 'features', 'demoUrl', 'videoUrl',
       'previewGallery', 'status', 'isPublished', 'isFeatured', 'metaTitle', 'metaDescription'
     ];
 

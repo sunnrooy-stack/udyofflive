@@ -66,6 +66,7 @@ model Product {
   fileUrls      String[]  // The actual digital products (ZIP, PDF, etc)
   features      String[]  // Custom "What's included" items
   demoUrl       String?   // ✨ Live Preview URL
+  videoUrl      String?   // Video played on hover (Hero & Showcase video preview)
   previewGallery Json?    // Array of preview objects [{ title, url, thumbnail, type }]
   status        ProductStatus @default(PENDING_APPROVAL)
   isPublished   Boolean   @default(false)

@@ -159,6 +159,9 @@ export default function AdminLayoutWrapper({ children }: { children: React.React
           <Link href="/sections/cc" className={`flex items-center gap-3 px-3 py-2 rounded-lg font-medium transition-colors ${pathname.includes("/sections/cc") ? "bg-muted text-foreground font-bold" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}>
             <span className="text-lg">🎞️</span> CC Presets
           </Link>
+          <Link href="/sections/hero" className={`flex items-center gap-3 px-3 py-2 rounded-lg font-medium transition-colors ${pathname.includes("/sections/hero") ? "bg-muted text-foreground font-bold" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}>
+            <span className="text-lg">🌟</span> Hero Reel / Video Cards
+          </Link>
 
           <div className="pt-4 pb-1 px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
             Customer Support

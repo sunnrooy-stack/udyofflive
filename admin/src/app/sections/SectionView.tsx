@@ -75,6 +75,16 @@ export const SECTIONS_CONFIG: Record<string, SectionConfig> = {
     defaultAspectRatio: "16:9",
     defaultOrientation: "landscape",
   },
+  "hero": {
+    slug: "hero",
+    title: "Hero Showcase Cards",
+    icon: "🌟",
+    badge: "HERO REEL",
+    description: "Hero Section dynamic cards moving left-to-right. Shows photos moving, and plays video on hover.",
+    defaultCover: "/images/yt-showcase/yt-preeti-live.jpg",
+    defaultAspectRatio: "16:9",
+    defaultOrientation: "landscape",
+  },
 };
 
 export function matchProductForSection(p: any, slug: string, title?: string) {
@@ -166,6 +176,16 @@ export function matchProductForSection(p: any, slug: string, title?: string) {
       hasCcTag
     );
   }
+  if (slug === "hero") {
+    return (
+      sSlug === "hero" ||
+      sSlug === "hero-showcase" ||
+      cat === "hero" ||
+      cat === "hero showcase" ||
+      cat.includes("hero") ||
+      pTitle.includes("hero")
+    );
+  }
   if (title) {
     const target = title.toLowerCase();
     return cat.includes(target) || pTitle.includes(target);
@@ -200,7 +220,8 @@ export default function SectionView({ slug }: { slug: string }) {
   const isGlowAnimeLogo = slug === "glow-anime-logo";
   const is3dCharacter = slug === "3d-character";
   const isCc = slug === "cc" || slug === "cc-presets";
-  const defaultSectionRatio = isCc
+  const isHero = slug === "hero" || slug === "hero-showcase";
+  const defaultSectionRatio = isHero || isCc
     ? "16:9"
     : is3dCharacter
     ? "600:692"
@@ -224,6 +245,7 @@ export default function SectionView({ slug }: { slug: string }) {
   const [price, setPrice] = useState<number | string>("");
   const [originalPrice, setOriginalPrice] = useState<number | string>("");
   const [coverImage, setCoverImage] = useState("");
+  const [videoUrl, setVideoUrl] = useState("");
   const [description, setDescription] = useState("");
   const [fileUrl, setFileUrl] = useState("");
   const [badgeTag, setBadgeTag] = useState("NEW");
@@ -301,6 +323,7 @@ export default function SectionView({ slug }: { slug: string }) {
     setPrice("");
     setOriginalPrice("");
     setCoverImage("");
+    setVideoUrl("");
     setDescription("");
     setFileUrl("");
     setBadgeTag("NEW");
@@ -315,6 +338,7 @@ export default function SectionView({ slug }: { slug: string }) {
     setPrice(item.price !== undefined ? item.price : "");
     setOriginalPrice(item.originalPrice !== undefined ? item.originalPrice : "");
     setCoverImage(item.coverImage || "");
+    setVideoUrl(item.videoUrl || item.demoUrl || "");
     setDescription(item.description || "");
     setFileUrl(item.fileUrls && item.fileUrls.length > 0 ? item.fileUrls[0] : "");
     setBadgeTag(item.tags?.[0] || "NEW");
@@ -392,6 +416,8 @@ export default function SectionView({ slug }: { slug: string }) {
       price: numericPrice,
       originalPrice: numericOrigPrice,
       coverImage: coverImage.trim() || section.defaultCover,
+      videoUrl: videoUrl.trim(),
+      demoUrl: videoUrl.trim(),
       category: section.title,
       sectionSlug: slug,
       description: description.trim() || `${section.title} collection`,
@@ -1047,6 +1073,40 @@ export default function SectionView({ slug }: { slug: string }) {
                     className="w-full bg-muted/50 border border-border rounded-xl px-3 py-1.5 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                   />
                 </div>
+              </div>
+
+              {/* HOVER VIDEO PREVIEW (For Hero & Showcase Video-on-Hover) */}
+              <div className="p-4 rounded-xl border border-purple-500/30 bg-purple-950/20 space-y-3">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold text-purple-400 uppercase tracking-wide flex items-center gap-1.5">
+                    <span>🎬 Hover Video Preview URL (Mouse Arrow Par Video Play)</span>
+                  </label>
+                  <span className="text-[10px] font-mono font-bold bg-purple-500/15 text-purple-400 border border-purple-500/30 px-2 py-0.5 rounded-full">
+                    {videoUrl ? "✓ Video Attached" : "Optional"}
+                  </span>
+                </div>
+                <input
+                  type="text"
+                  value={videoUrl}
+                  onChange={(e) => setVideoUrl(e.target.value)}
+                  placeholder="e.g. https://res.cloudinary.com/.../video.mp4 or /hero-wallpaper.mp4"
+                  className="w-full bg-muted/50 border border-border rounded-xl px-3.5 py-2 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-purple-500"
+                />
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                  Pehle photo moving hogi, jab user ispar mouse arrow layega toh ye video automatically play hoga!
+                </p>
+                {videoUrl && (
+                  <div className="mt-2 rounded-xl overflow-hidden border border-purple-400/40 bg-black aspect-video max-w-xs shadow-md">
+                    <video
+                      src={videoUrl}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
               </div>
 
               <div>

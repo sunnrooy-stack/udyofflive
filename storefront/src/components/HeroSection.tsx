@@ -3,10 +3,10 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Layers, Flame, Volume2, VolumeX } from "lucide-react";
-import Fan3DCarousel, { CarouselItem } from "./Fan3DCarousel";
+import HeroLeftToRightReel from "./HeroLeftToRightReel";
 
 interface HeroSectionProps {
-  carouselItems?: CarouselItem[];
+  carouselItems?: any[];
 }
 
 export default function HeroSection({ carouselItems = [] }: HeroSectionProps) {
@@ -123,14 +123,14 @@ export default function HeroSection({ carouselItems = [] }: HeroSectionProps) {
           </a>
         </motion.div>
 
-        {/* 3D Fan Carousel Section */}
+        {/* Left-to-Right Moving Reel with Video On Hover */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="w-full mt-6"
+          className="w-full mt-10"
         >
-          <Fan3DCarousel items={carouselItems} />
+          <HeroLeftToRightReel />
         </motion.div>
       </div>
     </section>
