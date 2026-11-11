@@ -87,6 +87,21 @@ export const SECTIONS_CONFIG: Record<string, SectionConfig> = {
   },
 };
 
+// YouTube helper functions for interactive video previews
+function isYouTubeUrl(url: string): boolean {
+  if (!url) return false;
+  return url.includes("youtube.com") || url.includes("youtu.be");
+}
+
+function getYouTubeEmbedUrl(url: string, autoplay = true): string {
+  if (!url) return "";
+  const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+  if (match && match[1]) {
+    return `https://www.youtube-nocookie.com/embed/${match[1]}?autoplay=${autoplay ? 1 : 0}&mute=0&controls=1&enablejsapi=1`;
+  }
+  return url;
+}
+
 export function matchProductForSection(p: any, slug: string, title?: string) {
   if (!p) return false;
   const cat = (p.category || "").toLowerCase();
@@ -1089,22 +1104,50 @@ export default function SectionView({ slug }: { slug: string }) {
                   type="text"
                   value={videoUrl}
                   onChange={(e) => setVideoUrl(e.target.value)}
-                  placeholder="e.g. https://res.cloudinary.com/.../video.mp4 or /hero-wallpaper.mp4"
+                  placeholder="e.g. https://res.cloudinary.com/.../video.mp4 or YouTube link or /hero-wallpaper.mp4"
                   className="w-full bg-muted/50 border border-border rounded-xl px-3.5 py-2 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-purple-500"
                 />
                 <p className="text-[11px] text-muted-foreground leading-relaxed">
                   Pehle photo moving hogi, jab user ispar mouse arrow layega toh ye video automatically play hoga!
                 </p>
                 {videoUrl && (
-                  <div className="mt-2 rounded-xl overflow-hidden border border-purple-400/40 bg-black aspect-video max-w-xs shadow-md">
-                    <video
-                      src={videoUrl}
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      className="w-full h-full object-cover"
-                    />
+                  <div className="mt-2 space-y-2">
+                    <div className="rounded-xl overflow-hidden border border-purple-400/50 bg-black aspect-video max-w-sm shadow-xl relative group">
+                      {isYouTubeUrl(videoUrl) ? (
+                        <iframe
+                          key={videoUrl}
+                          src={getYouTubeEmbedUrl(videoUrl, true)}
+                          title="YouTube Video Preview"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                          className="w-full h-full border-0"
+                        />
+                      ) : (
+                        <video
+                          key={videoUrl}
+                          src={videoUrl}
+                          controls
+                          autoPlay
+                          playsInline
+                          loop
+                          className="w-full h-full object-cover"
+                        />
+                      )}
+                    </div>
+                    <div className="flex items-center gap-3 pt-1">
+                      <span className="text-[11px] font-bold text-emerald-400 flex items-center gap-1.5">
+                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                        Live Video Preview Playing
+                      </span>
+                      <a
+                        href={videoUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-[11px] font-semibold text-purple-400 hover:text-purple-300 underline"
+                      >
+                        Open URL ↗
+                      </a>
+                    </div>
                   </div>
                 )}
               </div>

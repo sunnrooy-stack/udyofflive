@@ -1,7 +1,20 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Sparkles, Play } from "lucide-react";
+
+function isYouTubeUrl(url?: string): boolean {
+  if (!url) return false;
+  return url.includes("youtube.com") || url.includes("youtu.be");
+}
+
+function getYouTubeEmbedUrl(url: string): string {
+  if (!url) return "";
+  const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+  if (match && match[1]) {
+    return `https://www.youtube-nocookie.com/embed/${match[1]}?autoplay=1&mute=1&loop=1&playlist=${match[1]}&controls=0&showinfo=0&rel=0`;
+  }
+  return url;
+}
 
 export interface HeroReelItem {
   id: string;
@@ -158,10 +171,12 @@ function HeroCard({ item }: { item: HeroReelItem }) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const videoSource = item.videoUrl || "/hero-wallpaper.mp4";
+  const isYt = isYouTubeUrl(videoSource);
+  const ytEmbed = isYt ? getYouTubeEmbedUrl(videoSource) : "";
 
   const handleMouseEnter = () => {
     setIsHovered(true);
-    if (videoRef.current) {
+    if (!isYt && videoRef.current) {
       videoRef.current.currentTime = 0;
       const playPromise = videoRef.current.play();
       if (playPromise !== undefined) {
@@ -175,35 +190,24 @@ function HeroCard({ item }: { item: HeroReelItem }) {
   const handleMouseLeave = () => {
     setIsHovered(false);
     setIsPlaying(false);
-    if (videoRef.current) {
+    if (!isYt && videoRef.current) {
       videoRef.current.pause();
       videoRef.current.currentTime = 0;
     }
   };
 
-  const handleClick = () => {
-    if (item.href) {
-      window.location.href = item.href;
-    } else if (item.id && !item.id.startsWith("hero-yt")) {
-      window.location.href = `/product/${item.id}`;
-    } else {
-      window.location.href = "/products";
-    }
-  };
-
   return (
     <div
-      onClick={handleClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className="relative w-[260px] sm:w-[320px] md:w-[380px] lg:w-[420px] aspect-video rounded-2xl overflow-hidden bg-slate-950 border border-white/10 shrink-0 transform transition-all duration-300 hover:scale-[1.03] hover:z-30 hover:border-sky-400 hover:shadow-[0_12px_45px_rgba(56,189,248,0.35)] cursor-pointer group select-none shadow-xl"
+      className="relative w-[260px] sm:w-[320px] md:w-[380px] lg:w-[420px] aspect-video rounded-2xl overflow-hidden bg-slate-950 border border-white/10 shrink-0 transform transition-all duration-300 hover:scale-[1.03] hover:z-30 hover:border-sky-400 hover:shadow-[0_12px_45px_rgba(56,189,248,0.35)] select-none shadow-xl pointer-events-auto"
     >
-      {/* 1. Pure Clean Thumbnail Photo: Initially moving left-to-right */}
+      {/* 1. Pure Clean Thumbnail Photo: NO Title, NO Link, NO Price, NO etc */}
       <img
         src={item.coverImage}
-        alt={item.title}
+        alt=""
         className={`w-full h-full object-cover transition-opacity duration-300 ${
-          isHovered && isPlaying ? "opacity-0" : "opacity-100"
+          isHovered && (isPlaying || isYt) ? "opacity-0" : "opacity-100"
         }`}
         loading="lazy"
         onError={(e) => {
@@ -212,17 +216,28 @@ function HeroCard({ item }: { item: HeroReelItem }) {
       />
 
       {/* 2. Pure Clean Video: Plays automatically when mouse arrow hovers */}
-      <video
-        ref={videoRef}
-        src={videoSource}
-        muted
-        loop
-        playsInline
-        preload="metadata"
-        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 pointer-events-none ${
-          isHovered ? "opacity-100" : "opacity-0"
-        }`}
-      />
+      {isYt ? (
+        isHovered && (
+          <iframe
+            src={ytEmbed}
+            title="Video Preview"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            className="absolute inset-0 w-full h-full object-cover pointer-events-none border-0"
+          />
+        )
+      ) : (
+        <video
+          ref={videoRef}
+          src={videoSource}
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 pointer-events-none ${
+            isHovered ? "opacity-100" : "opacity-0"
+          }`}
+        />
+      )}
     </div>
   );
 }
@@ -308,10 +323,20 @@ export default function HeroLeftToRightReel({
     };
   }, []);
 
-  // Normalize items so we always have enough to seamlessly loop from -50% to 0%
-  const baseItems = items.length > 0 ? items : DEFAULT_HERO_REEL;
+  // Merge admin items first, followed by default showcase items so the reel is always rich & diverse
+  const baseItems =
+    items.length > 0
+      ? [
+          ...items,
+          ...DEFAULT_HERO_REEL.filter(
+            (def) => !items.some((it) => it.coverImage === def.coverImage)
+          ),
+        ]
+      : DEFAULT_HERO_REEL;
+
+  // Always keep at least 16 cards in normalized so track is 12,000px+ (zero empty space on right side)
   let normalized = [...baseItems];
-  while (normalized.length < 5) {
+  while (normalized.length < 16) {
     normalized = [...normalized, ...baseItems];
   }
   const displayItems = [...normalized, ...normalized];
@@ -320,11 +345,10 @@ export default function HeroLeftToRightReel({
     <div
       onMouseEnter={() => setIsReelPaused(true)}
       onMouseLeave={() => setIsReelPaused(false)}
-      className="hero-reel-container relative w-full overflow-hidden py-3 sm:py-4 select-none group"
+      className="hero-reel-container relative w-full overflow-hidden py-2 sm:py-3 select-none group"
     >
-      {/* Subtle edge masks for seamless cinematic entry/exit */}
-      <div className="absolute top-0 bottom-0 left-0 w-12 sm:w-28 bg-gradient-to-r from-black via-black/80 to-transparent z-20 pointer-events-none" />
-      <div className="absolute top-0 bottom-0 right-0 w-12 sm:w-28 bg-gradient-to-l from-black via-black/80 to-transparent z-20 pointer-events-none" />
+      {/* Subtle left entry fade mask only; right side remains clear and unblocked */}
+      <div className="absolute top-0 bottom-0 left-0 w-8 sm:w-16 bg-gradient-to-r from-black/80 to-transparent z-20 pointer-events-none" />
 
       {/* Pure Clean YouTube Thumbnails Reel moving Left to Right */}
       {/* Instantly freezes when mouse arrow enters any card or the track */}

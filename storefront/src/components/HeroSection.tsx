@@ -98,23 +98,25 @@ export default function HeroSection({ carouselItems = [] }: HeroSectionProps) {
         >
           Download hyper-realistic YouTube thumbnail PSDs, cinematic After Effects CC enhancers, manga packs, 4K overlays, and presets crafted for elite creators.
         </motion.p>
+      </div>
 
-        {/* Left-to-Right Moving Reel with Video On Hover */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          className="w-screen relative left-1/2 -translate-x-1/2 mt-8 overflow-hidden"
-        >
-          <HeroLeftToRightReel />
-        </motion.div>
+      {/* Left-to-Right Moving Reel with Video On Hover (Full Screen Width, No Right-Side Cutoff) */}
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, delay: 0.3 }}
+        className="w-full mt-8 relative z-10 overflow-hidden"
+      >
+        <HeroLeftToRightReel />
+      </motion.div>
 
-        {/* CTA Buttons (Placed Below the Moving Reel) */}
+      {/* CTA Buttons (Placed Below the Moving Reel) */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col items-center mt-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="mt-8 flex flex-wrap items-center justify-center gap-4"
+          className="flex flex-wrap items-center justify-center gap-4"
         >
           <a
             href="/products"
