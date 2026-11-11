@@ -38,92 +38,7 @@ interface CCPreset {
   description: string;
 }
 
-const CC_PRESETS: CCPreset[] = [
-  {
-    id: "cc-cyberpunk-neon",
-    title: "Cyberpunk Neon Tokyo CC",
-    platform: "pc",
-    software: ["After Effects CC", "Premiere Pro"],
-    style: "Cyberpunk Neon",
-    price: 99,
-    rating: 5.0,
-    downloads: "2.4k",
-    beforeImage: "https://res.cloudinary.com/dh0qmflg7/image/upload/v1788532911/ChatGPT_Image_Sep_4_2026_07_40_46_AM_etucka.png",
-    afterImage: "/images/before-after-banner.png",
-    badge: "BESTSELLER",
-    description: "Deep electric blues and intense magenta highlights with chromatic aberration.",
-  },
-  {
-    id: "cc-anime-hdr-glow",
-    title: "Anime 4K HDR Vibrant Glow CC",
-    platform: "both",
-    software: ["After Effects", "CapCut Pro", "Alight Motion"],
-    style: "Vibrant Anime",
-    price: 89,
-    rating: 4.9,
-    downloads: "3.8k",
-    beforeImage: "https://res.cloudinary.com/dh0qmflg7/image/upload/v1788533853/ChatGPT_Image_Sep_4_2026_07_57_06_AM_sa2q7c.png",
-    afterImage: "https://res.cloudinary.com/dh0qmflg7/image/upload/v1788874316/ChatGPT_Image_Sep_8_2026_06_31_13_AM_telgaw.png",
-    badge: "VIRAL",
-    description: "High saturation, warm anime skin tones with ethereal soft glow lighting.",
-  },
-  {
-    id: "cc-dark-moody-gang",
-    title: "Dark Moody Drill & Cinematic CC",
-    platform: "mobile",
-    software: ["CapCut", "VN Editor", "Alight Motion"],
-    style: "Moody & Dark",
-    price: 79,
-    rating: 4.8,
-    downloads: "1.9k",
-    beforeImage: "https://res.cloudinary.com/dh0qmflg7/image/upload/v1788533354/ChatGPT_Image_Sep_4_2026_07_48_35_AM_jtbyyn.png",
-    afterImage: "https://res.cloudinary.com/dh0qmflg7/image/upload/v1788532574/ChatGPT_Image_Sep_4_2026_07_35_36_AM_chc6st.png",
-    badge: "TRENDING",
-    description: "Crushed blacks, cold teal undertones and high-contrast punchy shadows.",
-  },
-  {
-    id: "cc-vintage-retro-90s",
-    title: "Vintage VHS & Retro Film 90s CC",
-    platform: "both",
-    software: ["Premiere Pro", "CapCut Pro", "VN"],
-    style: "Vintage Retro",
-    price: 89,
-    rating: 4.9,
-    downloads: "2.1k",
-    beforeImage: "https://res.cloudinary.com/dh0qmflg7/image/upload/v1788873870/TEXT_eepa3x.png",
-    afterImage: "https://res.cloudinary.com/dh0qmflg7/image/upload/v1788532911/ChatGPT_Image_Sep_4_2026_07_40_46_AM_etucka.png",
-    badge: "POPULAR",
-    description: "Warm kodak film simulation with authentic analog grain and halation.",
-  },
-  {
-    id: "cc-esports-godmode",
-    title: "God Mode 4K BGMI / Free Fire CC",
-    platform: "mobile",
-    software: ["CapCut Pro", "Alight Motion", "VN"],
-    style: "Cyberpunk Neon",
-    price: 99,
-    rating: 5.0,
-    downloads: "5.1k",
-    beforeImage: "/images/yt-showcase/yt-gaming-sensi-reveal.png",
-    afterImage: "/images/yt-showcase/yt-krish-gaming-live.jpg",
-    badge: "HOT",
-    description: "Extreme clarity, sharpening curves and vibrant character glow for highlights.",
-  },
-  {
-    id: "cc-hollywood-teal-orange",
-    title: "Hollywood Blockbuster Orange & Teal",
-    platform: "pc",
-    software: ["After Effects CC", "Premiere Pro", "DaVinci"],
-    style: "Cinematic Orange & Teal",
-    price: 119,
-    rating: 5.0,
-    downloads: "4.5k",
-    beforeImage: "https://res.cloudinary.com/dh0qmflg7/image/upload/v1788532574/ChatGPT_Image_Sep_4_2026_07_35_36_AM_chc6st.png",
-    afterImage: "https://res.cloudinary.com/dh0qmflg7/image/upload/v1788533853/ChatGPT_Image_Sep_4_2026_07_57_06_AM_sa2q7c.png",
-    badge: "PRO PICK",
-    description: "Industry-standard teal sky/shadows with glowing warm golden skin tones.",
-  },
-];
+const CC_PRESETS: CCPreset[] = [];
 
 const STYLES = [
   "All Styles",
@@ -143,6 +58,8 @@ function CCExploreContent() {
   );
   const [selectedStyle, setSelectedStyle] = useState("All Styles");
   const [previewPreset, setPreviewPreset] = useState<CCPreset | null>(null);
+  const [presets, setPresets] = useState<CCPreset[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const { addItem, isInCart } = useCartStore();
 
@@ -153,7 +70,142 @@ function CCExploreContent() {
     }
   }, [searchParams]);
 
-  const filteredPresets = CC_PRESETS.filter((item) => {
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadCcPresets() {
+      setLoading(true);
+      const isLocal =
+        typeof window !== "undefined" &&
+        (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
+      const envApi = process.env.NEXT_PUBLIC_API_URL
+        ? process.env.NEXT_PUBLIC_API_URL.replace(/\/$/, "")
+        : "";
+      const endpoints = isLocal
+        ? [
+            `http://localhost:5000/api/products?t=${Date.now()}`,
+            `${envApi}/api/products?t=${Date.now()}`,
+            `https://udyofflive1111111111.onrender.com/api/products?t=${Date.now()}`,
+          ]
+        : [
+            `${envApi}/api/products?t=${Date.now()}`,
+            `https://udyofflive1111111111.onrender.com/api/products?t=${Date.now()}`,
+            `http://localhost:5000/api/products?t=${Date.now()}`,
+          ];
+
+      let rawItems: any[] = [];
+      for (const endpoint of endpoints) {
+        try {
+          const res = await fetch(endpoint, { cache: "no-store" });
+          if (res.ok) {
+            const data = await res.json();
+            if (Array.isArray(data)) {
+              rawItems = data;
+              break;
+            }
+          }
+        } catch (e) {}
+      }
+
+      // Check admin local storage
+      let localItems: any[] = [];
+      try {
+        const stored = localStorage.getItem("admin_local_products");
+        if (stored) localItems = JSON.parse(stored);
+      } catch (e) {}
+
+      const all = [...rawItems, ...localItems];
+      const map = new Map();
+      all.forEach((p) => {
+        if (p && p.id) map.set(String(p.id), p);
+      });
+
+      let deletedIds: string[] = [];
+      try {
+        const d = localStorage.getItem("admin_deleted_products");
+        if (d) deletedIds = JSON.parse(d);
+      } catch (e) {}
+
+      const filtered = Array.from(map.values())
+        .filter((p: any) => !deletedIds.includes(String(p.id)))
+        .filter((p: any) => {
+          const sSlug = (p.sectionSlug || "").toLowerCase();
+          const cat = (p.category || "").toLowerCase();
+          const pTitle = (p.title || "").toLowerCase();
+          const hasCcTag =
+            Array.isArray(p.tags) &&
+            p.tags.some(
+              (t: string) =>
+                typeof t === "string" &&
+                (t.toLowerCase() === "cc" ||
+                  t.toLowerCase().includes("cc preset") ||
+                  t.toLowerCase().includes("color correction") ||
+                  t.toLowerCase().includes("lut"))
+            );
+          return (
+            sSlug === "cc" ||
+            sSlug === "cc-presets" ||
+            cat === "cc" ||
+            cat === "cc presets" ||
+            cat.includes("color correction") ||
+            pTitle.includes(" cc") ||
+            pTitle.startsWith("cc ") ||
+            hasCcTag
+          );
+        });
+
+      if (isMounted) {
+        const mappedPresets: CCPreset[] = filtered.map((p: any) => {
+          const pTags = Array.isArray(p.tags) ? p.tags.map((t: any) => String(t).toLowerCase()) : [];
+          let platform: "pc" | "mobile" | "both" = "both";
+          if (pTags.includes("mobile") || pTags.includes("mobile cc") || p.description?.toLowerCase().includes("mobile")) {
+            platform = "mobile";
+          } else if (pTags.includes("pc") || pTags.includes("pc cc") || p.description?.toLowerCase().includes("pc")) {
+            platform = "pc";
+          }
+
+          let style = "Cyberpunk Neon";
+          for (const s of STYLES) {
+            if (s !== "All Styles" && (p.title?.toLowerCase().includes(s.toLowerCase()) || p.description?.toLowerCase().includes(s.toLowerCase()))) {
+              style = s;
+              break;
+            }
+          }
+
+          const beforeImg = p.coverImage || "/images/before-after-red.png";
+          const afterImg =
+            (Array.isArray(p.previewMedia) && p.previewMedia[0]) ||
+            p.coverImage ||
+            "/images/before-after-banner.png";
+
+          return {
+            id: String(p.id),
+            title: p.title || "CC Preset",
+            platform,
+            software: ["After Effects", "Premiere Pro", "CapCut", "Alight Motion"],
+            style,
+            price: Number(p.price) || 0,
+            rating: typeof p.rating === "number" ? p.rating : 5.0,
+            downloads: "1.2k",
+            beforeImage: beforeImg,
+            afterImage: afterImg,
+            badge: Array.isArray(p.tags) && p.tags[0] ? p.tags[0] : "NEW",
+            description: p.description || "Professional color grading and lighting presets.",
+          };
+        });
+
+        setPresets(mappedPresets);
+        setLoading(false);
+      }
+    }
+
+    loadCcPresets();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const filteredPresets = presets.filter((item) => {
     const matchesPlatform =
       platformFilter === "all" ||
       item.platform === "both" ||
@@ -264,109 +316,140 @@ function CCExploreContent() {
           ))}
         </div>
 
-        {/* Presets Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-          {filteredPresets.map((preset) => {
-            const added = isInCart(preset.id);
-            return (
-              <div
-                key={preset.id}
-                onClick={() => setPreviewPreset(preset)}
-                className="group relative bg-slate-900/90 border border-slate-800 rounded-3xl overflow-hidden hover:border-rose-500/50 transition-all duration-300 hover:shadow-[0_16px_40px_rgba(225,29,72,0.25)] flex flex-col cursor-pointer"
+        {/* Presets Grid or Empty State */}
+        {loading ? (
+          <div className="py-24 text-center">
+            <div className="inline-block w-8 h-8 border-4 border-rose-500 border-t-transparent rounded-full animate-spin mb-4" />
+            <p className="text-slate-400 text-sm">Fetching CC Presets from database...</p>
+          </div>
+        ) : filteredPresets.length === 0 ? (
+          <div className="py-20 text-center flex flex-col items-center justify-center bg-slate-900/40 border border-slate-800/80 rounded-3xl p-10 max-w-xl mx-auto shadow-2xl">
+            <div className="w-16 h-16 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-3xl mb-4">
+              🎞️
+            </div>
+            <h3 className="text-2xl font-black text-white mb-2">0 CC Presets Available</h3>
+            <p className="text-slate-400 text-sm max-w-md mb-6 leading-relaxed">
+              No color correction presets have been published yet. You can add new CC packs directly from the Admin Panel to showcase them here!
+            </p>
+            <div className="flex items-center gap-3">
+              <Link
+                href="/products"
+                className="px-6 py-2.5 rounded-full bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs transition-colors"
               >
-                {/* Visual Thumbnail */}
-                <div className="relative aspect-[16/10] w-full overflow-hidden bg-black">
-                  <img
-                    src={preset.beforeImage}
-                    alt={preset.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
+                Browse All Products
+              </Link>
+              <Link
+                href="/"
+                className="px-6 py-2.5 rounded-full bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs transition-colors"
+              >
+                Back to Home
+              </Link>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            {filteredPresets.map((preset) => {
+              const added = isInCart(preset.id);
+              return (
+                <div
+                  key={preset.id}
+                  onClick={() => setPreviewPreset(preset)}
+                  className="group relative bg-slate-900/90 border border-slate-800 rounded-3xl overflow-hidden hover:border-rose-500/50 transition-all duration-300 hover:shadow-[0_16px_40px_rgba(225,29,72,0.25)] flex flex-col cursor-pointer"
+                >
+                  {/* Visual Thumbnail */}
+                  <div className="relative aspect-[16/10] w-full overflow-hidden bg-black">
+                    <img
+                      src={preset.beforeImage}
+                      alt={preset.title}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
 
-                  {/* Platform & Badge Tag */}
-                  <div className="absolute top-3 left-3 flex items-center gap-2 z-10">
-                    <span className="px-2.5 py-1 rounded-full bg-black/80 backdrop-blur-md text-[10px] font-black uppercase tracking-wider text-white border border-white/20">
-                      {preset.platform === "pc"
-                        ? "💻 PC ONLY"
-                        : preset.platform === "mobile"
-                        ? "📱 MOBILE ONLY"
-                        : "⚡ PC + MOBILE"}
-                    </span>
-                    {preset.badge && (
-                      <span className="px-2.5 py-1 rounded-full bg-rose-600 text-white text-[10px] font-black tracking-wider uppercase shadow-md">
-                        {preset.badge}
+                    {/* Platform & Badge Tag */}
+                    <div className="absolute top-3 left-3 flex items-center gap-2 z-10">
+                      <span className="px-2.5 py-1 rounded-full bg-black/80 backdrop-blur-md text-[10px] font-black uppercase tracking-wider text-white border border-white/20">
+                        {preset.platform === "pc"
+                          ? "💻 PC ONLY"
+                          : preset.platform === "mobile"
+                          ? "📱 MOBILE ONLY"
+                          : "⚡ PC + MOBILE"}
                       </span>
-                    )}
-                  </div>
-
-                  {/* Quick Preview Hover Trigger */}
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
-                    <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white text-slate-950 font-bold text-xs shadow-lg">
-                      <Eye className="w-3.5 h-3.5" />
-                      <span>Compare Before / After</span>
-                    </span>
-                  </div>
-                </div>
-
-                {/* Content Body */}
-                <div className="p-5 flex-1 flex flex-col justify-between">
-                  <div>
-                    <h3 className="font-extrabold text-base sm:text-lg text-white group-hover:text-rose-400 transition-colors line-clamp-1">
-                      {preset.title}
-                    </h3>
-                    <p className="mt-1.5 text-xs text-slate-400 line-clamp-2 leading-relaxed">
-                      {preset.description}
-                    </p>
-
-                    {/* Software tags */}
-                    <div className="mt-3 flex flex-wrap gap-1.5">
-                      {preset.software.map((sw) => (
-                        <span
-                          key={sw}
-                          className="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 text-[10px] font-medium"
-                        >
-                          {sw}
+                      {preset.badge && (
+                        <span className="px-2.5 py-1 rounded-full bg-rose-600 text-white text-[10px] font-black tracking-wider uppercase shadow-md">
+                          {preset.badge}
                         </span>
-                      ))}
+                      )}
+                    </div>
+
+                    {/* Quick Preview Hover Trigger */}
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+                      <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white text-slate-950 font-bold text-xs shadow-lg">
+                        <Eye className="w-3.5 h-3.5" />
+                        <span>Compare Before / After</span>
+                      </span>
                     </div>
                   </div>
 
-                  {/* Price & Action Button */}
-                  <div className="mt-5 pt-4 border-t border-slate-800/80 flex items-center justify-between">
+                  {/* Content Body */}
+                  <div className="p-5 flex-1 flex flex-col justify-between">
                     <div>
-                      <span className="text-xl font-black text-white">
-                        ₹{preset.price}
-                      </span>
-                      <span className="text-[10px] text-slate-400 ml-1.5">
-                        Lifetime license
-                      </span>
+                      <h3 className="font-extrabold text-base sm:text-lg text-white group-hover:text-rose-400 transition-colors line-clamp-1">
+                        {preset.title}
+                      </h3>
+                      <p className="mt-1.5 text-xs text-slate-400 line-clamp-2 leading-relaxed">
+                        {preset.description}
+                      </p>
+
+                      {/* Software tags */}
+                      <div className="mt-3 flex flex-wrap gap-1.5">
+                        {preset.software.map((sw) => (
+                          <span
+                            key={sw}
+                            className="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 text-[10px] font-medium"
+                          >
+                            {sw}
+                          </span>
+                        ))}
+                      </div>
                     </div>
 
-                    <button
-                      onClick={(e) => handleAddToCart(preset, e)}
-                      className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-black transition-all cursor-pointer ${
-                        added
-                          ? "bg-emerald-500 text-slate-950"
-                          : "bg-white text-slate-950 hover:bg-rose-500 hover:text-white"
-                      }`}
-                    >
-                      {added ? (
-                        <>
-                          <Check className="w-3.5 h-3.5" />
-                          <span>Added</span>
-                        </>
-                      ) : (
-                        <>
-                          <ShoppingCart className="w-3.5 h-3.5" />
-                          <span>+ Add</span>
-                        </>
-                      )}
-                    </button>
+                    {/* Price & Action Button */}
+                    <div className="mt-5 pt-4 border-t border-slate-800/80 flex items-center justify-between">
+                      <div>
+                        <span className="text-xl font-black text-white">
+                          ₹{preset.price}
+                        </span>
+                        <span className="text-[10px] text-slate-400 ml-1.5">
+                          Lifetime license
+                        </span>
+                      </div>
+
+                      <button
+                        onClick={(e) => handleAddToCart(preset, e)}
+                        className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-black transition-all cursor-pointer ${
+                          added
+                            ? "bg-emerald-500 text-slate-950"
+                            : "bg-white text-slate-950 hover:bg-rose-500 hover:text-white"
+                        }`}
+                      >
+                        {added ? (
+                          <>
+                            <Check className="w-3.5 h-3.5" />
+                            <span>Added</span>
+                          </>
+                        ) : (
+                          <>
+                            <ShoppingCart className="w-3.5 h-3.5" />
+                            <span>+ Add</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        )}
 
         {/* Software Compatibility & Installation Guide */}
         <div className="mt-20 p-6 sm:p-10 rounded-3xl bg-slate-900 border border-slate-800">

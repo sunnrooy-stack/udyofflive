@@ -65,6 +65,16 @@ export const SECTIONS_CONFIG: Record<string, SectionConfig> = {
     defaultAspectRatio: "2:1",
     defaultOrientation: "landscape",
   },
+  "cc": {
+    slug: "cc",
+    title: "CC Presets",
+    icon: "🎞️",
+    badge: "COLOR GRADING",
+    description: "Professional Color Correction presets, LUTs, and lighting enhancements for PC & Mobile.",
+    defaultCover: "/images/before-after-red.png",
+    defaultAspectRatio: "16:9",
+    defaultOrientation: "landscape",
+  },
 };
 
 export function matchProductForSection(p: any, slug: string, title?: string) {
@@ -137,6 +147,25 @@ export function matchProductForSection(p: any, slug: string, title?: string) {
       hasTextTag
     );
   }
+  if (slug === "cc" || slug === "cc-presets") {
+    const hasCcTag =
+      Array.isArray(p.tags) &&
+      p.tags.some(
+        (t: string) =>
+          typeof t === "string" &&
+          (t.toLowerCase() === "cc" || t.toLowerCase().includes("cc preset") || t.toLowerCase().includes("color correction") || t.toLowerCase().includes("lut"))
+      );
+    return (
+      sSlug === "cc" ||
+      sSlug === "cc-presets" ||
+      cat === "cc" ||
+      cat === "cc presets" ||
+      cat.includes("color correction") ||
+      pTitle.includes(" cc") ||
+      pTitle.startsWith("cc ") ||
+      hasCcTag
+    );
+  }
   if (title) {
     const target = title.toLowerCase();
     return cat.includes(target) || pTitle.includes(target);
@@ -170,7 +199,10 @@ export default function SectionView({ slug }: { slug: string }) {
   const isTextEffects = slug === "text-effects";
   const isGlowAnimeLogo = slug === "glow-anime-logo";
   const is3dCharacter = slug === "3d-character";
-  const defaultSectionRatio = is3dCharacter
+  const isCc = slug === "cc" || slug === "cc-presets";
+  const defaultSectionRatio = isCc
+    ? "16:9"
+    : is3dCharacter
     ? "600:692"
     : isGlowAnimeLogo
     ? "600:706"
@@ -649,17 +681,32 @@ export default function SectionView({ slug }: { slug: string }) {
                   (item.category && item.category.toLowerCase().includes("text"))
                 );
 
-              const itemIsPortrait =
+              const itemIsCc =
                 !itemIs3dChar &&
                 !itemIsGlowAnime &&
                 !itemIs4k &&
                 !itemIsTextEffects && (
+                  isCc ||
+                  item.sectionSlug === "cc" ||
+                  item.sectionSlug === "cc-presets" ||
+                  item.aspectRatio === "16:9" ||
+                  (item.category && item.category.toLowerCase().includes("cc"))
+                );
+
+              const itemIsPortrait =
+                !itemIs3dChar &&
+                !itemIsGlowAnime &&
+                !itemIs4k &&
+                !itemIsTextEffects &&
+                !itemIsCc && (
                   isThumbnailPsd ||
                   item.aspectRatio === "1.09:1" ||
                   item.orientation === "portrait"
                 );
 
-              const cardRatioStyle = itemIs3dChar
+              const cardRatioStyle = itemIsCc
+                ? "16 / 9"
+                : itemIs3dChar
                 ? "600 / 692"
                 : itemIsGlowAnime
                 ? "600 / 706"
@@ -719,6 +766,11 @@ export default function SectionView({ slug }: { slug: string }) {
                         {itemIsTextEffects && (
                           <span className="px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-md text-[8px] font-bold text-sky-300 border border-sky-300/30">
                             🔤 2:1 (600x300)
+                          </span>
+                        )}
+                        {itemIsCc && (
+                          <span className="px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-md text-[8px] font-bold text-rose-300 border border-rose-300/30">
+                            🎞️ 16:9 CC
                           </span>
                         )}
                         {itemIsPortrait && (
@@ -846,7 +898,9 @@ export default function SectionView({ slug }: { slug: string }) {
                     <span>🖼️ Cover PNG Upload</span>
                   </label>
                   <span className="text-[10px] font-mono font-bold bg-sky-500/15 text-sky-400 border border-sky-500/30 px-2 py-0.5 rounded-full">
-                    {selectedAspectRatio === "600:692"
+                    {selectedAspectRatio === "16:9"
+                      ? "CC Preset (16:9 Widescreen)"
+                      : selectedAspectRatio === "600:692"
                       ? "3D Character (600x692)"
                       : selectedAspectRatio === "600:706"
                       ? "Glow Anime Logo (600x706)"
@@ -861,6 +915,9 @@ export default function SectionView({ slug }: { slug: string }) {
                 {/* Aspect Ratio Selector Pills */}
                 <div className="flex items-center gap-2 pt-1 flex-wrap">
                   {[
+                    ...(isCc
+                      ? [{ id: "16:9", label: "🎞️ 16:9 CC Preset (Widescreen)" }]
+                      : []),
                     ...(is3dCharacter
                       ? [{ id: "600:692", label: "🎮 600x692 3D Character" }]
                       : []),
@@ -873,6 +930,7 @@ export default function SectionView({ slug }: { slug: string }) {
                     ...(isTextEffects
                       ? [{ id: "2:1", label: "🔤 2:1 Text Effects (600x300)" }]
                       : []),
+                    { id: "16:9", label: "🎞️ 16:9 Landscape" },
                     ...(!is3dCharacter
                       ? [{ id: "600:692", label: "🎮 600x692 3D Character" }]
                       : []),
@@ -888,7 +946,7 @@ export default function SectionView({ slug }: { slug: string }) {
                       : []),
                     { id: "1:1", label: "🔲 1:1 Square" },
                     { id: "16:10", label: "🖥️ 16:10 Landscape" },
-                  ].map((mode) => (
+                  ].filter((item, index, self) => index === self.findIndex((t) => t.id === item.id)).map((mode) => (
                     <button
                       key={mode.id}
                       type="button"

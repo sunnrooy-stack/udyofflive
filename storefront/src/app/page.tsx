@@ -130,15 +130,15 @@ export default function Home() {
       const isLocal = typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
       const endpoints = isLocal
         ? [
-            `http://localhost:5000/api/products?t=${Date.now()}`,
-            `${apiUrl}/api/products?t=${Date.now()}`,
-            `https://udyofflive1111111111.onrender.com/api/products?t=${Date.now()}`,
-          ]
+          `http://localhost:5000/api/products?t=${Date.now()}`,
+          `${apiUrl}/api/products?t=${Date.now()}`,
+          `https://udyofflive1111111111.onrender.com/api/products?t=${Date.now()}`,
+        ]
         : [
-            `${apiUrl}/api/products?t=${Date.now()}`,
-            `https://udyofflive1111111111.onrender.com/api/products?t=${Date.now()}`,
-            `http://localhost:5000/api/products?t=${Date.now()}`,
-          ];
+          `${apiUrl}/api/products?t=${Date.now()}`,
+          `https://udyofflive1111111111.onrender.com/api/products?t=${Date.now()}`,
+          `http://localhost:5000/api/products?t=${Date.now()}`,
+        ];
 
       for (const endpoint of endpoints) {
         try {
@@ -150,7 +150,7 @@ export default function Home() {
               break;
             }
           }
-        } catch (e) {}
+        } catch (e) { }
       }
 
       // Check admin local storage fallback
@@ -158,7 +158,7 @@ export default function Home() {
       try {
         const stored = localStorage.getItem("admin_local_products");
         if (stored) localProducts = JSON.parse(stored);
-      } catch (e) {}
+      } catch (e) { }
 
       if (isMounted) {
         let rawList: any[] = Array.isArray(data) && data.length > 0 ? [...data] : [...REAL_STORE_PRODUCTS];
@@ -172,7 +172,7 @@ export default function Home() {
             }
           });
         }
-        
+
         // Map and format products
         const formatted: Product[] = rawList.map((p: any) => ({
           id: String(p.id),
