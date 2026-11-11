@@ -99,11 +99,21 @@ export default function HeroSection({ carouselItems = [] }: HeroSectionProps) {
           Download hyper-realistic YouTube thumbnail PSDs, cinematic After Effects CC enhancers, manga packs, 4K overlays, and presets crafted for elite creators.
         </motion.p>
 
-        {/* CTA Buttons */}
+        {/* Left-to-Right Moving Reel with Video On Hover (Original Balanced Size) */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+          className="w-full mt-8 overflow-hidden"
+        >
+          <HeroLeftToRightReel />
+        </motion.div>
+
+        {/* CTA Buttons (Placed Below the Moving Reel) */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
           className="mt-8 flex flex-wrap items-center justify-center gap-4"
         >
           <a
@@ -121,16 +131,6 @@ export default function HeroSection({ carouselItems = [] }: HeroSectionProps) {
             <Layers className="w-4 h-4 text-sky-400" />
             Browse Categories
           </a>
-        </motion.div>
-
-        {/* Left-to-Right Moving Reel with Video On Hover (Original Balanced Size) */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="w-full mt-10 overflow-hidden"
-        >
-          <HeroLeftToRightReel />
         </motion.div>
       </div>
     </section>
