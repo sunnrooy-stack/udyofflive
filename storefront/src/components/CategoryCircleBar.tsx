@@ -16,44 +16,44 @@ const CATEGORIES: CategoryCircleItem[] = [
   {
     id: "psd",
     name: "PSD",
-    image: "/images/category-circles/psd.png",
+    image: "/images/category-circles/psd.png?v=4k",
     href: "/products?category=thumbnail-pack",
   },
   {
     id: "cc-enhancer",
     name: "CC Enhancer",
-    image: "/images/category-circles/cc-enhancer.png",
+    image: "/images/category-circles/cc-enhancer.png?v=4k",
     href: "/cc-explore",
     badge: "POPULAR",
   },
   {
     id: "manga",
     name: "Manga Animation",
-    image: "/images/category-circles/manga.png",
+    image: "/images/category-circles/manga.png?v=4k",
     href: "/products?category=manga",
   },
   {
     id: "character-pack",
     name: "character pack",
-    image: "/images/category-circles/character-pack.png",
+    image: "/images/category-circles/character-pack.png?v=4k",
     href: "/products?category=character-pack",
   },
   {
     id: "vfx-box",
     name: "VFX box",
-    image: "/images/category-circles/vfx-box.png",
+    image: "/images/category-circles/vfx-box.png?v=4k",
     href: "/products?category=vfx",
   },
   {
     id: "anime-pfp",
     name: "Anime PFP",
-    image: "/images/category-circles/anime-pfp.png",
+    image: "/images/category-circles/anime-pfp.png?v=4k",
     href: "/products?category=anime-pfp",
   },
   {
     id: "text",
     name: "TEXT",
-    image: "/images/category-circles/text.png",
+    image: "/images/category-circles/text.png?v=4k",
     href: "/products?category=text-effects",
   },
 ];
@@ -77,7 +77,7 @@ export default function CategoryCircleBar() {
               >
                 {/* Circle Container */}
                 <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full p-1 bg-gradient-to-tr from-slate-100 to-white shadow-sm border border-slate-200/80 transition-all duration-300 group-hover:scale-110 group-hover:shadow-[0_8px_20px_rgba(56,189,248,0.35)] group-hover:border-sky-400">
-                  <div className="w-full h-full rounded-full overflow-hidden flex items-center justify-center bg-slate-950">
+                  <div className="w-full h-full rounded-full overflow-hidden flex items-center justify-center bg-[#110824]">
                     <img
                       src={cat.image}
                       alt={cat.name}
