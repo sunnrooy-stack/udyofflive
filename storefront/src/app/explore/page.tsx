@@ -166,16 +166,8 @@ export default function ExploreStoreHomepage() {
         />
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-          {/* LEFT SIDE: Editorial Copy + CTAs + Recent Orders Activity */}
+          {/* LEFT SIDE: Editorial Copy + CTAs */}
           <div className="lg:col-span-5 space-y-7">
-            {/* Micro Eyebrow */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#2A1914] border border-[#D9C9B5]/20">
-              <span className="w-2 h-2 rounded-full bg-[#FF642D] animate-pulse" />
-              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-[#D9C9B5]">
-                Digital Creative Showroom
-              </span>
-            </div>
-
             {/* Large Editorial Headline */}
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-[#FFFFFF] leading-[1.06]">
               Everything you create,{" "}
@@ -207,51 +199,6 @@ export default function ExploreStoreHomepage() {
                 <BookOpen className="w-4 h-4 text-[#FF642D]" />
                 <span>Get Free Guide</span>
               </button>
-            </div>
-
-            {/* Recent Orders Activity Card */}
-            <div className="pt-3">
-              <div className="bg-[#2A1914] border border-[#D9C9B5]/15 rounded-2xl p-4 max-w-md shadow-xl">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] font-black uppercase tracking-[0.18em] text-[#FF642D]">
-                    Recent Shelf Activity
-                  </span>
-                  <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#F3EADB]">
-                    <Star className="w-3 h-3 fill-[#FF642D] text-[#FF642D]" />
-                    {activeOrder.rating}
-                  </span>
-                </div>
-
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={activeOrderIdx}
-                    initial={{ opacity: 0, y: 6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -6 }}
-                    transition={{ duration: 0.25 }}
-                    className="flex items-center justify-between gap-3"
-                  >
-                    <div className="min-w-0">
-                      <p className="text-sm font-extrabold text-white truncate">
-                        {activeOrder.product}
-                      </p>
-                      <div className="flex items-center gap-3 mt-1 text-[11px] text-[#D9C9B5]">
-                        <span className="inline-flex items-center gap-1">
-                          <MapPin className="w-3 h-3 text-[#FF642D]" />
-                          {activeOrder.location}
-                        </span>
-                        <span className="inline-flex items-center gap-1">
-                          <Clock className="w-3 h-3" />
-                          {activeOrder.time}
-                        </span>
-                      </div>
-                    </div>
-                    <span className="shrink-0 px-2.5 py-1 rounded-full bg-[#211510] text-[10px] font-bold uppercase tracking-wider text-[#F3EADB] border border-[#D9C9B5]/15">
-                      Verified
-                    </span>
-                  </motion.div>
-                </AnimatePresence>
-              </div>
             </div>
           </div>
 

@@ -62,18 +62,33 @@ export default function ExploreCheckoutPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [step, setStep] = useState<1 | 2 | 3>(2);
 
+  const loadRazorpay = (): Promise<boolean> => {
+    return new Promise((resolve) => {
+      if (typeof window !== "undefined" && window.Razorpay) {
+        resolve(true);
+        return;
+      }
+      const existing = document.getElementById("razorpay-sdk-script") as HTMLScriptElement | null;
+      if (existing) {
+        existing.addEventListener("load", () => resolve(true));
+        existing.addEventListener("error", () => resolve(false));
+        return;
+      }
+      const script = document.createElement("script");
+      script.id = "razorpay-sdk-script";
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.async = true;
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedEmail = localStorage.getItem("user_email");
       if (storedEmail) setEmail(storedEmail);
-
-      if (!document.getElementById("razorpay-sdk-script")) {
-        const script = document.createElement("script");
-        script.id = "razorpay-sdk-script";
-        script.src = "https://checkout.razorpay.com/v1/checkout.js";
-        script.async = true;
-        document.body.appendChild(script);
-      }
+      loadRazorpay();
     }
   }, []);
 
@@ -144,6 +159,54 @@ export default function ExploreCheckoutPage() {
 
     try {
       const apiBase = getApiBase();
+      const baseUrls = Array.from(
+        new Set([
+          apiBase,
+          "https://udyofflive1111111111.onrender.com",
+          "https://digital-product-1-l3qr.onrender.com",
+          "http://localhost:5000",
+        ].filter(Boolean))
+      );
+
+      let workingBaseUrl = apiBase;
+      const verifyAndRedirect = async (
+        rzpOrderId: string,
+        rzpPaymentId: string,
+        rzpSignature: string
+      ) => {
+        const verifyPayload = {
+          razorpay_order_id: rzpOrderId,
+          razorpay_payment_id: rzpPaymentId,
+          razorpay_signature: rzpSignature,
+          items,
+          email: email.trim(),
+          customer: customerName.trim() || email.split("@")[0] || "Guest",
+        };
+
+        let verifyData: any = {};
+        for (const base of [workingBaseUrl, ...baseUrls]) {
+          try {
+            const verifyRes = await fetch(`${base}/api/verify-payment`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(verifyPayload),
+            });
+            if (verifyRes.ok) {
+              verifyData = await verifyRes.json().catch(() => ({}));
+              break;
+            }
+          } catch {}
+        }
+
+        clearCart();
+        const tokenParam = verifyData.downloadToken
+          ? `&token=${encodeURIComponent(verifyData.downloadToken)}`
+          : "";
+        window.location.href = `/success?payment_id=${encodeURIComponent(
+          rzpPaymentId
+        )}${tokenParam}`;
+      };
+
       const payload = {
         items,
         email: email.trim(),
@@ -155,76 +218,57 @@ export default function ExploreCheckoutPage() {
         amount: finalTotal,
       };
 
-      let res: Response;
-      try {
-        res = await fetch(`${apiBase}/api/orders`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-      } catch {
-        res = await fetch("http://localhost:5000/api/orders", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
+      let orderData: any = null;
+      for (const base of baseUrls) {
+        try {
+          const res = await fetch(`${base}/api/create-order`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+          if (res.ok) {
+            const data = await res.json().catch(() => null);
+            if (data && (data.orderId || data.isFree)) {
+              orderData = data;
+              workingBaseUrl = base;
+              break;
+            }
+          }
+        } catch {}
       }
 
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.message || "Failed to initialize checkout order.");
+      if (!orderData || (!orderData.orderId && !orderData.isFree)) {
+        throw new Error("Could not reach Razorpay payment server. Please try again.");
       }
 
-      const orderData = await res.json();
-      const orderId = orderData.orderId || orderData.id;
+      if (orderData.isFree || finalTotal <= 0) {
+        await verifyAndRedirect("", `FREE_${Date.now()}`, "");
+        return;
+      }
+
+      const orderId = orderData.orderId;
       const razorpayKey =
-        orderData.key || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "";
+        orderData.key ||
+        process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID ||
+        "rzp_live_T3nxTH4mjFTNK8";
 
-      const verifyAndRedirect = async (
-        rzpOrderId: string,
-        rzpPaymentId: string,
-        rzpSignature: string
-      ) => {
-        const verifyRes = await fetch(`${apiBase}/api/orders/verify`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            razorpay_order_id: rzpOrderId,
-            razorpay_payment_id: rzpPaymentId,
-            razorpay_signature: rzpSignature,
-            orderId,
-            items,
-            email: email.trim(),
-            customerName: customerName.trim(),
-            amount: orderData.amount ? orderData.amount / 100 : finalTotal,
-          }),
-        });
-        const verifyData = await verifyRes.json().catch(() => ({}));
-        clearCart();
-        const tokenParam = verifyData.downloadToken
-          ? `&token=${encodeURIComponent(verifyData.downloadToken)}`
-          : "";
-        window.location.href = `/success?payment_id=${encodeURIComponent(
-          rzpPaymentId
-        )}${tokenParam}`;
-      };
-
-      // Demo / Test mode fallback when Razorpay key is absent or dummy
-      if (orderData.isDemo || !razorpayKey || razorpayKey.includes("dummy")) {
+      // Demo / Test mode fallback only when explicit demo requested and no valid Razorpay key
+      if (orderData.isDemo && (!razorpayKey || razorpayKey.includes("dummy"))) {
         const testPayId = `pay_shelf_${Date.now()}`;
         await verifyAndRedirect(orderId, testPayId, "verified_demo_signature");
         return;
       }
 
-      if (!window.Razorpay) {
-        throw new Error("Razorpay payment gateway is still loading. Please try again.");
+      const isLoaded = await loadRazorpay();
+      if (!isLoaded || !window.Razorpay) {
+        throw new Error("Razorpay payment gateway failed to load. Please check your connection and try again.");
       }
 
       const options = {
         key: razorpayKey,
-        amount: orderData.amount || finalTotal * 100,
+        amount: Math.round((orderData.totalAmount ?? finalTotal) * 100),
         currency: orderData.currency || "INR",
-        name: "Atelier Shelf Digital Store",
+        name: "GEONIX VFX Store",
         description: `${items.length} Digital Product(s)`,
         order_id: orderId,
         prefill: {
