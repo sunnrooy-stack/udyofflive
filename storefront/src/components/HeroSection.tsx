@@ -84,7 +84,7 @@ export default function HeroSection({ carouselItems = [] }: HeroSectionProps) {
           className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight text-white max-w-4xl leading-[1.1] drop-shadow-[0_4px_24px_rgba(0,0,0,0.9)]"
         >
           Everything You Need{" "}
-          <span className="block mt-1 text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-indigo-400 to-purple-500 drop-shadow-[0_4px_24px_rgba(56,189,248,0.5)]">
+          <span className="block mt-1 animated-gradient-text">
             to Create Without Limits.
           </span>
         </motion.h1>
