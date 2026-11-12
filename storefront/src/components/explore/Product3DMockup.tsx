@@ -22,8 +22,10 @@ export default function Product3DMockup({
   const [hovered, setHovered] = useState(false);
 
   const isHero = size === "hero";
-  const defaultY = isHero ? -20 : -16;
-  const defaultX = isHero ? 5 : 4;
+  const defaultY = isHero ? -22 : -18;
+  const defaultX = isHero ? 6 : 5;
+  const depth = isHero ? 36 : 24;
+  const halfDepth = depth / 2;
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return;
@@ -31,8 +33,8 @@ export default function Product3DMockup({
     const x = (e.clientX - rect.left) / rect.width - 0.5;
     const y = (e.clientY - rect.top) / rect.height - 0.5;
     setTilt({
-      rotateX: -y * 18 + 3,
-      rotateY: x * 24 - 12,
+      rotateX: -y * 24 + 5,
+      rotateY: x * 32 - 14,
     });
   };
 
@@ -85,7 +87,7 @@ export default function Product3DMockup({
         <div
           className="absolute inset-0 rounded-r-lg rounded-l-[3px] overflow-hidden bg-[#2A1914] border border-white/15 shadow-2xl flex flex-col justify-between"
           style={{
-            transform: isHero ? "translateZ(20px)" : "translateZ(14px)",
+            transform: `translateZ(${halfDepth}px)`,
             boxShadow:
               "inset 2px 0 6px rgba(255,255,255,0.22), 0 22px 45px rgba(0,0,0,0.65)",
           }}
@@ -168,17 +170,23 @@ export default function Product3DMockup({
           />
         </div>
 
+        {/* BACK COVER FACE */}
+        <div
+          className="absolute inset-0 rounded-l-lg rounded-r-[3px] bg-[#1A0F0B] border border-white/10"
+          style={{
+            transform: `rotateY(180deg) translateZ(${halfDepth}px)`,
+          }}
+        />
+
         {/* LEFT 3D SPINE */}
         <div
           className="absolute top-0 bottom-0 left-0 rounded-l-sm flex items-center justify-center overflow-hidden border-y border-l border-white/10"
           style={{
-            width: isHero ? "40px" : "28px",
+            width: `${depth}px`,
             backgroundColor: spineColor,
             backgroundImage:
-              "linear-gradient(90deg, rgba(0,0,0,0.4) 0%, rgba(255,255,255,0.12) 45%, rgba(0,0,0,0.55) 100%)",
-            transform: isHero
-              ? "rotateY(-90deg) translateZ(20px)"
-              : "rotateY(-90deg) translateZ(14px)",
+              "linear-gradient(90deg, rgba(0,0,0,0.4) 0%, rgba(255,255,255,0.16) 45%, rgba(0,0,0,0.55) 100%)",
+            transform: `rotateY(-90deg) translateZ(${halfDepth}px)`,
           }}
         >
           <span
@@ -191,17 +199,35 @@ export default function Product3DMockup({
           </span>
         </div>
 
-        {/* RIGHT WARM CREAM PAGE EDGES */}
+        {/* RIGHT WARM CREAM PAGE EDGES (Flush with right edge) */}
         <div
-          className="absolute top-[3px] bottom-[3px] right-0"
+          className="absolute top-[2px] bottom-[2px] right-0"
           style={{
-            width: isHero ? "36px" : "24px",
+            width: `${depth}px`,
             background:
               "repeating-linear-gradient(90deg, #F3EADB 0px, #F3EADB 2px, #D9C9B5 2px, #D9C9B5 3px)",
-            transform: isHero
-              ? "rotateY(90deg) translateZ(242px)"
-              : "rotateY(90deg) translateZ(126px)",
+            transform: `rotateY(90deg) translateZ(${halfDepth}px)`,
             boxShadow: "inset 0 0 10px rgba(33,21,16,0.35)",
+          }}
+        />
+
+        {/* TOP EDGE */}
+        <div
+          className="absolute left-[2px] right-[2px] top-0"
+          style={{
+            height: `${depth}px`,
+            backgroundColor: "#241611",
+            transform: `rotateX(90deg) translateZ(${halfDepth}px)`,
+          }}
+        />
+
+        {/* BOTTOM EDGE */}
+        <div
+          className="absolute left-[2px] right-[2px] bottom-0"
+          style={{
+            height: `${depth}px`,
+            backgroundColor: "#140B08",
+            transform: `rotateX(-90deg) translateZ(${halfDepth}px)`,
           }}
         />
       </motion.div>
