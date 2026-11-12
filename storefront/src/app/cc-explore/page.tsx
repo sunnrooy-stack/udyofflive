@@ -23,6 +23,22 @@ import {
 } from "lucide-react";
 import { useCartStore } from "@/store/cart";
 
+function isYouTubeUrl(url?: string): boolean {
+  if (!url) return false;
+  return url.includes("youtube.com") || url.includes("youtu.be");
+}
+
+function getYouTubeEmbedUrl(url: string): string {
+  if (!url) return "";
+  const match = url.match(
+    /(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/
+  );
+  if (match && match[1]) {
+    return `https://www.youtube-nocookie.com/embed/${match[1]}?autoplay=1&mute=1&loop=1&playlist=${match[1]}&controls=0&showinfo=0&rel=0`;
+  }
+  return url;
+}
+
 interface CCPreset {
   id: string;
   title: string;
@@ -34,6 +50,7 @@ interface CCPreset {
   downloads: string;
   beforeImage: string;
   afterImage: string;
+  videoUrl?: string;
   badge?: string;
   description: string;
 }
@@ -189,6 +206,7 @@ function CCExploreContent() {
             downloads: "1.2k",
             beforeImage: beforeImg,
             afterImage: afterImg,
+            videoUrl: p.videoUrl || p.demoUrl || "",
             badge: Array.isArray(p.tags) && p.tags[0] ? p.tags[0] : "NEW",
             description: p.description || "Professional color grading and lighting presets.",
           };
@@ -350,42 +368,72 @@ function CCExploreContent() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {filteredPresets.map((preset) => {
               const added = isInCart(preset.id);
+              const videoSource = preset.videoUrl || "/hero-wallpaper.mp4";
+              const isYt = isYouTubeUrl(videoSource);
+              const ytEmbed = isYt ? getYouTubeEmbedUrl(videoSource) : "";
               return (
-                <div
+                <Link
                   key={preset.id}
-                  onClick={() => setPreviewPreset(preset)}
+                  href={`/cc-product?id=${preset.id}`}
                   className="group relative bg-slate-900/90 border border-slate-800 rounded-3xl overflow-hidden hover:border-rose-500/50 transition-all duration-300 hover:shadow-[0_16px_40px_rgba(225,29,72,0.25)] flex flex-col cursor-pointer"
                 >
-                  {/* Visual Thumbnail */}
+                  {/* Auto-Playing Video Thumbnail */}
                   <div className="relative aspect-[16/10] w-full overflow-hidden bg-black">
-                    <img
-                      src={preset.beforeImage}
-                      alt={preset.title}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
+                    {isYt ? (
+                      <iframe
+                        src={ytEmbed}
+                        title={preset.title}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        className="w-full h-full border-0 pointer-events-none"
+                      />
+                    ) : (
+                      <video
+                        src={videoSource}
+                        poster={preset.beforeImage}
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                    )}
 
-                    {/* Platform & Badge Tag */}
-                    <div className="absolute top-3 left-3 flex items-center gap-2 z-10">
-                      <span className="px-2.5 py-1 rounded-full bg-black/80 backdrop-blur-md text-[10px] font-black uppercase tracking-wider text-white border border-white/20">
-                        {preset.platform === "pc"
-                          ? "💻 PC ONLY"
-                          : preset.platform === "mobile"
-                          ? "📱 MOBILE ONLY"
-                          : "⚡ PC + MOBILE"}
-                      </span>
-                      {preset.badge && (
-                        <span className="px-2.5 py-1 rounded-full bg-rose-600 text-white text-[10px] font-black tracking-wider uppercase shadow-md">
-                          {preset.badge}
+                    {/* Platform & Live Playing Tag */}
+                    <div className="absolute top-3 left-3 right-3 flex items-center justify-between gap-2 z-10 pointer-events-none">
+                      <div className="flex items-center gap-2">
+                        <span className="px-2.5 py-1 rounded-full bg-black/80 backdrop-blur-md text-[10px] font-black uppercase tracking-wider text-white border border-white/20">
+                          {preset.platform === "pc"
+                            ? "💻 PC ONLY"
+                            : preset.platform === "mobile"
+                            ? "📱 MOBILE ONLY"
+                            : "⚡ PC + MOBILE"}
                         </span>
-                      )}
+                        {preset.badge && (
+                          <span className="px-2.5 py-1 rounded-full bg-rose-600 text-white text-[10px] font-black tracking-wider uppercase shadow-md">
+                            {preset.badge}
+                          </span>
+                        )}
+                      </div>
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-600/90 text-white text-[10px] font-black uppercase tracking-wider shadow-md">
+                        <Play className="w-2.5 h-2.5 fill-current" />
+                        PLAYING
+                      </span>
                     </div>
 
-                    {/* Quick Preview Hover Trigger */}
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
-                      <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white text-slate-950 font-bold text-xs shadow-lg">
+                    {/* Quick Compare Modal Trigger */}
+                    <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setPreviewPreset(preset);
+                        }}
+                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white text-slate-950 font-bold text-xs shadow-lg hover:scale-105 transition-transform cursor-pointer"
+                      >
                         <Eye className="w-3.5 h-3.5" />
-                        <span>Compare Before / After</span>
-                      </span>
+                        <span>Quick Compare</span>
+                      </button>
                     </div>
                   </div>
 
@@ -424,7 +472,11 @@ function CCExploreContent() {
                       </div>
 
                       <button
-                        onClick={(e) => handleAddToCart(preset, e)}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleAddToCart(preset, e);
+                        }}
                         className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-black transition-all cursor-pointer ${
                           added
                             ? "bg-emerald-500 text-slate-950"
@@ -445,7 +497,7 @@ function CCExploreContent() {
                       </button>
                     </div>
                   </div>
-                </div>
+                </Link>
               );
             })}
           </div>

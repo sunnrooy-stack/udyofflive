@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useCartStore, CartItem } from "@/store/cart";
 import { useParams } from "next/navigation";
 import ProductPreviewGallery from "@/components/ProductPreviewGallery";
+import CCProductDetailView from "@/components/CCProductDetailView";
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -181,6 +182,23 @@ export default function ProductDetailPage() {
   };
 
   const displayedMainImage = activeImage || product.coverImage;
+
+  const isCcProduct =
+    product?.sectionSlug === "cc" ||
+    product?.sectionSlug === "cc-presets" ||
+    (product?.category && String(product.category).toLowerCase().includes("cc")) ||
+    (Array.isArray(product?.tags) &&
+      product.tags.some(
+        (t: any) =>
+          typeof t === "string" &&
+          (t.toLowerCase() === "cc" ||
+            t.toLowerCase().includes("cc preset") ||
+            t.toLowerCase().includes("color correction"))
+      ));
+
+  if (isCcProduct && product?.id) {
+    return <CCProductDetailView product={product} />;
+  }
 
   return (
     <div className="py-20 px-6 lg:px-8 max-w-7xl mx-auto w-full min-h-screen">
