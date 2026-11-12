@@ -19,6 +19,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import Product3DMockup from "@/components/explore/Product3DMockup";
+import VideoBeforeAfterSlider, { isCcOrPresetProduct } from "@/components/VideoBeforeAfterSlider";
 import { ExploreProduct, fetchExploreProducts } from "@/lib/exploreApi";
 import { useCartStore } from "@/store/cart";
 
@@ -310,6 +311,19 @@ function ExploreProductDetailContent() {
       {/* LOWER SECTION: WARM CREAM #F3EADB */}
       <section className="bg-[#F3EADB] text-[#17110E] py-16 sm:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+          {/* 0. INTERACTIVE VIDEO BEFORE & AFTER COMPARISON (ONLY CC & PRESET PRODUCTS) */}
+          {isCcOrPresetProduct(product) && product.comparisonEnabled !== false && (
+            <div>
+              <VideoBeforeAfterSlider
+                beforeVideoUrl={product.beforeVideoUrl || ""}
+                afterVideoUrl={product.afterVideoUrl || product.videoUrl || ""}
+                poster={product.comparisonThumbnail || product.coverImage}
+                defaultSplit={product.comparisonSettings?.defaultSplit}
+                displayOrder={product.comparisonSettings?.displayOrder}
+              />
+            </div>
+          )}
+
           {/* 1. WHAT'S INSIDE SECTION */}
           <div>
             <span className="text-[11px] font-black uppercase tracking-[0.2em] text-[#FF642D] block mb-2">
@@ -519,3 +533,4 @@ export default function ExploreProductDetailPage() {
     </Suspense>
   );
 }
+

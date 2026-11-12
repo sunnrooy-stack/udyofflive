@@ -236,6 +236,11 @@ export const createProduct = async (req: Request, res: Response) => {
         features: Array.isArray(features) ? features : [],
         demoUrl: demoUrl || "",
         videoUrl: req.body.videoUrl || demoUrl || "",
+        beforeVideoUrl: beforeVideoUrl || "",
+        afterVideoUrl: afterVideoUrl || "",
+        comparisonEnabled: req.body.comparisonEnabled !== undefined ? Boolean(req.body.comparisonEnabled) : true,
+        comparisonThumbnail: req.body.comparisonThumbnail || coverImage || "",
+        comparisonSettings: req.body.comparisonSettings || { displayOrder: "before-left", defaultSplit: 50 },
         previewGallery: previewGallery || [],
         status: productStatus,
         isPublished: isPublished,
@@ -264,6 +269,11 @@ export const createProduct = async (req: Request, res: Response) => {
       aspectRatio: req.body.aspectRatio || "",
       orientation: req.body.orientation || "landscape",
       videoUrl: req.body.videoUrl || demoUrl || "",
+      beforeVideoUrl: beforeVideoUrl || "",
+      afterVideoUrl: afterVideoUrl || "",
+      comparisonEnabled: req.body.comparisonEnabled !== undefined ? Boolean(req.body.comparisonEnabled) : true,
+      comparisonThumbnail: req.body.comparisonThumbnail || coverImage || "",
+      comparisonSettings: req.body.comparisonSettings || { displayOrder: "before-left", defaultSplit: 50 },
       tags: Array.isArray(tags) ? tags : [],
       coverImage: coverImage || "",
       fileUrls: Array.isArray(fileUrls) ? fileUrls : [],
@@ -299,6 +309,7 @@ export const updateProduct = async (req: Request, res: Response) => {
       'title', 'description', 'price', 'originalPrice', 'category', 'sectionSlug',
       'aspectRatio', 'orientation', 'sellerName', 'rating', 'reviewsCount',
       'tags', 'coverImage', 'previewMedia', 'fileUrls', 'features', 'demoUrl', 'videoUrl',
+      'beforeVideoUrl', 'afterVideoUrl', 'comparisonEnabled', 'comparisonThumbnail', 'comparisonSettings',
       'previewGallery', 'status', 'isPublished', 'isFeatured', 'metaTitle', 'metaDescription'
     ];
 

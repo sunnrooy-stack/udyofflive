@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import VideoBeforeAfterManager from "@/components/VideoBeforeAfterManager";
 
 export interface SectionConfig {
   slug: string;
@@ -235,6 +236,8 @@ export default function SectionView({ slug }: { slug: string }) {
   const isGlowAnimeLogo = slug === "glow-anime-logo";
   const is3dCharacter = slug === "3d-character";
   const isCc = slug === "cc" || slug === "cc-presets";
+  const isPresetOrCc =
+    isCc || slug === "presets" || slug.includes("preset") || slug.includes("cc");
   const isHero = slug === "hero" || slug === "hero-showcase";
   const defaultSectionRatio = isHero || isCc
     ? "16:9"
@@ -261,6 +264,12 @@ export default function SectionView({ slug }: { slug: string }) {
   const [originalPrice, setOriginalPrice] = useState<number | string>("");
   const [coverImage, setCoverImage] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
+  const [beforeVideoUrl, setBeforeVideoUrl] = useState("");
+  const [afterVideoUrl, setAfterVideoUrl] = useState("");
+  const [comparisonEnabled, setComparisonEnabled] = useState(true);
+  const [comparisonThumbnail, setComparisonThumbnail] = useState("");
+  const [comparisonOrder, setComparisonOrder] = useState<"before-left" | "after-left">("before-left");
+  const [comparisonSplit, setComparisonSplit] = useState(50);
   const [description, setDescription] = useState("");
   const [fileUrl, setFileUrl] = useState("");
   const [badgeTag, setBadgeTag] = useState("NEW");
@@ -339,6 +348,12 @@ export default function SectionView({ slug }: { slug: string }) {
     setOriginalPrice("");
     setCoverImage("");
     setVideoUrl("");
+    setBeforeVideoUrl("");
+    setAfterVideoUrl("");
+    setComparisonEnabled(true);
+    setComparisonThumbnail("");
+    setComparisonOrder("before-left");
+    setComparisonSplit(50);
     setDescription("");
     setFileUrl("");
     setBadgeTag("NEW");
@@ -354,6 +369,16 @@ export default function SectionView({ slug }: { slug: string }) {
     setOriginalPrice(item.originalPrice !== undefined ? item.originalPrice : "");
     setCoverImage(item.coverImage || "");
     setVideoUrl(item.videoUrl || item.demoUrl || "");
+    setBeforeVideoUrl(item.beforeVideoUrl || item.beforeUrl || "");
+    setAfterVideoUrl(item.afterVideoUrl || item.afterUrl || "");
+    setComparisonEnabled(item.comparisonEnabled !== false);
+    setComparisonThumbnail(item.comparisonThumbnail || "");
+    setComparisonOrder(item.comparisonSettings?.displayOrder || "before-left");
+    setComparisonSplit(
+      typeof item.comparisonSettings?.defaultSplit === "number"
+        ? item.comparisonSettings.defaultSplit
+        : 50
+    );
     setDescription(item.description || "");
     setFileUrl(item.fileUrls && item.fileUrls.length > 0 ? item.fileUrls[0] : "");
     setBadgeTag(item.tags?.[0] || "NEW");
@@ -433,6 +458,18 @@ export default function SectionView({ slug }: { slug: string }) {
       coverImage: coverImage.trim() || section.defaultCover,
       videoUrl: videoUrl.trim(),
       demoUrl: videoUrl.trim(),
+      ...(isPresetOrCc
+        ? {
+            beforeVideoUrl: beforeVideoUrl.trim(),
+            afterVideoUrl: afterVideoUrl.trim(),
+            comparisonEnabled,
+            comparisonThumbnail: comparisonThumbnail.trim(),
+            comparisonSettings: {
+              displayOrder: comparisonOrder,
+              defaultSplit: comparisonSplit,
+            },
+          }
+        : {}),
       category: section.title,
       sectionSlug: slug,
       description: description.trim() || `${section.title} collection`,
@@ -1151,6 +1188,26 @@ export default function SectionView({ slug }: { slug: string }) {
                   </div>
                 )}
               </div>
+
+              {/* VIDEO BEFORE & AFTER MANAGER (ONLY CC & PRESET SECTIONS) */}
+              {isPresetOrCc && (
+                <VideoBeforeAfterManager
+                  beforeVideoUrl={beforeVideoUrl}
+                  afterVideoUrl={afterVideoUrl}
+                  comparisonEnabled={comparisonEnabled}
+                  comparisonThumbnail={comparisonThumbnail}
+                  displayOrder={comparisonOrder}
+                  defaultSplit={comparisonSplit}
+                  onChange={(patch) => {
+                    if (patch.beforeVideoUrl !== undefined) setBeforeVideoUrl(patch.beforeVideoUrl);
+                    if (patch.afterVideoUrl !== undefined) setAfterVideoUrl(patch.afterVideoUrl);
+                    if (patch.comparisonEnabled !== undefined) setComparisonEnabled(patch.comparisonEnabled);
+                    if (patch.comparisonThumbnail !== undefined) setComparisonThumbnail(patch.comparisonThumbnail);
+                    if (patch.displayOrder !== undefined) setComparisonOrder(patch.displayOrder);
+                    if (patch.defaultSplit !== undefined) setComparisonSplit(patch.defaultSplit);
+                  }}
+                />
+              )}
 
               <div>
                 <label className="block text-xs font-bold text-muted-foreground uppercase mb-1">

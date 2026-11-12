@@ -5,6 +5,7 @@ import { useCartStore, CartItem } from "@/store/cart";
 import { useParams } from "next/navigation";
 import ProductPreviewGallery from "@/components/ProductPreviewGallery";
 import CCProductDetailView from "@/components/CCProductDetailView";
+import VideoBeforeAfterSlider, { isCcOrPresetProduct } from "@/components/VideoBeforeAfterSlider";
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -349,6 +350,19 @@ export default function ProductDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* Interactive Video Before & After Comparison (ONLY CC & Preset products) */}
+      {isCcOrPresetProduct(product) && product.comparisonEnabled !== false && (
+        <div className="mt-12">
+          <VideoBeforeAfterSlider
+            beforeVideoUrl={product.beforeVideoUrl || ""}
+            afterVideoUrl={product.afterVideoUrl || product.videoUrl || product.demoUrl || ""}
+            poster={product.comparisonThumbnail || product.coverImage}
+            defaultSplit={product.comparisonSettings?.defaultSplit}
+            displayOrder={product.comparisonSettings?.displayOrder}
+          />
+        </div>
+      )}
     </div>
   );
 }

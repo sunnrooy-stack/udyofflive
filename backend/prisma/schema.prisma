@@ -67,6 +67,11 @@ model Product {
   features      String[]  // Custom "What's included" items
   demoUrl       String?   // ✨ Live Preview URL
   videoUrl      String?   // Video played on hover (Hero & Showcase video preview)
+  beforeVideoUrl String?  // Video Before & After Comparison: BEFORE video URL
+  afterVideoUrl  String?  // Video Before & After Comparison: AFTER video URL
+  comparisonEnabled Boolean @default(true) // Enable/Disable Video Before & After Slider
+  comparisonThumbnail String? // Poster/thumbnail for comparison slider
+  comparisonSettings Json?    // { displayOrder, defaultSplit }
   previewGallery Json?    // Array of preview objects [{ title, url, thumbnail, type }]
   status        ProductStatus @default(PENDING_APPROVAL)
   isPublished   Boolean   @default(false)

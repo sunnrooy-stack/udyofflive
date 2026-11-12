@@ -277,6 +277,7 @@ export default function CreateProductPage() {
       coverImage: formCover || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe",
       demoUrl: formDemoUrl,
       showBeforeAfterCC: formShowBeforeAfterCC,
+      comparisonEnabled: formShowBeforeAfterCC || Boolean(formBeforeVideoUrl || formAfterVideoUrl),
       beforeVideoUrl: formBeforeVideoUrl,
       afterVideoUrl: formAfterVideoUrl,
       beforeUrl: formBeforeVideoUrl,

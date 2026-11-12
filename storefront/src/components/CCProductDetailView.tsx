@@ -20,6 +20,7 @@ import {
   Film,
 } from "lucide-react";
 import { useCartStore } from "@/store/cart";
+import VideoBeforeAfterSlider from "@/components/VideoBeforeAfterSlider";
 
 function isYouTubeUrl(url?: string): boolean {
   if (!url) return false;
@@ -47,6 +48,14 @@ export interface CCProductDetailProps {
     coverImage: string;
     videoUrl?: string;
     demoUrl?: string;
+    beforeVideoUrl?: string;
+    afterVideoUrl?: string;
+    comparisonEnabled?: boolean;
+    comparisonThumbnail?: string;
+    comparisonSettings?: {
+      displayOrder?: "before-left" | "after-left";
+      defaultSplit?: number;
+    };
     previewMedia?: string[];
     category?: string;
     tags?: string[];
@@ -123,104 +132,36 @@ export default function CCProductDetailView({ product }: CCProductDetailProps) {
 
         {/* Main 2-Column CC Detail Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Left: Auto-Playing 16:9 Video & Before/After Stage (7 cols) */}
+          {/* Left: Synchronized Video Before & After Comparison Stage (7 cols) */}
           <div className="lg:col-span-7 space-y-4">
-            {/* Mode Switcher Tabs */}
-            <div className="flex items-center justify-between bg-slate-900/90 border border-slate-800 p-1.5 rounded-2xl">
-              <div className="flex items-center gap-1.5">
-                <button
-                  type="button"
-                  onClick={() => setViewMode("video")}
-                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black transition-all cursor-pointer ${
-                    viewMode === "video"
-                      ? "bg-gradient-to-r from-rose-600 to-purple-600 text-white shadow-md"
-                      : "text-slate-400 hover:text-white"
-                  }`}
-                >
-                  <Play className="w-3.5 h-3.5 fill-current" />
-                  <span>Auto-Play Video Preview</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setViewMode("photo")}
-                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black transition-all cursor-pointer ${
-                    viewMode === "photo"
-                      ? "bg-white text-slate-950 shadow-md"
-                      : "text-slate-400 hover:text-white"
-                  }`}
-                >
-                  <Sliders className="w-3.5 h-3.5" />
-                  <span>Before / After Compare</span>
-                </button>
+            <div className="flex items-center justify-between bg-[#2A1914] border border-[#D9C9B5]/20 px-4 py-2.5 rounded-2xl">
+              <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-[#F3EADB]">
+                <Sliders className="w-4 h-4 text-[#FF642D]" />
+                <span>Interactive Video Before &amp; After</span>
               </div>
-
-              <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 text-[11px] font-bold mr-1">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                {hasCustomVideo ? "Live CC Demo" : "4K Ready"}
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FF642D]/15 text-[#FF642D] text-[11px] font-bold">
+                <span className="w-2 h-2 rounded-full bg-[#FF642D] animate-ping" />
+                Drag Handle to Compare
               </span>
             </div>
 
-            {/* Widescreen 16:9 Player Stage */}
-            <div className="relative aspect-video w-full rounded-3xl overflow-hidden bg-black border border-slate-800 shadow-[0_20px_60px_rgba(0,0,0,0.8)]">
-              {viewMode === "video" ? (
-                isYt ? (
-                  <iframe
-                    src={ytEmbed}
-                    title={product.title}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className="w-full h-full border-0"
-                  />
-                ) : (
-                  <video
-                    key={videoSource}
-                    src={videoSource}
-                    autoPlay
-                    muted
-                    loop
-                    controls
-                    playsInline
-                    className="w-full h-full object-cover"
-                  />
-                )
-              ) : (
-                <div className="relative w-full h-full select-none overflow-hidden">
-                  <img
-                    src={afterImg}
-                    alt="After CC"
-                    className="absolute inset-0 w-full h-full object-cover"
-                  />
-                  <div
-                    className="absolute inset-0 overflow-hidden"
-                    style={{ clipPath: `inset(0 ${100 - sliderPos}% 0 0)` }}
-                  >
-                    <img
-                      src={beforeImg}
-                      alt="Before CC"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <input
-                    type="range"
-                    min={0}
-                    max={100}
-                    value={sliderPos}
-                    onChange={(e) => setSliderPos(Number(e.target.value))}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-20"
-                  />
-                  <div
-                    className="absolute top-0 bottom-0 w-0.5 bg-white shadow-[0_0_10px_#fff] z-10 pointer-events-none"
-                    style={{ left: `${sliderPos}%` }}
-                  />
-                  <span className="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-black/75 text-[10px] font-black uppercase text-white z-10">
-                    BEFORE (RAW)
-                  </span>
-                  <span className="absolute top-3 right-3 px-2.5 py-1 rounded-md bg-rose-600/90 text-[10px] font-black uppercase text-white z-10">
-                    AFTER (CC APPLIED)
-                  </span>
-                </div>
-              )}
-            </div>
+            <VideoBeforeAfterSlider
+              beforeVideoUrl={
+                product.beforeVideoUrl ||
+                product.videoUrl ||
+                product.demoUrl ||
+                "/hero-wallpaper.mp4"
+              }
+              afterVideoUrl={
+                product.afterVideoUrl ||
+                product.videoUrl ||
+                product.demoUrl ||
+                "https://res.cloudinary.com/demo/video/upload/snow_horses.mp4"
+              }
+              poster={product.comparisonThumbnail || product.coverImage}
+              defaultSplit={product.comparisonSettings?.defaultSplit || 50}
+              displayOrder={product.comparisonSettings?.displayOrder || "before-left"}
+            />
 
             {/* Software & Format Strip */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">

@@ -28,6 +28,7 @@ interface Product {
   showBeforeAfterCC?: boolean | string;
   beforeVideoUrl?: string;
   afterVideoUrl?: string;
+  comparisonEnabled?: boolean;
   metaTitle: string;
   metaDescription: string;
   downloads: number;
@@ -523,6 +524,7 @@ function ProductsContent() {
         coverImage: formCover || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe",
         demoUrl: formDemoUrl,
         showBeforeAfterCC: formShowBeforeAfterCC,
+        comparisonEnabled: formShowBeforeAfterCC || Boolean(formBeforeVideoUrl || formAfterVideoUrl),
         beforeVideoUrl: formBeforeVideoUrl,
         afterVideoUrl: formAfterVideoUrl,
         beforeUrl: formBeforeVideoUrl,
@@ -583,6 +585,7 @@ function ProductsContent() {
         coverImage: formCover || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe",
         demoUrl: formDemoUrl,
         showBeforeAfterCC: formShowBeforeAfterCC,
+        comparisonEnabled: formShowBeforeAfterCC || Boolean(formBeforeVideoUrl || formAfterVideoUrl),
         beforeVideoUrl: formBeforeVideoUrl,
         afterVideoUrl: formAfterVideoUrl,
         beforeUrl: formBeforeVideoUrl,

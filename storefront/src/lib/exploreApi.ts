@@ -17,6 +17,15 @@ export interface ExploreProduct {
   sellerName?: string;
   accentColor?: string;
   formatLabel?: string;
+  videoUrl?: string;
+  beforeVideoUrl?: string;
+  afterVideoUrl?: string;
+  comparisonEnabled?: boolean;
+  comparisonThumbnail?: string;
+  comparisonSettings?: {
+    displayOrder?: "before-left" | "after-left";
+    defaultSplit?: number;
+  };
 }
 
 const ACCENT_COLORS = [
@@ -58,6 +67,12 @@ export function normalizeExploreProduct(p: any, idx = 0): ExploreProduct {
     formatLabel: p.sectionSlug
       ? String(p.sectionSlug).replace(/-/g, " ").toUpperCase()
       : "DIGITAL PACK",
+    videoUrl: p.videoUrl || p.demoUrl || "",
+    beforeVideoUrl: p.beforeVideoUrl || "",
+    afterVideoUrl: p.afterVideoUrl || "",
+    comparisonEnabled: p.comparisonEnabled !== false,
+    comparisonThumbnail: p.comparisonThumbnail || "",
+    comparisonSettings: p.comparisonSettings || undefined,
   };
 }
 
@@ -135,3 +150,4 @@ export function getApiBase(): string {
     "https://udyofflive1111111111.onrender.com"
   ).replace(/\/$/, "");
 }
+
