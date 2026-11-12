@@ -93,12 +93,12 @@ export default function AdminLayoutWrapper({ children }: { children: React.React
             onError={(e) => {
               (e.currentTarget as HTMLImageElement).src = "/logo.png";
             }}
-            alt="GEONIXEDITZ Logo"
+            alt="GEONIX VFX Logo"
             className="h-10 w-10 object-contain rounded-xl drop-shadow-md"
           />
           <div className="flex flex-col">
-            <span className="font-extrabold text-base tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-indigo-400">
-              GEONIXEDITZ
+            <span className="font-extrabold text-base tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400">
+              GEONIX VFX
             </span>
             <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest -mt-1">
               Admin Control

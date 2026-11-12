@@ -79,7 +79,7 @@ export default function Navbar() {
     >
       {/* Floating Glassmorphism Pill Navbar */}
       <div className="pointer-events-auto max-w-7xl mx-auto rounded-2xl bg-[#160A29]/60 backdrop-blur-xl border border-purple-500/35 shadow-[0_8px_32px_rgba(124,58,237,0.22),inset_0_1px_0_rgba(255,255,255,0.08)] px-4 sm:px-6 h-16 flex items-center justify-between gap-4 transition-all">
-        {/* LEFT: GENOIX VFX Logo & Brand Text */}
+        {/* LEFT: GEONIX VFX Logo & Brand Text */}
         <BrandLogo size="md" />
 
         {/* CENTER: Navigation Links */}

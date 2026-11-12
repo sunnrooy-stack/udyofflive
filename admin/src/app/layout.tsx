@@ -3,7 +3,7 @@ import "./globals.css";
 import AdminLayoutWrapper from "@/components/AdminLayoutWrapper";
 
 export const metadata: Metadata = {
-  title: "GEONIXEDITZ | Admin Control Center",
+  title: "GEONIX VFX | Admin Control Center",
   icons: {
     icon: "/logo-tight.png",
     shortcut: "/logo-tight.png",

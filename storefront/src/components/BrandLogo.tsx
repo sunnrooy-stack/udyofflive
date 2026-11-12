@@ -40,7 +40,7 @@ export default function BrandLogo({
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
           className="w-full h-full"
-          aria-label="GENOIX VFX Logo"
+          aria-label="GEONIX VFX Logo"
         >
           <defs>
             <linearGradient id="gvGradMain" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
@@ -77,7 +77,7 @@ export default function BrandLogo({
         <span
           className={`font-black ${textMap[size]} tracking-tight text-white group-hover:text-purple-200 transition-colors`}
         >
-          GENOIX{" "}
+          GEONIX{" "}
           <span className="bg-gradient-to-r from-[#A855F7] via-[#EC4899] to-[#06B6D4] bg-clip-text text-transparent">
             VFX
           </span>

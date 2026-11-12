@@ -164,7 +164,7 @@ export default function Footer() {
 
         {/* Bottom Credits */}
         <div className="mt-14 pt-8 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-          <p>© {new Date().getFullYear()} GENOIX VFX Digital Marketplace. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} GEONIX VFX Digital Marketplace. All rights reserved.</p>
           <div className="flex items-center gap-4 text-slate-400">
             <span>Secured with 256-bit SSL</span>
             <span>•</span>

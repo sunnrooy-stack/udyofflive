@@ -10,7 +10,7 @@ const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "GENOIX VFX | Premium VFX & Digital Products Marketplace",
+  title: "GEONIX VFX | Premium VFX & Digital Products Marketplace",
   description: "Download 4K CC packs, After Effects, Premiere Pro, Alight Motion & CapCut presets, thumbnail PSDs, and VFX assets.",
   icons: {
     icon: "/logo-tight.png",
