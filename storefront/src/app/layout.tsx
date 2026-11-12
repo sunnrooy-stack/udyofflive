@@ -10,8 +10,8 @@ const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "GEONIXEDITZ | Premium Digital Products Marketplace",
-  description: "Download YouTube thumbnail PSDs, After Effects CC packs, manga assets, character packs, and 3D text effects.",
+  title: "GENOIX VFX | Premium VFX & Digital Products Marketplace",
+  description: "Download 4K CC packs, After Effects, Premiere Pro, Alight Motion & CapCut presets, thumbnail PSDs, and VFX assets.",
   icons: {
     icon: "/logo-tight.png",
     shortcut: "/logo-tight.png",
@@ -31,7 +31,7 @@ export default function RootLayout({
         <link rel="shortcut icon" type="image/png" href="/logo-tight.png" />
         <link rel="apple-touch-icon" href="/logo-tight.png" />
       </head>
-      <body className={`${inter.className} bg-slate-50 text-slate-900 antialiased selection:bg-sky-500 selection:text-white`}>
+      <body className={`${inter.className} bg-[#160A29] text-white antialiased selection:bg-[#A855F7] selection:text-white`}>
         <div className="relative flex min-h-screen flex-col">
           <Navbar />
           <main className="flex-1">{children}</main>
