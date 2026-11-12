@@ -7,7 +7,6 @@ import YouTubeThumbnailShowcase from "@/components/YouTubeThumbnailShowcase";
 import CategoryCircleBar from "@/components/CategoryCircleBar";
 import ShowcaseSection from "@/components/ShowcaseSection";
 import CCShowcaseSection from "@/components/CCShowcaseSection";
-import CCAndPresetsSections from "@/components/CCAndPresetsSections";
 import FanDeckSection from "@/components/FanDeckSection";
 import ProductCard, { Product } from "@/components/ProductCard";
 import AuthVerificationModal from "@/components/AuthVerificationModal";
@@ -324,9 +323,6 @@ export default function Home() {
 
       {/* 4.5 Auto-Playing CC Presets & LUTs Showcase Section */}
       <CCShowcaseSection />
-
-      {/* 4.6 Separate Dynamic CC & Presets Sections (Section A & Section B) */}
-      <CCAndPresetsSections products={products} />
 
       {/* 5. Circular Category Navigation Bar (Right between buttons and Thumbnail PSD) */}
       <CategoryCircleBar />
