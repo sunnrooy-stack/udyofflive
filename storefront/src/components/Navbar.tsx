@@ -69,7 +69,7 @@ export default function Navbar() {
     return () => unsubscribe();
   }, []);
 
-  const isHome = pathname === "/";
+  const isHome = pathname === "/" || pathname?.startsWith("/explore");
 
   return (
     <header
