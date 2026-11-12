@@ -2,13 +2,15 @@
 
 import React, { useState, useEffect } from "react";
 import { useCartStore, CartItem } from "@/store/cart";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import ProductPreviewGallery from "@/components/ProductPreviewGallery";
 import CCProductDetailView from "@/components/CCProductDetailView";
 import VideoBeforeAfterSlider, { isCcOrPresetProduct } from "@/components/VideoBeforeAfterSlider";
+import { AlertTriangle, Check, ShoppingCart, Zap } from "lucide-react";
 
 export default function ProductDetailPage() {
   const params = useParams();
+  const router = useRouter();
   const id = params?.id as string;
 
   const { addItem, removeItem, isInCart } = useCartStore();
@@ -201,168 +203,211 @@ export default function ProductDetailPage() {
     return <CCProductDetailView product={product} />;
   }
 
+  const price = Number(product.price) || 0;
+  const originalPrice = Number(product.originalPrice) || 0;
+  const hasDiscount = originalPrice > price && price >= 0;
+  const discountPct = hasDiscount
+    ? Math.round(((originalPrice - price) / originalPrice) * 100)
+    : 0;
+
+  const featuresList: string[] =
+    Array.isArray(product.features) && product.features.length > 0
+      ? product.features
+      : [
+          "Instant digital file download",
+          "Compatible with PC & Mobile workflows",
+          "Step-by-step setup documentation",
+          "Lifetime updates included",
+        ];
+
+  const handleBuyNow = () => {
+    if (!inCart) addItem(cartItem);
+    router.push("/checkout");
+  };
+
   return (
-    <div className="py-20 px-6 lg:px-8 max-w-7xl mx-auto w-full min-h-screen">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-        {/* Product Media */}
-        <div className="space-y-4">
-          <div
-            className={`rounded-2xl overflow-hidden relative group border border-border bg-slate-900 flex items-center justify-center shadow-xl transition-all duration-300 ${getAspectRatioClass(currentActiveRatio)}`}
-            style={{
-              aspectRatio:
-                currentActiveRatio === "600:692" || currentActiveRatio === "600/692"
-                  ? "600 / 692"
-                  : currentActiveRatio === "600:706" || currentActiveRatio === "600/706"
-                  ? "600 / 706"
-                  : currentActiveRatio === "600:550" || currentActiveRatio === "600/550" || currentActiveRatio === "12:11"
-                  ? "600 / 550"
-                  : currentActiveRatio === "2:1" || currentActiveRatio === "2/1"
-                  ? "2 / 1"
-                  : currentActiveRatio === "1.09:1" || currentActiveRatio === "1:1.09"
-                  ? "1 / 1.09"
-                  : undefined,
-            }}
-          >
-            {displayedMainImage ? (
-              <img src={displayedMainImage} alt={product.title} className="w-full h-full object-cover transition-all duration-300" />
-            ) : (
-              <>
-                <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 to-purple-600 opacity-80 group-hover:opacity-100 transition-opacity"></div>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-white text-6xl">📦</span>
-                </div>
-              </>
-            )}
+    <div className="min-h-screen bg-[#090514] text-white relative overflow-hidden">
+      {/* Ambient Violet & Cyan Glow */}
+      <div className="pointer-events-none absolute -top-24 left-1/4 w-[480px] h-[480px] rounded-full bg-purple-700/20 blur-[140px]" />
+      <div className="pointer-events-none absolute bottom-0 right-1/4 w-[420px] h-[420px] rounded-full bg-cyan-500/10 blur-[140px]" />
 
-            {/* Resolution / Aspect Ratio Badge */}
-            <span className="absolute top-3 left-3 bg-slate-950/80 backdrop-blur-md text-indigo-300 text-[10px] font-mono font-black px-2.5 py-1 rounded-lg border border-indigo-500/30 shadow-lg">
-              {currentActiveRatio}
-            </span>
-          </div>
-
-          <div className="flex gap-4 overflow-x-auto pb-2">
-            {Array.isArray(product.previewMedia) && product.previewMedia.length > 0 ? (
-              product.previewMedia.map((url: string, i: number) => (
-                <div
-                  key={i}
-                  className="h-24 w-32 shrink-0 rounded-xl border border-border overflow-hidden cursor-pointer hover:ring-2 hover:ring-primary transition-all"
-                >
-                  <img src={url} alt={`Preview ${i + 1}`} className="w-full h-full object-cover" />
-                </div>
-              ))
-            ) : (
-              [
-                "from-indigo-500 to-purple-600",
-                "from-pink-500 to-rose-600",
-                "from-emerald-500 to-teal-600",
-              ].map((gradient, i) => (
-                <div
-                  key={i}
-                  className={`h-24 w-32 shrink-0 rounded-lg bg-gradient-to-br ${gradient} opacity-60 cursor-pointer hover:opacity-100 hover:ring-2 hover:ring-primary transition-all`}
+      <div className="relative z-10 py-14 sm:py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
+          {/* LEFT SIDE: Large Square Dark Artwork Preview + Thumbnails */}
+          <div className="lg:col-span-6 space-y-4">
+            <div className="aspect-square rounded-3xl overflow-hidden relative group border border-purple-500/30 bg-[#0A0A0F] flex items-center justify-center shadow-[0_24px_70px_rgba(0,0,0,0.65)]">
+              {displayedMainImage ? (
+                <img
+                  src={displayedMainImage}
+                  alt={product.title}
+                  className="w-full h-full object-contain p-4 sm:p-6 transition-transform duration-500 group-hover:scale-[1.03]"
                 />
-              ))
+              ) : (
+                <div className="flex items-center justify-center text-6xl">📦</div>
+              )}
+
+              {discountPct > 0 && (
+                <span className="absolute top-4 left-4 px-3 py-1 rounded-full bg-gradient-to-r from-violet-600 to-cyan-500 text-white text-xs font-black uppercase tracking-wider shadow-lg">
+                  -{discountPct}% OFF
+                </span>
+              )}
+            </div>
+
+            {/* Multiple Preview Thumbnails */}
+            {Array.isArray(product.previewMedia) && product.previewMedia.length > 0 && (
+              <div className="flex gap-3 overflow-x-auto pb-2">
+                {product.coverImage && (
+                  <button
+                    type="button"
+                    onClick={() => setActiveImage(product.coverImage)}
+                    className={`h-20 w-20 shrink-0 rounded-xl border overflow-hidden cursor-pointer transition-all bg-[#0A0A0F] ${
+                      displayedMainImage === product.coverImage
+                        ? "border-cyan-400 ring-2 ring-cyan-400/40"
+                        : "border-purple-500/25 hover:border-purple-400"
+                    }`}
+                  >
+                    <img src={product.coverImage} alt="Cover" className="w-full h-full object-cover" />
+                  </button>
+                )}
+                {product.previewMedia.map((url: string, i: number) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => setActiveImage(url)}
+                    className={`h-20 w-20 shrink-0 rounded-xl border overflow-hidden cursor-pointer transition-all bg-[#0A0A0F] ${
+                      displayedMainImage === url
+                        ? "border-cyan-400 ring-2 ring-cyan-400/40"
+                        : "border-purple-500/25 hover:border-purple-400"
+                    }`}
+                  >
+                    <img src={url} alt={`Preview ${i + 1}`} className="w-full h-full object-cover" />
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Video Link Button Section */}
+            {product.demoUrl && product.demoUrl.trim() !== "" && product.demoUrl !== "#" && (
+              <div className="pt-1">
+                <a
+                  href={product.demoUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full inline-flex items-center justify-between px-5 py-3.5 rounded-2xl bg-[#140E26]/90 hover:bg-purple-950/60 text-white font-bold text-sm border border-purple-500/35 hover:border-cyan-400/60 transition-all cursor-pointer"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <span className="text-cyan-400">▶</span>
+                    <span className="tracking-wide uppercase font-black text-xs">Watch Video Preview</span>
+                  </div>
+                  <span className="text-xs bg-purple-500/20 px-3 py-1 rounded-lg font-mono text-purple-200">
+                    {product.demoUrl.replace(/^https?:\/\//, "").split("/")[0]} ↗
+                  </span>
+                </a>
+              </div>
             )}
           </div>
 
-          {/* Video Link Button Section - Only shown when Admin provides a valid Video Link / demoUrl */}
-          {product.demoUrl && product.demoUrl.trim() !== "" && product.demoUrl !== "#" && (
-            <div className="pt-2">
-              <a
-                href={product.demoUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full inline-flex items-center justify-between px-5 py-3.5 rounded-xl bg-gradient-to-r from-red-600 via-rose-600 to-indigo-600 text-white font-bold text-sm shadow-lg hover:shadow-red-500/30 hover:scale-[1.01] transition-all border border-red-400/30 group cursor-pointer"
-              >
-                <div className="flex items-center gap-2.5">
-                  <span className="text-lg">▶</span>
-                  <span className="tracking-wide uppercase font-black">VIDEO LINK</span>
-                </div>
-                <span className="text-xs bg-white/20 group-hover:bg-white/30 px-3 py-1 rounded-lg font-mono flex items-center gap-1 transition-colors">
-                  <span>{product.demoUrl.replace(/^https?:\/\//, '').split('/')[0]}</span>
-                  <span>↗</span>
+          {/* RIGHT SIDE: Clean Editorial Details matching Reference Image 1 */}
+          <div className="lg:col-span-6 flex flex-col space-y-6">
+            <div className="space-y-3">
+              <span className="inline-block text-xs font-black uppercase tracking-[0.2em] text-purple-300">
+                {product.category || "4K DIGITAL ASSET"}
+              </span>
+              <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white leading-[1.08]">
+                {product.title}
+              </h1>
+              <div className="flex flex-wrap items-baseline gap-3 pt-1">
+                <span className="text-2xl sm:text-3xl font-black text-white">
+                  Rs. {price.toFixed(2)}
                 </span>
-              </a>
+                {hasDiscount && (
+                  <span className="text-base font-bold text-slate-400 line-through">
+                    Rs. {originalPrice.toFixed(2)}
+                  </span>
+                )}
+                <span className="text-xs text-slate-400 font-medium">Taxes included.</span>
+              </div>
             </div>
-          )}
+
+            <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
+              {product.description}
+            </p>
+
+            {/* Pill Action Buttons */}
+            <div className="flex flex-col gap-3 pt-1">
+              <button
+                type="button"
+                suppressHydrationWarning
+                onClick={() => (inCart ? removeItem(cartItem.id) : addItem(cartItem))}
+                className={`w-full rounded-full py-3.5 text-sm font-black uppercase tracking-wider border-2 transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                  inCart
+                    ? "bg-emerald-500/20 border-emerald-400 text-emerald-300"
+                    : "bg-transparent hover:bg-white/5 border-purple-400/60 text-white"
+                }`}
+              >
+                <ShoppingCart className="w-4 h-4" />
+                <span>{inCart ? "Remove from cart ✓" : "Add to cart"}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleBuyNow}
+                className="w-full rounded-full py-3.5 text-sm font-black uppercase tracking-wider text-white bg-gradient-to-r from-violet-600 via-purple-500 to-cyan-400 hover:brightness-110 shadow-[0_0_28px_rgba(139,92,246,0.45)] transition-all flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <Zap className="w-4 h-4" />
+                <span>Buy it now</span>
+              </button>
+            </div>
+
+            {/* Features & Included Files */}
+            <div className="rounded-2xl bg-[#130D24]/80 border border-purple-500/20 p-5 space-y-3">
+              <h3 className="text-xs font-black uppercase tracking-widest text-purple-300">
+                What&apos;s Included
+              </h3>
+              <ul className="space-y-2 text-sm text-slate-300">
+                {featuresList.map((feat, idx) => (
+                  <li key={idx} className="flex items-start gap-2.5">
+                    <Check className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+                    <span>{feat}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* License Terms Section (Matching Reference Image 1) */}
+            <div className="rounded-2xl bg-[#130D24]/60 border border-purple-500/20 p-5 space-y-2 text-xs sm:text-sm text-slate-300 leading-relaxed">
+              <div className="flex items-center gap-2 font-black text-white">
+                <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
+                <span>License Terms: Personal Use Only</span>
+              </div>
+              <p className="text-slate-400">
+                By purchasing this item, you are granted a license for{" "}
+                <strong className="text-slate-200">personal use only</strong>. Commercial use in
+                any form is <strong className="text-slate-200">strictly prohibited</strong>. You are{" "}
+                <strong className="text-slate-200">
+                  not allowed to resell, redistribute, or use this product for merchandise or on
+                  any third-party platforms
+                </strong>
+                . Any violation of these terms — including unauthorized resale or commercial use —
+                will result in legal action.
+              </p>
+            </div>
+          </div>
         </div>
 
-        {/* Product Info */}
-        <div className="flex flex-col">
-          <h1 className="text-4xl font-extrabold tracking-tight mb-2">
-            {product.title}
-          </h1>
-          <div className="flex items-center gap-4 mb-6 text-sm text-muted-foreground">
-            <span className="flex items-center gap-1">
-              <span className="text-yellow-500">★★★★★</span>
-              <span>4.9 (128 reviews)</span>
-            </span>
-            <span>•</span>
-            <span>By {product.sellerName || "Admin"}</span>
+        {/* Interactive Video Before & After Comparison (ONLY CC & Preset products) */}
+        {isCcOrPresetProduct(product) && product.comparisonEnabled !== false && (
+          <div className="mt-14">
+            <VideoBeforeAfterSlider
+              beforeVideoUrl={product.beforeVideoUrl || ""}
+              afterVideoUrl={product.afterVideoUrl || product.videoUrl || product.demoUrl || ""}
+              poster={product.comparisonThumbnail || product.coverImage}
+              defaultSplit={product.comparisonSettings?.defaultSplit}
+              displayOrder={product.comparisonSettings?.displayOrder}
+            />
           </div>
-
-          <div className="text-3xl font-bold text-primary mb-6">
-            ₹{Number(product.price).toFixed(2)}
-          </div>
-
-          <p className="text-muted-foreground text-lg leading-relaxed mb-8">
-            {product.description}
-          </p>
-
-          <div className="flex flex-col gap-4 mt-auto">
-            <button
-              suppressHydrationWarning
-              onClick={() =>
-                inCart ? removeItem(cartItem.id) : addItem(cartItem)
-              }
-              className={`w-full rounded-full py-4 text-lg font-bold shadow-lg transition-all flex items-center justify-center gap-2 hover:scale-[1.02] ${
-                inCart
-                  ? "bg-primary/20 text-primary border-2 border-primary/30"
-                  : "bg-primary text-white hover:bg-primary/90"
-              }`}
-            >
-              {inCart ? "Remove from Cart ✓" : "Add to Cart"}
-            </button>
-            <button className="w-full rounded-full bg-muted/50 py-4 text-lg font-bold hover:bg-muted transition-colors flex items-center justify-center gap-2 border border-border">
-              Add to Wishlist ❤️
-            </button>
-          </div>
-
-          <div className="mt-8 border-t border-border pt-8">
-            <h3 className="font-bold mb-4">What&apos;s included:</h3>
-            <ul className="space-y-3 text-muted-foreground">
-              <li className="flex gap-3">
-                <span className="text-primary">✓</span>
-                <span>Full source code download</span>
-              </li>
-              <li className="flex gap-3">
-                <span className="text-primary">✓</span>
-                <span>Figma design templates (if specified)</span>
-              </li>
-              <li className="flex gap-3">
-                <span className="text-primary">✓</span>
-                <span>Comprehensive setup documentation</span>
-              </li>
-              <li className="flex gap-3">
-                <span className="text-primary">✓</span>
-                <span>Lifetime updates</span>
-              </li>
-            </ul>
-          </div>
-        </div>
+        )}
       </div>
-
-      {/* Interactive Video Before & After Comparison (ONLY CC & Preset products) */}
-      {isCcOrPresetProduct(product) && product.comparisonEnabled !== false && (
-        <div className="mt-12">
-          <VideoBeforeAfterSlider
-            beforeVideoUrl={product.beforeVideoUrl || ""}
-            afterVideoUrl={product.afterVideoUrl || product.videoUrl || product.demoUrl || ""}
-            poster={product.comparisonThumbnail || product.coverImage}
-            defaultSplit={product.comparisonSettings?.defaultSplit}
-            displayOrder={product.comparisonSettings?.displayOrder}
-          />
-        </div>
-      )}
     </div>
   );
 }
