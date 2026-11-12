@@ -31,16 +31,16 @@ export default function HeroSection({ carouselItems = [] }: HeroSectionProps) {
   }, []);
 
   return (
-    <section className="relative w-full overflow-hidden bg-black pt-28 pb-16 isolate">
-      {/* 16:9 Looping Live Wallpaper Video Background */}
-      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+    <section className="relative w-full min-h-[56.25vw] flex flex-col justify-center overflow-hidden bg-black pt-28 pb-16 isolate">
+      {/* 16:9 Looping Live Wallpaper Video Background (Uncut Full Frame) */}
+      <div className="absolute inset-0 z-0 flex items-center justify-center overflow-hidden pointer-events-none bg-black">
         <video
           ref={videoRef}
           autoPlay
           loop
           muted
           playsInline
-          className="w-full h-full object-cover object-center scale-105 opacity-80 transition-opacity duration-700"
+          className="w-full h-full object-contain object-center opacity-85 transition-opacity duration-700"
         >
           <source
             src="https://res.cloudinary.com/dh0qmflg7/video/upload/v1793469435/vidssave.com_Halloween_Spooky_Cemetery_Projection_Loop_with_Music_1080P_wmqwic.mp4"
