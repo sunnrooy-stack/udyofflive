@@ -6,7 +6,6 @@ import HeroSection from "@/components/HeroSection";
 import YouTubeThumbnailShowcase from "@/components/YouTubeThumbnailShowcase";
 import CategoryCircleBar from "@/components/CategoryCircleBar";
 import ShowcaseSection from "@/components/ShowcaseSection";
-import CCShowcaseSection from "@/components/CCShowcaseSection";
 import FanDeckSection from "@/components/FanDeckSection";
 import ProductCard, { Product } from "@/components/ProductCard";
 import AuthVerificationModal from "@/components/AuthVerificationModal";
@@ -298,13 +297,13 @@ export default function Home() {
         </Link>
       </section>
 
-      {/* 4. Platform Action Buttons [PC CC] & [MOBILE CC] on Deep Dark Purple */}
-      <section className="w-full bg-[#090514] pt-10 pb-6 border-t border-purple-500/20">
+      {/* 4. Platform Action Buttons [PC CC] & [MOBILE CC] on Clean White Background */}
+      <section className="w-full bg-white pt-10 pb-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center gap-4 sm:gap-6 flex-wrap">
           {/* PC CC Button */}
           <Link
             href="/cc-explore?platform=pc"
-            className="px-8 py-3.5 rounded-full font-black text-sm sm:text-base text-white bg-gradient-to-r from-violet-600 via-purple-500 to-cyan-400 hover:brightness-110 shadow-[0_0_25px_rgba(139,92,246,0.45)] transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-2.5 cursor-pointer"
+            className="px-8 py-3.5 rounded-full font-black text-sm sm:text-base text-white bg-gradient-to-r from-violet-600 via-purple-500 to-cyan-400 hover:brightness-110 shadow-[0_8px_24px_rgba(124,58,237,0.35)] transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-2.5 cursor-pointer"
           >
             <Monitor className="w-5 h-5 text-white" />
             <span>PC CC</span>
@@ -313,16 +312,13 @@ export default function Home() {
           {/* MOBILE CC Button */}
           <Link
             href="/cc-explore?platform=mobile"
-            className="px-8 py-3.5 rounded-full font-black text-sm sm:text-base text-white bg-[#140E26] hover:bg-purple-950/60 shadow-[0_0_20px_rgba(34,211,238,0.2)] border border-purple-500/35 hover:border-cyan-400/60 transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-2.5 cursor-pointer"
+            className="px-8 py-3.5 rounded-full font-black text-sm sm:text-base text-white bg-slate-950 hover:bg-slate-900 shadow-[0_8px_20px_rgba(15,23,42,0.25)] border border-slate-800 transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-2.5 cursor-pointer"
           >
             <Smartphone className="w-5 h-5 text-cyan-400" />
             <span>MOBILE CC</span>
           </Link>
         </div>
       </section>
-
-      {/* 4.5 Auto-Playing CC Presets & LUTs Showcase Section */}
-      <CCShowcaseSection />
 
       {/* 5. Circular Category Navigation Bar (Right between buttons and Thumbnail PSD) */}
       <CategoryCircleBar />
