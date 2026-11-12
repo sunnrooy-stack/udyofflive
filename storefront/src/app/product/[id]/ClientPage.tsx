@@ -226,16 +226,12 @@ export default function ProductDetailPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#090514] text-white relative overflow-hidden">
-      {/* Ambient Violet & Cyan Glow */}
-      <div className="pointer-events-none absolute -top-24 left-1/4 w-[480px] h-[480px] rounded-full bg-purple-700/20 blur-[140px]" />
-      <div className="pointer-events-none absolute bottom-0 right-1/4 w-[420px] h-[420px] rounded-full bg-cyan-500/10 blur-[140px]" />
-
+    <div className="min-h-screen bg-white text-slate-900 relative overflow-hidden">
       <div className="relative z-10 py-14 sm:py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
           {/* LEFT SIDE: Large Square Dark Artwork Preview + Thumbnails */}
           <div className="lg:col-span-6 space-y-4">
-            <div className="aspect-square rounded-3xl overflow-hidden relative group border border-purple-500/30 bg-[#0A0A0F] flex items-center justify-center shadow-[0_24px_70px_rgba(0,0,0,0.65)]">
+            <div className="aspect-square rounded-3xl overflow-hidden relative group border border-slate-200 bg-[#0A0A0F] flex items-center justify-center shadow-xl">
               {displayedMainImage ? (
                 <img
                   src={displayedMainImage}
@@ -262,8 +258,8 @@ export default function ProductDetailPage() {
                     onClick={() => setActiveImage(product.coverImage)}
                     className={`h-20 w-20 shrink-0 rounded-xl border overflow-hidden cursor-pointer transition-all bg-[#0A0A0F] ${
                       displayedMainImage === product.coverImage
-                        ? "border-cyan-400 ring-2 ring-cyan-400/40"
-                        : "border-purple-500/25 hover:border-purple-400"
+                        ? "border-purple-600 ring-2 ring-purple-600/30"
+                        : "border-slate-200 hover:border-purple-400"
                     }`}
                   >
                     <img src={product.coverImage} alt="Cover" className="w-full h-full object-cover" />
@@ -276,8 +272,8 @@ export default function ProductDetailPage() {
                     onClick={() => setActiveImage(url)}
                     className={`h-20 w-20 shrink-0 rounded-xl border overflow-hidden cursor-pointer transition-all bg-[#0A0A0F] ${
                       displayedMainImage === url
-                        ? "border-cyan-400 ring-2 ring-cyan-400/40"
-                        : "border-purple-500/25 hover:border-purple-400"
+                        ? "border-purple-600 ring-2 ring-purple-600/30"
+                        : "border-slate-200 hover:border-purple-400"
                     }`}
                   >
                     <img src={url} alt={`Preview ${i + 1}`} className="w-full h-full object-cover" />
@@ -293,13 +289,13 @@ export default function ProductDetailPage() {
                   href={product.demoUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full inline-flex items-center justify-between px-5 py-3.5 rounded-2xl bg-[#140E26]/90 hover:bg-purple-950/60 text-white font-bold text-sm border border-purple-500/35 hover:border-cyan-400/60 transition-all cursor-pointer"
+                  className="w-full inline-flex items-center justify-between px-5 py-3.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm transition-all cursor-pointer shadow-md"
                 >
                   <div className="flex items-center gap-2.5">
                     <span className="text-cyan-400">▶</span>
                     <span className="tracking-wide uppercase font-black text-xs">Watch Video Preview</span>
                   </div>
-                  <span className="text-xs bg-purple-500/20 px-3 py-1 rounded-lg font-mono text-purple-200">
+                  <span className="text-xs bg-white/10 px-3 py-1 rounded-lg font-mono text-slate-200">
                     {product.demoUrl.replace(/^https?:\/\//, "").split("/")[0]} ↗
                   </span>
                 </a>
@@ -307,17 +303,17 @@ export default function ProductDetailPage() {
             )}
           </div>
 
-          {/* RIGHT SIDE: Clean Editorial Details matching Reference Image 1 */}
+          {/* RIGHT SIDE: Clean Editorial Details matching Reference Image 1 on White */}
           <div className="lg:col-span-6 flex flex-col space-y-6">
             <div className="space-y-3">
-              <span className="inline-block text-xs font-black uppercase tracking-[0.2em] text-purple-300">
+              <span className="inline-block text-xs font-black uppercase tracking-[0.2em] text-slate-500">
                 {product.category || "4K DIGITAL ASSET"}
               </span>
-              <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white leading-[1.08]">
+              <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-900 leading-[1.08]">
                 {product.title}
               </h1>
               <div className="flex flex-wrap items-baseline gap-3 pt-1">
-                <span className="text-2xl sm:text-3xl font-black text-white">
+                <span className="text-2xl sm:text-3xl font-black text-slate-900">
                   Rs. {price.toFixed(2)}
                 </span>
                 {hasDiscount && (
@@ -325,11 +321,11 @@ export default function ProductDetailPage() {
                     Rs. {originalPrice.toFixed(2)}
                   </span>
                 )}
-                <span className="text-xs text-slate-400 font-medium">Taxes included.</span>
+                <span className="text-xs text-slate-500 font-medium">Taxes included.</span>
               </div>
             </div>
 
-            <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
+            <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
               {product.description}
             </p>
 
@@ -341,8 +337,8 @@ export default function ProductDetailPage() {
                 onClick={() => (inCart ? removeItem(cartItem.id) : addItem(cartItem))}
                 className={`w-full rounded-full py-3.5 text-sm font-black uppercase tracking-wider border-2 transition-all flex items-center justify-center gap-2 cursor-pointer ${
                   inCart
-                    ? "bg-emerald-500/20 border-emerald-400 text-emerald-300"
-                    : "bg-transparent hover:bg-white/5 border-purple-400/60 text-white"
+                    ? "bg-emerald-50 border-emerald-500 text-emerald-700"
+                    : "bg-white hover:bg-slate-50 border-slate-900 text-slate-900"
                 }`}
               >
                 <ShoppingCart className="w-4 h-4" />
@@ -352,7 +348,7 @@ export default function ProductDetailPage() {
               <button
                 type="button"
                 onClick={handleBuyNow}
-                className="w-full rounded-full py-3.5 text-sm font-black uppercase tracking-wider text-white bg-gradient-to-r from-violet-600 via-purple-500 to-cyan-400 hover:brightness-110 shadow-[0_0_28px_rgba(139,92,246,0.45)] transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full rounded-full py-3.5 text-sm font-black uppercase tracking-wider text-white bg-slate-950 hover:bg-slate-800 shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Zap className="w-4 h-4" />
                 <span>Buy it now</span>
@@ -360,14 +356,14 @@ export default function ProductDetailPage() {
             </div>
 
             {/* Features & Included Files */}
-            <div className="rounded-2xl bg-[#130D24]/80 border border-purple-500/20 p-5 space-y-3">
-              <h3 className="text-xs font-black uppercase tracking-widest text-purple-300">
+            <div className="rounded-2xl bg-slate-50 border border-slate-200 p-5 space-y-3">
+              <h3 className="text-xs font-black uppercase tracking-widest text-slate-700">
                 What&apos;s Included
               </h3>
-              <ul className="space-y-2 text-sm text-slate-300">
+              <ul className="space-y-2 text-sm text-slate-700">
                 {featuresList.map((feat, idx) => (
                   <li key={idx} className="flex items-start gap-2.5">
-                    <Check className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+                    <Check className="w-4 h-4 text-purple-600 shrink-0 mt-0.5" />
                     <span>{feat}</span>
                   </li>
                 ))}
@@ -375,16 +371,16 @@ export default function ProductDetailPage() {
             </div>
 
             {/* License Terms Section (Matching Reference Image 1) */}
-            <div className="rounded-2xl bg-[#130D24]/60 border border-purple-500/20 p-5 space-y-2 text-xs sm:text-sm text-slate-300 leading-relaxed">
-              <div className="flex items-center gap-2 font-black text-white">
-                <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
+            <div className="rounded-2xl bg-slate-50 border border-slate-200 p-5 space-y-2 text-xs sm:text-sm text-slate-600 leading-relaxed">
+              <div className="flex items-center gap-2 font-black text-slate-900">
+                <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0" />
                 <span>License Terms: Personal Use Only</span>
               </div>
-              <p className="text-slate-400">
+              <p className="text-slate-600">
                 By purchasing this item, you are granted a license for{" "}
-                <strong className="text-slate-200">personal use only</strong>. Commercial use in
-                any form is <strong className="text-slate-200">strictly prohibited</strong>. You are{" "}
-                <strong className="text-slate-200">
+                <strong className="text-slate-900">personal use only</strong>. Commercial use in
+                any form is <strong className="text-slate-900">strictly prohibited</strong>. You are{" "}
+                <strong className="text-slate-900">
                   not allowed to resell, redistribute, or use this product for merchandise or on
                   any third-party platforms
                 </strong>

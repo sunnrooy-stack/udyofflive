@@ -31,7 +31,7 @@ export default function RootLayout({
         <link rel="shortcut icon" type="image/png" href="/logo-tight.png" />
         <link rel="apple-touch-icon" href="/logo-tight.png" />
       </head>
-      <body className={`${inter.className} bg-[#160A29] text-white antialiased selection:bg-[#A855F7] selection:text-white`}>
+      <body className={`${inter.className} bg-white text-slate-900 antialiased selection:bg-[#A855F7] selection:text-white`}>
         <div className="relative flex min-h-screen flex-col">
           <Navbar />
           <main className="flex-1">{children}</main>

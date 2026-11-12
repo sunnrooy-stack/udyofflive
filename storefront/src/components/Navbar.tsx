@@ -69,8 +69,14 @@ export default function Navbar() {
     return () => unsubscribe();
   }, []);
 
+  const isHome = pathname === "/";
+
   return (
-    <header className="sticky top-0 z-50 w-full px-3 sm:px-6 lg:px-8 pt-3 pb-2 bg-transparent pointer-events-none">
+    <header
+      className={`${
+        isHome ? "fixed top-0 left-0 right-0" : "sticky top-0"
+      } z-50 w-full px-3 sm:px-6 lg:px-8 pt-3 pb-2 bg-transparent pointer-events-none`}
+    >
       {/* Floating Glassmorphism Pill Navbar */}
       <div className="pointer-events-auto max-w-7xl mx-auto rounded-2xl bg-[#160A29]/60 backdrop-blur-xl border border-purple-500/35 shadow-[0_8px_32px_rgba(124,58,237,0.22),inset_0_1px_0_rgba(255,255,255,0.08)] px-4 sm:px-6 h-16 flex items-center justify-between gap-4 transition-all">
         {/* LEFT: GENOIX VFX Logo & Brand Text */}
