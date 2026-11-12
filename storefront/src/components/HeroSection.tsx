@@ -119,7 +119,7 @@ export default function HeroSection({ carouselItems = [] }: HeroSectionProps) {
           className="flex flex-wrap items-center justify-center gap-4"
         >
           <a
-            href="/products"
+            href="/explore"
             className="px-8 py-3.5 rounded-full text-sm font-extrabold text-white bg-gradient-to-r from-sky-500 via-indigo-600 to-purple-600 hover:from-sky-400 hover:to-purple-500 shadow-[0_4px_25px_rgba(56,189,248,0.35)] transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-2 cursor-pointer"
           >
             <Flame className="w-4 h-4 text-amber-300" />
