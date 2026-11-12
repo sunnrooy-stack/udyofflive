@@ -107,31 +107,28 @@ export default function ExploreStoreHomepage() {
   const activeOrder = RECENT_ORDERS[activeOrderIdx];
 
   return (
-    <div className="min-h-screen bg-[#160A29] text-[#FFFFFF] font-sans selection:bg-[#A855F7] selection:text-white pt-20">
+    <div className="min-h-screen bg-[#211510] text-[#FFFFFF] font-sans selection:bg-[#FF642D] selection:text-white">
       {/* Top Editorial Navigation */}
-      <header className="border-b border-purple-500/20 bg-[#160A29]/80 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
+      <header className="sticky top-0 z-40 bg-[#211510]/95 backdrop-blur-md border-b border-[#D9C9B5]/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link
               href="/"
-              className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-slate-300 hover:text-cyan-400 transition-colors"
+              className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#D9C9B5] hover:text-[#FF642D] transition-colors"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Main Store</span>
             </Link>
-            <span className="text-purple-500/35">|</span>
+            <span className="text-[#D9C9B5]/25">|</span>
             <span className="text-sm sm:text-base font-black tracking-tight text-[#FFFFFF]">
-              GEONIX VFX{" "}
-              <span className="bg-gradient-to-r from-[#A855F7] to-[#06B6D4] bg-clip-text text-transparent">
-                SHELF
-              </span>
+              ATELIER <span className="text-[#FF642D]">SHELF</span>
             </span>
           </div>
 
-          <nav className="hidden md:flex items-center gap-6 text-xs font-bold uppercase tracking-widest text-slate-300">
-            <Link href="/products" className="hover:text-white transition-colors">
+          <nav className="hidden md:flex items-center gap-6 text-xs font-bold uppercase tracking-widest text-[#D9C9B5]">
+            <a href="#catalog" className="hover:text-white transition-colors">
               Catalog
-            </Link>
+            </a>
             <button
               type="button"
               onClick={() => setIsGuideOpen(true)}
@@ -141,7 +138,7 @@ export default function ExploreStoreHomepage() {
             </button>
             <Link
               href="/explore/checkout"
-              className="hover:text-cyan-400 transition-colors"
+              className="hover:text-[#FF642D] transition-colors"
             >
               Checkout
             </Link>
@@ -149,22 +146,22 @@ export default function ExploreStoreHomepage() {
 
           <Link
             href="/explore/checkout"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#1D0F38] hover:bg-purple-600/30 border border-purple-500/35 text-xs font-black uppercase tracking-wider text-white transition-all shadow-md"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#2A1914] hover:bg-[#FF642D] border border-[#D9C9B5]/20 text-xs font-black uppercase tracking-wider text-white transition-all shadow-md"
           >
-            <ShoppingBag className="w-3.5 h-3.5 text-cyan-400" />
+            <ShoppingBag className="w-3.5 h-3.5" />
             <span>Shelf ({cartItems.length})</span>
           </Link>
         </div>
       </header>
 
       {/* HERO SECTION: 2-Column Editorial + 3D Product Shelf Installation */}
-      <section className="relative overflow-hidden bg-[#160A29] pt-12 pb-20 lg:pt-16 lg:pb-24 border-b border-purple-500/15">
-        {/* Subtle Purple & Cyan Studio Spotlight */}
+      <section className="relative overflow-hidden bg-[#211510] pt-12 pb-20 lg:pt-16 lg:pb-24 border-b border-[#D9C9B5]/10">
+        {/* Subtle Warm Studio Spotlight */}
         <div
-          className="absolute top-0 right-0 w-[620px] h-[620px] rounded-full pointer-events-none opacity-35"
+          className="absolute top-0 right-0 w-[620px] h-[620px] rounded-full pointer-events-none opacity-25"
           style={{
             background:
-              "radial-gradient(circle, rgba(168,85,247,0.32) 0%, rgba(22,10,41,0) 70%)",
+              "radial-gradient(circle, rgba(255,100,45,0.28) 0%, rgba(33,21,16,0) 70%)",
           }}
         />
 
@@ -172,9 +169,9 @@ export default function ExploreStoreHomepage() {
           {/* LEFT SIDE: Editorial Copy + CTAs + Recent Orders Activity */}
           <div className="lg:col-span-5 space-y-7">
             {/* Micro Eyebrow */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1D0F38] border border-purple-500/30">
-              <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-purple-200">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#2A1914] border border-[#D9C9B5]/20">
+              <span className="w-2 h-2 rounded-full bg-[#FF642D] animate-pulse" />
+              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-[#D9C9B5]">
                 Digital Creative Showroom
               </span>
             </div>
@@ -182,13 +179,11 @@ export default function ExploreStoreHomepage() {
             {/* Large Editorial Headline */}
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-[#FFFFFF] leading-[1.06]">
               Everything you create,{" "}
-              <span className="bg-gradient-to-r from-[#A855F7] via-[#C084FC] to-[#06B6D4] bg-clip-text text-transparent">
-                all in one place.
-              </span>
+              <span className="text-[#FF642D]">all in one place.</span>
             </h1>
 
             {/* Description */}
-            <p className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-lg">
+            <p className="text-sm sm:text-base text-[#D9C9B5] leading-relaxed max-w-lg">
               A curated physical-grade shelf of digital courses, LUT &amp; CC
               collections, 8K thumbnail PSDs, 3D character packs, and creator
               toolkits engineered for studio output.
@@ -196,33 +191,33 @@ export default function ExploreStoreHomepage() {
 
             {/* CTA Buttons */}
             <div className="flex flex-wrap items-center gap-4 pt-1">
-              <Link
-                href="/products"
-                className="px-7 py-3.5 rounded-full bg-gradient-to-r from-[#7C3AED] via-[#A855F7] to-[#2563EB] hover:brightness-110 text-white font-black text-sm tracking-wide shadow-[0_12px_30px_rgba(124,58,237,0.45)] transition-all transform hover:-translate-y-0.5 inline-flex items-center gap-2"
+              <a
+                href="#catalog"
+                className="px-7 py-3.5 rounded-full bg-[#FF642D] hover:bg-[#e85520] text-white font-black text-sm tracking-wide shadow-[0_12px_30px_rgba(255,100,45,0.35)] transition-all transform hover:-translate-y-0.5 inline-flex items-center gap-2"
               >
                 <span>Explore Products</span>
                 <ArrowRight className="w-4 h-4" />
-              </Link>
+              </a>
 
               <button
                 type="button"
                 onClick={() => setIsGuideOpen(true)}
-                className="px-6 py-3.5 rounded-full bg-[#1D0F38] hover:bg-purple-900/50 border border-purple-500/35 text-white font-bold text-sm transition-all inline-flex items-center gap-2 cursor-pointer"
+                className="px-6 py-3.5 rounded-full bg-[#2A1914] hover:bg-[#38221b] border border-[#D9C9B5]/25 text-[#F3EADB] font-bold text-sm transition-all inline-flex items-center gap-2 cursor-pointer"
               >
-                <BookOpen className="w-4 h-4 text-cyan-400" />
+                <BookOpen className="w-4 h-4 text-[#FF642D]" />
                 <span>Get Free Guide</span>
               </button>
             </div>
 
             {/* Recent Orders Activity Card */}
             <div className="pt-3">
-              <div className="bg-[#1D0F38]/85 backdrop-blur-xl border border-purple-500/25 rounded-2xl p-4 max-w-md shadow-xl">
+              <div className="bg-[#2A1914] border border-[#D9C9B5]/15 rounded-2xl p-4 max-w-md shadow-xl">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-400">
+                  <span className="text-[10px] font-black uppercase tracking-[0.18em] text-[#FF642D]">
                     Recent Shelf Activity
                   </span>
-                  <span className="inline-flex items-center gap-1 text-[11px] font-bold text-purple-200">
-                    <Star className="w-3 h-3 fill-[#A855F7] text-[#A855F7]" />
+                  <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#F3EADB]">
+                    <Star className="w-3 h-3 fill-[#FF642D] text-[#FF642D]" />
                     {activeOrder.rating}
                   </span>
                 </div>
@@ -240,9 +235,9 @@ export default function ExploreStoreHomepage() {
                       <p className="text-sm font-extrabold text-white truncate">
                         {activeOrder.product}
                       </p>
-                      <div className="flex items-center gap-3 mt-1 text-[11px] text-slate-300">
+                      <div className="flex items-center gap-3 mt-1 text-[11px] text-[#D9C9B5]">
                         <span className="inline-flex items-center gap-1">
-                          <MapPin className="w-3 h-3 text-purple-400" />
+                          <MapPin className="w-3 h-3 text-[#FF642D]" />
                           {activeOrder.location}
                         </span>
                         <span className="inline-flex items-center gap-1">
@@ -251,7 +246,7 @@ export default function ExploreStoreHomepage() {
                         </span>
                       </div>
                     </div>
-                    <span className="shrink-0 px-2.5 py-1 rounded-full bg-[#160A29] text-[10px] font-bold uppercase tracking-wider text-cyan-300 border border-purple-500/25">
+                    <span className="shrink-0 px-2.5 py-1 rounded-full bg-[#211510] text-[10px] font-bold uppercase tracking-wider text-[#F3EADB] border border-[#D9C9B5]/15">
                       Verified
                     </span>
                   </motion.div>
@@ -262,19 +257,19 @@ export default function ExploreStoreHomepage() {
 
           {/* RIGHT SIDE: Floating 3D Product Shelf Installation */}
           <div className="lg:col-span-7">
-            <div className="relative rounded-3xl bg-[#1D0F38]/75 backdrop-blur-xl border border-purple-500/25 p-5 sm:p-8 shadow-[0_30px_80px_rgba(0,0,0,0.65)]">
+            <div className="relative rounded-3xl bg-[#2A1914]/70 border border-[#D9C9B5]/15 p-5 sm:p-8 shadow-[0_30px_80px_rgba(0,0,0,0.65)]">
               <div className="flex items-center justify-between mb-6">
-                <span className="text-[10px] font-black uppercase tracking-[0.22em] text-purple-200">
+                <span className="text-[10px] font-black uppercase tracking-[0.22em] text-[#D9C9B5]">
                   Interactive 3D Shelf Display
                 </span>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-cyan-400">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#FF642D]">
                   Move Cursor to Inspect
                 </span>
               </div>
 
               {loading ? (
-                <div className="h-[430px] flex flex-col items-center justify-center text-slate-300 text-sm">
-                  <div className="w-8 h-8 border-2 border-[#A855F7] border-t-transparent rounded-full animate-spin mb-3" />
+                <div className="h-[430px] flex flex-col items-center justify-center text-[#D9C9B5] text-sm">
+                  <div className="w-8 h-8 border-2 border-[#FF642D] border-t-transparent rounded-full animate-spin mb-3" />
                   Arranging 3D showroom shelves...
                 </div>
               ) : (
@@ -293,8 +288,8 @@ export default function ExploreStoreHomepage() {
                         />
                       ))}
                     </div>
-                    {/* Physical Horizontal Neon-Purple Shelf Plank */}
-                    <div className="relative z-0 h-4 w-full rounded-sm bg-gradient-to-b from-[#2E1A54] to-[#110824] border-t border-purple-400/35 shadow-[0_18px_30px_rgba(0,0,0,0.85)]" />
+                    {/* Physical Horizontal Wooden/Espresso Shelf Plank */}
+                    <div className="relative z-0 h-4 w-full rounded-sm bg-gradient-to-b from-[#3d251d] to-[#17110E] border-t border-[#D9C9B5]/25 shadow-[0_18px_30px_rgba(0,0,0,0.85)]" />
                   </div>
 
                   {/* SHELF 2 */}
@@ -313,7 +308,7 @@ export default function ExploreStoreHomepage() {
                         ))}
                       </div>
                       {/* Physical Horizontal Shelf Plank */}
-                      <div className="relative z-0 h-4 w-full rounded-sm bg-gradient-to-b from-[#2E1A54] to-[#110824] border-t border-purple-400/35 shadow-[0_18px_30px_rgba(0,0,0,0.85)]" />
+                      <div className="relative z-0 h-4 w-full rounded-sm bg-gradient-to-b from-[#3d251d] to-[#17110E] border-t border-[#D9C9B5]/25 shadow-[0_18px_30px_rgba(0,0,0,0.85)]" />
                     </div>
                   )}
                 </div>
