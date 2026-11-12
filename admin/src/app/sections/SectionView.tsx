@@ -908,8 +908,12 @@ export default function SectionView({ slug }: { slug: string }) {
       {/* Add / Edit Product Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-card border border-border rounded-2xl p-6 max-w-lg w-full shadow-2xl space-y-4 my-8 animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between border-b border-border pb-3">
+          <div
+            className={`bg-card border border-border rounded-2xl p-6 ${
+              isPresetOrCc ? "max-w-2xl" : "max-w-lg"
+            } w-full max-h-[90vh] flex flex-col shadow-2xl gap-4 animate-in fade-in zoom-in-95 duration-200`}
+          >
+            <div className="flex items-center justify-between border-b border-border pb-3 shrink-0">
               <h3 className="font-bold text-lg text-foreground flex items-center gap-2">
                 <span>{section.icon}</span>
                 <span>
@@ -917,6 +921,7 @@ export default function SectionView({ slug }: { slug: string }) {
                 </span>
               </h3>
               <button
+                type="button"
                 onClick={() => setIsModalOpen(false)}
                 className="text-muted-foreground hover:text-foreground text-sm font-bold cursor-pointer"
               >
@@ -924,7 +929,7 @@ export default function SectionView({ slug }: { slug: string }) {
               </button>
             </div>
 
-            <form onSubmit={handleSaveProduct} className="space-y-4">
+            <form onSubmit={handleSaveProduct} className="space-y-4 overflow-y-auto pr-1 flex-1">
               <div>
                 <label className="block text-xs font-bold text-muted-foreground uppercase mb-1">
                   Product Title *
