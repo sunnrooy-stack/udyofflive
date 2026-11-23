@@ -5,6 +5,8 @@ import morgan from 'morgan';
 import dotenv from 'dotenv';
 import fs from 'fs';
 import path from 'path';
+import crypto from 'crypto';
+import { v2 as cloudinary } from 'cloudinary';
 import { connectRedis } from './config/redis';
 import './config/firebase'; // Initialize Firebase
 import authRoutes from './routes/auth.routes';
@@ -18,8 +20,21 @@ import { inMemoryOrdersStore } from './controllers/order.controller';
 import { inMemoryProductsStore } from './controllers/product.controller';
 import { generateDownloadToken, verifyDownloadToken } from './utils/security';
 import { loadPaymentGateways, savePaymentGateways, getActiveRazorpay } from './config/paymentGateways';
+import prisma from './config/prisma';
 
 dotenv.config();
+
+// Configure Cloudinary if credentials provided
+const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME || process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'dh0qmflg7';
+const CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY || '915851656698785';
+const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET || '';
+
+cloudinary.config({
+  cloud_name: CLOUDINARY_CLOUD_NAME,
+  api_key: CLOUDINARY_API_KEY,
+  api_secret: CLOUDINARY_API_SECRET,
+  secure: true,
+});
 
 const app: Express = express();
 const port = process.env.PORT || 5000;
@@ -54,7 +69,7 @@ if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
 app.use('/uploads', express.static(uploadsDir));
 
 // Image Upload Endpoint (PNG, JPG, WEBP)
-app.post('/api/upload', (req: Request, res: Response) => {
+app.post('/api/upload', async (req: Request, res: Response) => {
   try {
     const { imageBase64, filename } = req.body;
     if (!imageBase64) {
@@ -89,15 +104,36 @@ app.post('/api/upload', (req: Request, res: Response) => {
       fs.writeFileSync(path.join(storefrontUploadsDir, finalFilename), buffer);
     } catch (e) {}
 
-    const backendBase = process.env.BACKEND_URL || process.env.RENDER_EXTERNAL_URL || 'https://udyofflive1111111111.onrender.com';
-    const fileUrl = `${backendBase.replace(/\/$/, '')}/uploads/${finalFilename}`;
-    const storefrontUrl = `/images/uploads/${finalFilename}`;
+    // Cloudinary upload if API key & secret or base64 data available
+    let cloudUrl: string | null = null;
+    if (CLOUDINARY_API_SECRET) {
+      try {
+        const uploadResult = await cloudinary.uploader.upload(`data:image/${ext.replace('.', '')};base64,${buffer.toString('base64')}`, {
+          folder: 'digital_product_store',
+          public_id: `${Date.now()}_${cleanName}`,
+          resource_type: 'auto',
+        });
+        if (uploadResult && uploadResult.secure_url) {
+          cloudUrl = uploadResult.secure_url;
+          console.log(`[Upload] Image permanently uploaded to Cloudinary: ${cloudUrl}`);
+        }
+      } catch (cloudErr: any) {
+        console.warn('[Upload] Cloudinary upload notice (fallback to local static):', cloudErr.message || cloudErr);
+      }
+    }
 
-    console.log(`[Upload] Image saved successfully: ${finalFilename} (${buffer.length} bytes)`);
+    const backendBase = process.env.BACKEND_URL || process.env.RENDER_EXTERNAL_URL || 'https://udyofflive1111111111.onrender.com';
+    const localFileUrl = `${backendBase.replace(/\/$/, '')}/uploads/${finalFilename}`;
+    const fileUrl = cloudUrl || localFileUrl;
+    const storefrontUrl = cloudUrl || `/images/uploads/${finalFilename}`;
+
+    console.log(`[Upload] Image saved successfully: ${finalFilename} (${buffer.length} bytes) -> URL: ${fileUrl}`);
 
     return res.json({
       success: true,
       url: fileUrl,
+      cloudUrl,
+      localUrl: localFileUrl,
       storefrontUrl,
       filename: finalFilename
     });
@@ -107,9 +143,121 @@ app.post('/api/upload', (req: Request, res: Response) => {
   }
 });
 
+// Secure Cloudinary Upload Signature Endpoint
+app.get('/api/upload/signature', (req: Request, res: Response) => {
+  try {
+    const timestamp = Math.round(new Date().getTime() / 1000);
+    const secret = CLOUDINARY_API_SECRET || process.env.CLOUDINARY_API_SECRET || 'dummy_signature_secret';
+    
+    // Hash timestamp with secret for Cloudinary standard signature
+    const signature = crypto
+      .createHash('sha1')
+      .update(`timestamp=${timestamp}${secret}`)
+      .digest('hex');
+
+    res.json({
+      timestamp,
+      signature,
+      apiKey: CLOUDINARY_API_KEY,
+      cloudName: CLOUDINARY_CLOUD_NAME,
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: 'Failed to generate upload signature' });
+  }
+});
+
+// Automated Database Backup & Snapshot Endpoint
+app.get('/api/database/backup', async (req: Request, res: Response) => {
+  try {
+    const [products, categories, users, orders, coupons, tickets] = await Promise.all([
+      prisma.product.findMany().catch(() => []),
+      prisma.category.findMany().catch(() => []),
+      prisma.user.findMany().catch(() => []),
+      prisma.order.findMany({ include: { items: true } }).catch(() => []),
+      prisma.coupon.findMany().catch(() => []),
+      prisma.supportTicket.findMany().catch(() => []),
+    ]);
+
+    const backupData = {
+      timestamp: new Date().toISOString(),
+      counts: {
+        products: products.length,
+        categories: categories.length,
+        users: users.length,
+        orders: orders.length,
+        coupons: coupons.length,
+        tickets: tickets.length,
+      },
+      data: {
+        products,
+        categories,
+        users,
+        orders,
+        coupons,
+        tickets,
+      }
+    };
+
+    const backupDir = path.join(__dirname, '../data/backups');
+    if (!fs.existsSync(backupDir)) fs.mkdirSync(backupDir, { recursive: true });
+    const backupFile = path.join(backupDir, `backup_${Date.now()}.json`);
+    fs.writeFileSync(backupFile, JSON.stringify(backupData, null, 2), 'utf8');
+
+    res.json({
+      success: true,
+      message: 'Automatic database backup created successfully',
+      file: path.basename(backupFile),
+      counts: backupData.counts,
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message || 'Backup creation failed' });
+  }
+});
+
+// Platform Settings Database API
+app.get('/api/platform-settings', async (req: Request, res: Response) => {
+  try {
+    const settingsFile = path.join(__dirname, '../data/platform_settings.json');
+    let localData: any = {};
+    if (fs.existsSync(settingsFile)) {
+      try {
+        localData = JSON.parse(fs.readFileSync(settingsFile, 'utf8'));
+      } catch {}
+    }
+    res.json({
+      success: true,
+      settings: {
+        platformFee: 5,
+        payoutThreshold: 100,
+        allowSellerSignups: false,
+        autoProductApproval: true,
+        ...localData,
+      }
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.post('/api/platform-settings', async (req: Request, res: Response) => {
+  try {
+    const settingsFile = path.join(__dirname, '../data/platform_settings.json');
+    const dir = path.dirname(settingsFile);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    
+    let current: any = {};
+    if (fs.existsSync(settingsFile)) {
+      try { current = JSON.parse(fs.readFileSync(settingsFile, 'utf8')); } catch {}
+    }
+    const updated = { ...current, ...req.body, updatedAt: new Date().toISOString() };
+    fs.writeFileSync(settingsFile, JSON.stringify(updated, null, 2), 'utf8');
+    res.json({ success: true, settings: updated });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 import Razorpay from 'razorpay';
-import crypto from 'crypto';
-import prisma from './config/prisma';
 
 // Global fallback user store for real-time local sync
 export const inMemoryUsersMap = new Map<string, any>();

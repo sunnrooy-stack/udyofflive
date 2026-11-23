@@ -1,44 +1,8 @@
 import { Request, Response } from 'express';
 import prisma from '../config/prisma';
 
-// Pre-seeded real catalog products matching Admin Panel
-export const inMemoryProductsStore: any[] = [
-  {
-    id: "6ae8508c7a36210fc0dc8e0a",
-    title: "ANNU PALYZ PDF",
-    description: "PDF",
-    price: 299,
-    originalPrice: 499,
-    category: "Glow anime logo",
-    sectionSlug: "glow-anime-logo",
-    tags: ["NEW", "GLOW ANIME LOGO"],
-    coverImage: "https://res.cloudinary.com/dh0qmflg7/image/upload/v1793609839/ChatGPT_Image_Sep_27_2026_10_31_36_AM_ia3ubv.png",
-    sellerName: "Admin",
-    rating: 5.0,
-    reviewsCount: 1,
-    isFeatured: true,
-    isPublished: true,
-    status: "APPROVED",
-  },
-  {
-    id: "6ae95fcb24ea2eb0363e9650",
-    title: "PSD",
-    description: "Thumbnail PSD collection",
-    price: 2,
-    originalPrice: 3,
-    category: "Thumbnail PSD",
-    sectionSlug: "thumbnail-psd",
-    tags: ["NEW", "THUMBNAIL PSD"],
-    coverImage: "https://res.cloudinary.com/dh0qmflg7/image/upload/v1793679196/ChatGPT_Image_Sep_27_2026_10_53_41_AM_y3n3ff.png",
-    aspectRatio: "1.09:1",
-    sellerName: "Admin",
-    rating: 5.0,
-    reviewsCount: 1,
-    isFeatured: true,
-    isPublished: true,
-    status: "APPROVED",
-  },
-];
+// Optional in-memory fallback list (only used if MongoDB is completely offline)
+export const inMemoryProductsStore: any[] = [];
 
 export const getProducts = async (req: Request, res: Response) => {
   try {

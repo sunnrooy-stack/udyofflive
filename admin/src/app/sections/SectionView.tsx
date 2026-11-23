@@ -311,27 +311,9 @@ export default function SectionView({ slug }: { slug: string }) {
     }
     setApiSource(connectedApi);
 
-    const allItems = Array.isArray(apiItems) ? [...apiItems, ...localItems] : localItems;
-    // Deduplicate by id
-    const uniqueMap = new Map();
-    allItems.forEach((p) => {
-      if (p && p.id) uniqueMap.set(String(p.id), p);
-    });
-    const uniqueItems = Array.from(uniqueMap.values());
-
-    let deletedIds: string[] = [
-      "6ae869e86dc9e35a6d5051b7", // 3D Text Effects demo
-      "6ae85671efbc320141ab02c1", // 4K Thumbnail demo
-      "6ae85ebadd55de6b68b7520f", // FF Bundle demo
-      "6ae869e86dc9e35a6d5051b6", // 3D Character Pack demo
-    ];
-    try {
-      const d = localStorage.getItem("admin_deleted_products");
-      if (d) deletedIds = [...deletedIds, ...JSON.parse(d)];
-    } catch (e) {}
-
-    const filtered = uniqueItems
-      .filter((p: any) => !deletedIds.includes(String(p.id)))
+    // Database items are primary source of truth
+    const finalItems = Array.isArray(apiItems) && apiItems.length > 0 ? apiItems : localItems;
+    const filtered = finalItems
       .filter((p: any) => matchProductForSection(p, slug, section.title));
     setProducts(filtered);
     setLoading(false);

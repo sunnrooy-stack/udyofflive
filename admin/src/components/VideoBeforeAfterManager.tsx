@@ -22,11 +22,7 @@ export interface VideoBeforeAfterManagerProps {
 }
 
 async function uploadVideoToCloudinary(file: File): Promise<string | null> {
-  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-  if (!cloudName) {
-    alert("Cloudinary cloud name is not set in admin/.env.local!");
-    return null;
-  }
+  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "dh0qmflg7";
 
   const endpoints = [
     process.env.NEXT_PUBLIC_API_URL,
@@ -34,7 +30,7 @@ async function uploadVideoToCloudinary(file: File): Promise<string | null> {
     "https://udyofflive1111111111.onrender.com",
   ].filter(Boolean) as string[];
 
-  let sigData: { timestamp: number; signature: string } | null = null;
+  let sigData: { timestamp: number; signature: string; apiKey?: string } | null = null;
   for (const base of endpoints) {
     try {
       const sigRes = await fetch(`${base.replace(/\/$/, "")}/api/upload/signature`);
@@ -47,30 +43,40 @@ async function uploadVideoToCloudinary(file: File): Promise<string | null> {
     }
   }
 
-  if (!sigData) {
-    alert("Failed to fetch upload signature from backend.");
-    return null;
+  if (sigData && sigData.signature) {
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("api_key", sigData.apiKey || "915851656698785");
+      formData.append("timestamp", sigData.timestamp.toString());
+      formData.append("signature", sigData.signature);
+
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/video/upload`, {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      if (data.secure_url) return data.secure_url;
+    } catch (err) {
+      console.warn("Signature video upload failed, trying unsigned preset:", err);
+    }
   }
 
+  // Fallback: unsigned upload
   try {
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("api_key", "915851656698785");
-    formData.append("timestamp", sigData.timestamp.toString());
-    formData.append("signature", sigData.signature);
-
+    formData.append("upload_preset", "unsigned_preset");
     const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/video/upload`, {
       method: "POST",
       body: formData,
     });
     const data = await res.json();
-    if (data.error) throw new Error(data.error.message);
-    return data.secure_url || null;
-  } catch (err) {
-    console.error("Video upload failed:", err);
-    alert("Failed to upload video to Cloudinary.");
-    return null;
-  }
+    if (data.secure_url) return data.secure_url;
+  } catch (err) {}
+
+  alert("Failed to upload video to Cloudinary. Please check your connection.");
+  return null;
 }
 
 export default function VideoBeforeAfterManager({

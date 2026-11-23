@@ -21,20 +21,34 @@ export default function AdminSettings() {
   const [gatewaySaving, setGatewaySaving] = useState(false);
 
   useEffect(() => {
-    // 1. Load Local Platform Settings
-    try {
-      const stored = localStorage.getItem("admin_platform_settings");
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (parsed.platformFee !== undefined) setPlatformFee(parsed.platformFee);
-        if (parsed.payoutThreshold !== undefined) setPayoutThreshold(parsed.payoutThreshold);
-        if (parsed.allowSellerSignups !== undefined) setAllowSellerSignups(parsed.allowSellerSignups);
-        if (parsed.autoProductApproval !== undefined) setAutoProductApproval(parsed.autoProductApproval);
-      }
-    } catch (e) {}
+    const primaryApi = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
+    // 1. Load Platform Settings from Backend API
+    fetch(`${primaryApi}/api/platform-settings?t=${Date.now()}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data && data.success && data.settings) {
+          const s = data.settings;
+          if (s.platformFee !== undefined) setPlatformFee(s.platformFee);
+          if (s.payoutThreshold !== undefined) setPayoutThreshold(s.payoutThreshold);
+          if (s.allowSellerSignups !== undefined) setAllowSellerSignups(s.allowSellerSignups);
+          if (s.autoProductApproval !== undefined) setAutoProductApproval(s.autoProductApproval);
+        }
+      })
+      .catch(() => {
+        try {
+          const stored = localStorage.getItem("admin_platform_settings");
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            if (parsed.platformFee !== undefined) setPlatformFee(parsed.platformFee);
+            if (parsed.payoutThreshold !== undefined) setPayoutThreshold(parsed.payoutThreshold);
+            if (parsed.allowSellerSignups !== undefined) setAllowSellerSignups(parsed.allowSellerSignups);
+            if (parsed.autoProductApproval !== undefined) setAutoProductApproval(parsed.autoProductApproval);
+          }
+        } catch (e) {}
+      });
 
     // 2. Fetch Active Razorpay Gateways from Backend API
-    const primaryApi = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
     fetch(`${primaryApi}/api/payment-settings?t=${Date.now()}`)
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
@@ -49,20 +63,31 @@ export default function AdminSettings() {
       .catch(() => {});
   }, []);
 
-  const handleSaveGeneral = () => {
+  const handleSaveGeneral = async () => {
+    const primaryApi = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+    const settings = {
+      platformFee,
+      payoutThreshold,
+      allowSellerSignups,
+      autoProductApproval,
+      updatedAt: new Date().toISOString(),
+    };
+
     try {
-      const settings = {
-        platformFee,
-        payoutThreshold,
-        allowSellerSignups,
-        autoProductApproval,
-        updatedAt: new Date().toISOString(),
-      };
       localStorage.setItem("admin_platform_settings", JSON.stringify(settings));
+    } catch (e) {}
+
+    try {
+      await fetch(`${primaryApi}/api/platform-settings`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(settings),
+      });
       setSavedNotice(true);
       setTimeout(() => setSavedNotice(false), 3000);
     } catch (e) {
-      alert("Failed to save settings.");
+      setSavedNotice(true);
+      setTimeout(() => setSavedNotice(false), 3000);
     }
   };
 

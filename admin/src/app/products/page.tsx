@@ -63,41 +63,11 @@ function ProductsContent() {
   };
 
   const mergeLocalWithFetched = (fetchedData: Product[]): Product[] => {
-    const local = getLocalProducts();
-    const map = new Map<string, Product>();
-    const titleMap = new Map<string, string>();
-
-    fetchedData.forEach((p) => {
-      map.set(String(p.id), p);
-      if (p.title) {
-        titleMap.set(p.title.trim().toLowerCase(), String(p.id));
-      }
-    });
-
-    local.forEach((p) => {
-      const titleKey = p.title ? p.title.trim().toLowerCase() : "";
-      if (map.has(String(p.id))) {
-        map.set(String(p.id), { ...map.get(String(p.id)), ...p });
-      } else if (titleKey && titleMap.has(titleKey)) {
-        const dbId = titleMap.get(titleKey)!;
-        map.set(dbId, { ...map.get(dbId), ...p, id: dbId });
-      } else {
-        map.set(String(p.id), p);
-      }
-    });
-
-    let deletedIds: string[] = [
-      "6ae869e86dc9e35a6d5051b7", // 3D Text Effects demo
-      "6ae85671efbc320141ab02c1", // 4K Thumbnail demo
-      "6ae85ebadd55de6b68b7520f", // FF Bundle demo
-      "6ae869e86dc9e35a6d5051b6", // 3D Character Pack demo
-    ];
-    try {
-      const d = localStorage.getItem("admin_deleted_products");
-      if (d) deletedIds = [...deletedIds, ...JSON.parse(d)];
-    } catch (e) {}
-
-    return Array.from(map.values()).filter((p) => !deletedIds.includes(String(p.id)));
+    // If backend returned database products, use them directly as single source of truth
+    if (Array.isArray(fetchedData) && fetchedData.length > 0) {
+      return fetchedData;
+    }
+    return getLocalProducts();
   };
 
   const refreshProducts = () => {
@@ -289,29 +259,85 @@ function ProductsContent() {
   }, []);
 
   const uploadToCloudinary = async (file: File) => {
-    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-    const uploadPreset = "unsigned_preset"; // Or your preset
-    if (!cloudName) {
-      alert("Missing Cloudinary Cloud Name in environment variables.");
-      return null;
-    }
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", uploadPreset);
+    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "dh0qmflg7";
+    const endpoints = [
+      process.env.NEXT_PUBLIC_API_URL,
+      "http://localhost:5000",
+      "https://udyofflive1111111111.onrender.com",
+    ].filter(Boolean) as string[];
 
+    // 1. Try secure signature-based upload if backend signature endpoint is reachable
+    let sigData: { timestamp: number; signature: string; apiKey?: string } | null = null;
+    for (const base of endpoints) {
+      try {
+        const sigRes = await fetch(`${base.replace(/\/$/, "")}/api/upload/signature`);
+        if (sigRes.ok) {
+          sigData = await sigRes.json();
+          break;
+        }
+      } catch {}
+    }
+
+    if (sigData && sigData.signature) {
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("api_key", sigData.apiKey || "915851656698785");
+        formData.append("timestamp", sigData.timestamp.toString());
+        formData.append("signature", sigData.signature);
+
+        const resourceType = file.type.startsWith("video/") ? "video" : "auto";
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`, {
+          method: "POST",
+          body: formData,
+        });
+        const data = await res.json();
+        if (data.secure_url) return data.secure_url;
+      } catch (err) {
+        console.warn("Signature upload attempt failed, falling back to unsigned/backend upload:", err);
+      }
+    }
+
+    // 2. Fallback to unsigned Cloudinary preset
     try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", "unsigned_preset");
       const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/upload`, {
         method: "POST",
         body: formData,
       });
       const data = await res.json();
-      if (data.error) throw new Error(data.error.message);
-      return data.secure_url;
-    } catch (err) {
-      console.error("Cloudinary upload error:", err);
-      alert("Failed to upload file to Cloudinary.");
-      return null;
+      if (data.secure_url) return data.secure_url;
+    } catch (err) {}
+
+    // 3. Fallback to backend /api/upload endpoint (converts to permanent file storage)
+    for (const base of endpoints) {
+      try {
+        const reader = new FileReader();
+        const base64Promise = new Promise<string>((resolve, reject) => {
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+        const base64Data = await base64Promise;
+        const res = await fetch(`${base.replace(/\/$/, "")}/api/upload`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            imageBase64: base64Data,
+            filename: file.name.replace(/\.[^/.]+$/, ""),
+          }),
+        });
+        if (res.ok) {
+          const resData = await res.json();
+          if (resData.url) return resData.url;
+        }
+      } catch {}
     }
+
+    alert("Failed to upload file. Please check your connection.");
+    return null;
   };
 
   const handleEdit = (prod: Product) => {

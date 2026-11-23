@@ -48,24 +48,7 @@ export default function SectionsOverviewPage() {
       }
     }
 
-    const all = Array.isArray(apiItems) ? [...apiItems, ...localItems] : localItems;
-    // Deduplicate by ID
-    const map = new Map();
-    all.forEach((p) => {
-      if (p && p.id) map.set(String(p.id), p);
-    });
-    let deletedIds: string[] = [
-      "6ae869e86dc9e35a6d5051b7", // 3D Text Effects demo
-      "6ae85671efbc320141ab02c1", // 4K Thumbnail demo
-      "6ae85ebadd55de6b68b7520f", // FF Bundle demo
-      "6ae869e86dc9e35a6d5051b6", // 3D Character Pack demo
-    ];
-    try {
-      const d = localStorage.getItem("admin_deleted_products");
-      if (d) deletedIds = [...deletedIds, ...JSON.parse(d)];
-    } catch (e) {}
-
-    const unique = Array.from(map.values()).filter((p: any) => !deletedIds.includes(String(p.id)));
+    const unique = Array.isArray(apiItems) && apiItems.length > 0 ? apiItems : localItems;
 
     setProducts(unique);
     setApiSource(activeApi);

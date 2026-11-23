@@ -101,40 +101,85 @@ export default function CreateProductPage() {
   }, []);
 
   const uploadToCloudinary = async (file: File) => {
-    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-    
-    if (!cloudName) {
-      alert("Cloudinary cloud name is not set in admin/.env.local!");
-      return null;
+    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "dh0qmflg7";
+    const endpoints = [
+      process.env.NEXT_PUBLIC_API_URL,
+      "http://localhost:5000",
+      "https://udyofflive1111111111.onrender.com",
+    ].filter(Boolean) as string[];
+
+    // 1. Fetch secure signature from backend
+    let sigData: { timestamp: number; signature: string; apiKey?: string } | null = null;
+    for (const base of endpoints) {
+      try {
+        const sigRes = await fetch(`${base.replace(/\/$/, "")}/api/upload/signature`);
+        if (sigRes.ok) {
+          sigData = await sigRes.json();
+          break;
+        }
+      } catch {}
     }
 
-    try {
-      // 1. Fetch secure signature from backend
-      const sigRes = await fetch("https://udyofflive1111111111.onrender.com/api/upload/signature");
-      if (!sigRes.ok) throw new Error("Failed to get upload signature");
-      const { timestamp, signature } = await sigRes.json();
+    if (sigData && sigData.signature) {
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("api_key", sigData.apiKey || "915851656698785");
+        formData.append("timestamp", sigData.timestamp.toString());
+        formData.append("signature", sigData.signature);
 
-      // 2. Upload file directly to Cloudinary using the signature
+        const resourceType = file.type.startsWith("video/") ? "video" : "auto";
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`, {
+          method: "POST",
+          body: formData,
+        });
+        const data = await res.json();
+        if (data.secure_url) return data.secure_url;
+      } catch (err) {
+        console.warn("Signature upload attempt failed, falling back to unsigned/backend upload:", err);
+      }
+    }
+
+    // 2. Fallback to unsigned Cloudinary preset
+    try {
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("api_key", "915851656698785"); // User's API Key
-      formData.append("timestamp", timestamp.toString());
-      formData.append("signature", signature);
-
-      const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`, {
+      formData.append("upload_preset", "unsigned_preset");
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/upload`, {
         method: "POST",
         body: formData,
       });
       const data = await res.json();
-      
-      if (data.error) throw new Error(data.error.message);
-      
-      return data.secure_url;
-    } catch (err) {
-      console.error("Cloudinary secure upload error:", err);
-      alert("Failed to securely upload file to Cloudinary.");
-      return null;
+      if (data.secure_url) return data.secure_url;
+    } catch (err) {}
+
+    // 3. Fallback to backend /api/upload endpoint (converts to permanent file storage)
+    for (const base of endpoints) {
+      try {
+        const reader = new FileReader();
+        const base64Promise = new Promise<string>((resolve, reject) => {
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+        const base64Data = await base64Promise;
+        const res = await fetch(`${base.replace(/\/$/, "")}/api/upload`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            imageBase64: base64Data,
+            filename: file.name.replace(/\.[^/.]+$/, ""),
+          }),
+        });
+        if (res.ok) {
+          const resData = await res.json();
+          if (resData.url) return resData.url;
+        }
+      } catch {}
     }
+
+    alert("Failed to securely upload file to Cloudinary.");
+    return null;
   };
 
   const AVAILABLE_FEATURE_TAGS = ["FEATURED", "NEW", "POPULAR", "TRENDING", "PREMIUM"];
